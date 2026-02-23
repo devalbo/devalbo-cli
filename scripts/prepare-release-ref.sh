@@ -11,27 +11,36 @@ set -euo pipefail
 REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$REPO_ROOT"
 
-if [[ ! -f dist/index.js || ! -f dist/node.js ]]; then
-  echo "Run build first: npm run build:dist" >&2
-  exit 1
-fi
-
 RELEASE_BRANCH="${1:-release}"
 echo "Preparing branch: $RELEASE_BRANCH"
 
-# Replace root package.json with release layout (no workspaces, no file: deps)
-cp package.json package.json.bak
-cp scripts/package.release.json package.json
+TMP_TREE="$(mktemp -d "${TMPDIR:-/tmp}/devalbo-release-tree.XXXXXX")"
+cleanup() {
+  rm -rf "$TMP_TREE"
+}
+trap cleanup EXIT
 
-# Commit only root package.json and dist/ on the release branch
+bash "$REPO_ROOT/scripts/prepare-release-tree.sh" "$TMP_TREE"
+
+# Replace root package.json + README + dist with generated release tree.
 git checkout -B "$RELEASE_BRANCH" 2>/dev/null || git checkout "$RELEASE_BRANCH"
-git add package.json dist/
+cp "$TMP_TREE/package.json" "$REPO_ROOT/package.json"
+cp "$TMP_TREE/README.md" "$REPO_ROOT/README.md"
+rm -rf "$REPO_ROOT/dist"
+cp -R "$TMP_TREE/dist" "$REPO_ROOT/dist"
+if [[ -f "$TMP_TREE/LICENSE" ]]; then
+  cp "$TMP_TREE/LICENSE" "$REPO_ROOT/LICENSE"
+fi
+
+git add package.json README.md dist/
+if [[ -f LICENSE ]]; then
+  git add LICENSE
+fi
 git status
-git commit -m "Release: single-package layout for install-from-git (no file: deps)" || true
+git commit -m "Release: publish-root layout for install-from-git" || true
 
 # Back to main (restores dev package.json from branch)
 git checkout main 2>/dev/null || git checkout master 2>/dev/null || true
-rm -f package.json.bak
 
 echo ""
 echo "Done. Push with: git push origin $RELEASE_BRANCH"

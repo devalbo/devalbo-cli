@@ -1,0 +1,149 @@
+name: Promote Release Ref
+
+on:
+  workflow_dispatch:
+    inputs:
+      source_sha:
+        description: "Source commit SHA on main"
+        required: true
+        type: string
+      release_branch:
+        description: "Release branch to update"
+        required: true
+        default: "release"
+        type: string
+      create_tag:
+        description: "Create immutable release tag"
+        required: true
+        default: false
+        type: boolean
+      release_tag:
+        description: "Tag name (required when create_tag=true), e.g. v0.1.0"
+        required: false
+        type: string
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-promote-${{ inputs.release_branch }}
+  cancel-in-progress: false
+
+jobs:
+  promote:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout source SHA
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.source_sha }}
+          fetch-depth: 0
+
+      - name: Verify source SHA is on main
+        run: |
+          set -euo pipefail
+          git fetch origin main --depth=1
+          if ! git merge-base --is-ancestor "${{ inputs.source_sha }}" "origin/main"; then
+            echo "source_sha is not reachable from origin/main: ${{ inputs.source_sha }}" >&2
+            exit 1
+          fi
+
+      - name: Read matrix baseline
+        id: matrix
+        run: |
+          set -euo pipefail
+          node -e "const fs=require('fs'); const m=JSON.parse(fs.readFileSync('ci/repackaging-matrix.json','utf8')); for (const k of ['node_baseline','npm_baseline']) { if (!m[k]) throw new Error('Missing '+k); fs.appendFileSync(process.env.GITHUB_OUTPUT, k+'='+m[k]+'\\n'); }"
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.29.3
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ steps.matrix.outputs.node_baseline }}
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
+
+      - name: Setup npm baseline
+        run: npm i -g npm@${{ steps.matrix.outputs.npm_baseline }}
+
+      - name: Build dist from source SHA
+        run: |
+          set -euo pipefail
+          pnpm install --frozen-lockfile
+          npm run build:dist
+
+      - name: Pre-publish packaging gates
+        run: |
+          set -euo pipefail
+          STRICT_METADATA_SYNC=1 bash tests/packaging/metadata-sync.test.sh
+          STRICT_PUBLIC_REFS=1 bash tests/packaging/public-reference-guard.test.sh
+          bash tests/packaging/release-tree-smoke.test.sh
+
+      - name: Prepare release tree
+        run: |
+          set -euo pipefail
+          bash scripts/prepare-release-tree.sh "$RUNNER_TEMP/release-tree"
+
+      - name: Publish release branch
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          tree="$RUNNER_TEMP/release-tree"
+          remote="https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git"
+          branch="${{ inputs.release_branch }}"
+
+          pushd "$tree" >/dev/null
+          git init
+          git checkout -b "$branch"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add .
+          git commit -m "release: publish-root from ${{ inputs.source_sha }}"
+          git push --force "$remote" "$branch"
+          popd >/dev/null
+
+      - name: Create release tag
+        if: ${{ inputs.create_tag }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          tag="${{ inputs.release_tag }}"
+          branch="${{ inputs.release_branch }}"
+          remote="https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git"
+          if [[ -z "$tag" ]]; then
+            echo "release_tag is required when create_tag=true" >&2
+            exit 1
+          fi
+          if [[ ! "$tag" =~ ^v[0-9]+\.[0-9]+\.[0-9]+([-.][0-9A-Za-z.-]+)?$ ]]; then
+            echo "release_tag must match vX.Y.Z (optionally with pre-release/build suffix): $tag" >&2
+            exit 1
+          fi
+          if git ls-remote --tags "$remote" "refs/tags/$tag" | grep -q .; then
+            echo "Tag already exists and must remain immutable: $tag" >&2
+            exit 1
+          fi
+          tmp_tag_repo="$(mktemp -d)"
+          trap 'rm -rf "$tmp_tag_repo"' EXIT
+          git clone --branch "$branch" --depth=1 "$remote" "$tmp_tag_repo"
+          pushd "$tmp_tag_repo" >/dev/null
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag "$tag"
+          git push "$remote" "$tag"
+          popd >/dev/null
+
+      - name: Summary
+        run: |
+          set -euo pipefail
+          echo "Updated branch: ${{ inputs.release_branch }}"
+          if [[ "${{ inputs.create_tag }}" == "true" ]]; then
+            echo "Created tag: ${{ inputs.release_tag }}"
+          else
+            echo "Tag creation skipped."
+          fi

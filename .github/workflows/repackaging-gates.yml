@@ -4,6 +4,10 @@ on:
   pull_request:
   workflow_dispatch:
 
+concurrency:
+  group: repackaging-gates-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   matrix-config:
     runs-on: ubuntu-latest
@@ -112,6 +116,11 @@ jobs:
         run: |
           set -euo pipefail
           STRICT_PUBLIC_REFS=1 bash tests/packaging/public-reference-guard.test.sh
+
+      - name: Release tree smoke
+        run: |
+          set -euo pipefail
+          bash tests/packaging/release-tree-smoke.test.sh
 
       - name: CLI runtime smoke
         continue-on-error: true
