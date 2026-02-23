@@ -54,7 +54,14 @@ export default defineConfig([
     outDir: 'dist',
     clean: false,
     tsconfig: 'tsconfig.npm.json',
-    external: ['react-devtools-core', 'vite-plugin-node-polyfills', ...nodeBuiltins],
+    external: [
+      'react',
+      'react-dom',
+      'react/jsx-runtime',
+      'react-devtools-core',
+      'vite-plugin-node-polyfills',
+      ...nodeBuiltins
+    ],
     esbuildOptions(options) {
       options.alias = options.alias || {};
       options.alias['@devalbo-cli/filesystem'] = '@devalbo-cli/filesystem/browser';
@@ -67,9 +74,7 @@ export default defineConfig([
       '@devalbo-cli/filesystem',
       '@devalbo-cli/commands',
       '@devalbo-cli/ui',
-      '@devalbo-cli/branded-types',
-      'react',
-      'react-dom'
+      '@devalbo-cli/branded-types'
     ]
   },
   // Vite plugin entry — NO banner (node:module's createRequire breaks browser builds).
