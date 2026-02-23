@@ -1,11 +1,19 @@
-import React from 'react';
-import { Spinner as InkSpinner, type SpinnerProps as InkSpinnerProps } from '@inkjs/ui';
+import React, { useEffect, useState } from 'react';
+import { Text } from 'ink';
 
 interface SpinnerProps {
-  type?: InkSpinnerProps['type'];
+  type?: 'dots';
   label?: string;
 }
 
 export const Spinner: React.FC<SpinnerProps> = ({ type = 'dots', label = 'Loading...' }) => {
-  return <InkSpinner type={type} label={label} />;
+  const frames = type === 'dots' ? ['.', '..', '...'] : ['.', '..', '...'];
+  const [index, setIndex] = useState(0);
+
+  useEffect(() => {
+    const id = setInterval(() => setIndex((n) => (n + 1) % frames.length), 200);
+    return () => clearInterval(id);
+  }, [frames.length]);
+
+  return <Text>{`${label} ${frames[index]}`}</Text>;
 };

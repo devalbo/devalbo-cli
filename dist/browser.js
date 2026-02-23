@@ -21698,12 +21698,12 @@ var systemCommandsBrowser = {
 };
 
 // packages/cli-shell/src/components/InteractiveShell.tsx
-import { useMemo as useMemo14, useState as useState10 } from "react";
-import { Box as Box6, Text as Text5 } from "ink";
+import { useMemo as useMemo14, useState as useState12 } from "react";
+import { Box as Box7, Text as Text8 } from "ink";
 
 // packages/ui/src/primitives/text-input.tsx
-import "react";
-import { TextInput as InkTextInput } from "@inkjs/ui";
+import { useEffect, useState } from "react";
+import { Text as Text2, useInput } from "ink";
 import { jsx as jsx2 } from "react/jsx-runtime";
 var TextInput = ({
   value: value2,
@@ -21711,43 +21711,60 @@ var TextInput = ({
   onChange,
   onSubmit,
   placeholder,
-  isDisabled,
-  suggestions
+  isDisabled
 }) => {
-  const inputProps = {
-    onChange,
-    onSubmit: (nextValue) => onSubmit?.(nextValue),
-    ...typeof isDisabled === "boolean" ? { isDisabled } : {},
-    ...typeof placeholder === "string" ? { placeholder } : {},
-    ...typeof (value2 ?? defaultValue) === "string" ? { defaultValue: value2 ?? defaultValue } : {},
-    ...Array.isArray(suggestions) ? { suggestions } : {}
-  };
-  return /* @__PURE__ */ jsx2(InkTextInput, { ...inputProps });
+  const [internalValue, setInternalValue] = useState(value2 ?? defaultValue ?? "");
+  const controlled = typeof value2 === "string";
+  const renderedValue = controlled ? value2 : internalValue;
+  useEffect(() => {
+    if (controlled) setInternalValue(value2);
+  }, [controlled, value2]);
+  useInput((input, key) => {
+    if (isDisabled) return;
+    if (key.return) {
+      onSubmit?.(renderedValue ?? "");
+      return;
+    }
+    if (key.backspace || key.delete) {
+      const next = (renderedValue ?? "").slice(0, -1);
+      if (!controlled) setInternalValue(next);
+      onChange(next);
+      return;
+    }
+    if (input && !key.ctrl && !key.meta) {
+      const next = `${renderedValue ?? ""}${input}`;
+      if (!controlled) setInternalValue(next);
+      onChange(next);
+    }
+  });
+  const display = renderedValue && renderedValue.length > 0 ? renderedValue : placeholder ?? "";
+  const dimColor = !renderedValue || renderedValue.length === 0;
+  return /* @__PURE__ */ jsx2(Text2, { dimColor, children: display });
 };
 
 // packages/ui/src/primitives/spinner.tsx
-import "react";
-import { Spinner as InkSpinner } from "@inkjs/ui";
+import { useEffect as useEffect2, useState as useState2 } from "react";
+import { Text as Text3 } from "ink";
 import { jsx as jsx3 } from "react/jsx-runtime";
 
 // packages/ui/src/primitives/select.tsx
-import "react";
-import SelectInput from "ink-select-input";
-import { jsx as jsx4 } from "react/jsx-runtime";
+import React4 from "react";
+import { Box as Box2, Text as Text4, useInput as useInput2 } from "ink";
+import { jsx as jsx4, jsxs } from "react/jsx-runtime";
 
 // packages/ui/src/primitives/tree-view.tsx
 import "react";
-import { Box as Box2, Text as Text2 } from "ink";
-import { jsx as jsx5, jsxs } from "react/jsx-runtime";
+import { Box as Box3, Text as Text5 } from "ink";
+import { jsx as jsx5, jsxs as jsxs2 } from "react/jsx-runtime";
 
 // packages/ui/src/primitives/status-bar.tsx
 import "react";
-import { Box as Box3, Text as Text3 } from "ink";
+import { Box as Box4, Text as Text6 } from "ink";
 import { jsx as jsx6 } from "react/jsx-runtime";
 
 // packages/ui/src/primitives/scroll-area.tsx
 import "react";
-import { Box as Box4 } from "ink";
+import { Box as Box5 } from "ink";
 import { jsx as jsx7 } from "react/jsx-runtime";
 
 // packages/ui/src/shell/shell-context.tsx
@@ -21755,10 +21772,10 @@ import { createContext, useContext } from "react";
 var ShellContext = createContext(null);
 
 // packages/ui/src/shell/browser-shell-provider.tsx
-import { useMemo, useState } from "react";
+import { useMemo, useState as useState3 } from "react";
 import { jsx as jsx8 } from "react/jsx-runtime";
 var BrowserShellProvider = ({ children }) => {
-  const [isCommandRunning, setIsCommandRunning] = useState(false);
+  const [isCommandRunning, setIsCommandRunning] = useState3(false);
   const value2 = useMemo(
     () => ({
       isCommandRunning,
@@ -21771,10 +21788,10 @@ var BrowserShellProvider = ({ children }) => {
 };
 
 // packages/ui/src/shell/terminal-shell-provider.tsx
-import { useMemo as useMemo2, useState as useState2 } from "react";
+import { useMemo as useMemo2, useState as useState4 } from "react";
 import { jsx as jsx9 } from "react/jsx-runtime";
 var TerminalShellProvider = ({ children }) => {
-  const [isCommandRunning, setIsCommandRunning] = useState2(false);
+  const [isCommandRunning, setIsCommandRunning] = useState4(false);
   const value2 = useMemo2(
     () => ({
       isCommandRunning,
@@ -21788,15 +21805,15 @@ var TerminalShellProvider = ({ children }) => {
 
 // packages/ui/src/shell/interactive-shell.tsx
 import "react";
-import { Box as Box5, Text as Text4 } from "ink";
-import { jsx as jsx10, jsxs as jsxs2 } from "react/jsx-runtime";
+import { Box as Box6, Text as Text7 } from "ink";
+import { jsx as jsx10, jsxs as jsxs3 } from "react/jsx-runtime";
 
 // packages/ui/src/hooks/use-keyboard.ts
-import { useInput } from "ink";
+import { useInput as useInput3 } from "ink";
 
 // packages/ui/src/social/persona-card.tsx
 import "react";
-import { jsx as jsx11, jsxs as jsxs3 } from "react/jsx-runtime";
+import { jsx as jsx11, jsxs as jsxs4 } from "react/jsx-runtime";
 
 // packages/ui/src/social/persona-list.tsx
 import "react";
@@ -21804,15 +21821,15 @@ import { jsx as jsx12 } from "react/jsx-runtime";
 
 // packages/ui/src/social/contact-card.tsx
 import "react";
-import { jsx as jsx13, jsxs as jsxs4 } from "react/jsx-runtime";
+import { jsx as jsx13, jsxs as jsxs5 } from "react/jsx-runtime";
 
 // packages/ui/src/social/contact-list.tsx
-import { useMemo as useMemo3, useState as useState3 } from "react";
-import { jsx as jsx14, jsxs as jsxs5 } from "react/jsx-runtime";
+import { useMemo as useMemo3, useState as useState5 } from "react";
+import { jsx as jsx14, jsxs as jsxs6 } from "react/jsx-runtime";
 
 // packages/ui/src/social/group-card.tsx
 import "react";
-import { jsx as jsx15, jsxs as jsxs6 } from "react/jsx-runtime";
+import { jsx as jsx15, jsxs as jsxs7 } from "react/jsx-runtime";
 
 // packages/ui/src/social/group-list.tsx
 import "react";
@@ -21820,31 +21837,31 @@ import { jsx as jsx16 } from "react/jsx-runtime";
 
 // packages/ui/src/social/membership-list.tsx
 import "react";
-import { jsx as jsx17, jsxs as jsxs7 } from "react/jsx-runtime";
+import { jsx as jsx17, jsxs as jsxs8 } from "react/jsx-runtime";
 
 // packages/ui/src/social/social-entity-badge.tsx
 import "react";
-import { jsx as jsx18, jsxs as jsxs8 } from "react/jsx-runtime";
+import { jsx as jsx18, jsxs as jsxs9 } from "react/jsx-runtime";
 
 // packages/ui/src/file-handlers/image-file-preview.tsx
-import { useEffect, useMemo as useMemo4, useState as useState4 } from "react";
-import { jsx as jsx19, jsxs as jsxs9 } from "react/jsx-runtime";
+import { useEffect as useEffect3, useMemo as useMemo4, useState as useState6 } from "react";
+import { jsx as jsx19, jsxs as jsxs10 } from "react/jsx-runtime";
 
 // packages/ui/src/file-handlers/markdown-edit.tsx
-import { useEffect as useEffect2, useMemo as useMemo5, useState as useState5 } from "react";
-import { jsx as jsx20, jsxs as jsxs10 } from "react/jsx-runtime";
+import { useEffect as useEffect4, useMemo as useMemo5, useState as useState7 } from "react";
+import { jsx as jsx20, jsxs as jsxs11 } from "react/jsx-runtime";
 
 // packages/ui/src/file-handlers/markdown-view.tsx
 import { useMemo as useMemo6 } from "react";
 import { jsx as jsx21 } from "react/jsx-runtime";
 
 // packages/ui/src/file-handlers/markdown-view-edit.tsx
-import { useEffect as useEffect3, useMemo as useMemo7, useState as useState6 } from "react";
-import { jsx as jsx22, jsxs as jsxs11 } from "react/jsx-runtime";
+import { useEffect as useEffect5, useMemo as useMemo7, useState as useState8 } from "react";
+import { jsx as jsx22, jsxs as jsxs12 } from "react/jsx-runtime";
 
 // packages/ui/src/file-handlers/text-file-view-edit.tsx
-import { useEffect as useEffect4, useMemo as useMemo8, useState as useState7 } from "react";
-import { jsx as jsx23, jsxs as jsxs12 } from "react/jsx-runtime";
+import { useEffect as useEffect6, useMemo as useMemo8, useState as useState9 } from "react";
+import { jsx as jsx23, jsxs as jsxs13 } from "react/jsx-runtime";
 
 // node_modules/.pnpm/tinybase@7.3.4_@sqlite.org+sqlite-wasm@3.51.2-build6_effect@3.19.18_react-dom@19.2.4_re_6b17624b1e1b989d6af746770c44149e/node_modules/tinybase/schematizers/schematizer-zod/index.js
 var getTypeOf2 = (thing) => typeof thing;
@@ -22010,10 +22027,10 @@ import { createContext as createContext2, useContext as useContext2 } from "reac
 var StoreContext = createContext2(null);
 
 // packages/state/src/hooks/use-table.ts
-import { useEffect as useEffect5, useState as useState8 } from "react";
+import { useEffect as useEffect7, useState as useState10 } from "react";
 
 // packages/state/src/hooks/use-row.ts
-import { useEffect as useEffect6, useState as useState9 } from "react";
+import { useEffect as useEffect8, useState as useState11 } from "react";
 
 // packages/state/src/hooks/use-personas.ts
 import { useMemo as useMemo9 } from "react";
@@ -22098,7 +22115,7 @@ var executeCommandRaw = async (raw, ctx) => {
 };
 
 // packages/cli-shell/src/components/InteractiveShell.tsx
-import { jsx as jsx25, jsxs as jsxs13 } from "react/jsx-runtime";
+import { jsx as jsx25, jsxs as jsxs14 } from "react/jsx-runtime";
 function ShellContent({
   commands,
   createProgram,
@@ -22111,12 +22128,12 @@ function ShellContent({
   session,
   welcomeMessage
 }) {
-  const [connectivity] = useState10(() => new BrowserConnectivityService());
-  const [input, setInput] = useState10("");
-  const [inputKey, setInputKey] = useState10(0);
-  const [history, setHistory] = useState10([
+  const [connectivity] = useState12(() => new BrowserConnectivityService());
+  const [input, setInput] = useState12("");
+  const [inputKey, setInputKey] = useState12(0);
+  const [history, setHistory] = useState12([
     {
-      component: typeof welcomeMessage === "string" ? /* @__PURE__ */ jsx25(Text5, { color: "cyan", children: welcomeMessage }) : welcomeMessage
+      component: typeof welcomeMessage === "string" ? /* @__PURE__ */ jsx25(Text8, { color: "cyan", children: welcomeMessage }) : welcomeMessage
     }
   ]);
   const executeCommand2 = async (raw) => {
@@ -22146,13 +22163,13 @@ function ShellContent({
     setInput("");
     setInputKey((prev) => prev + 1);
   };
-  return /* @__PURE__ */ jsxs13(Box6, { flexDirection: "column", padding: 1, children: [
-    history.map((item, idx) => /* @__PURE__ */ jsxs13(Box6, { flexDirection: "column", marginBottom: 1, children: [
-      item.command ? /* @__PURE__ */ jsx25(Text5, { dimColor: true, children: item.command }) : null,
-      item.component && /* @__PURE__ */ jsx25(Box6, { marginLeft: 2, children: item.component })
+  return /* @__PURE__ */ jsxs14(Box7, { flexDirection: "column", padding: 1, children: [
+    history.map((item, idx) => /* @__PURE__ */ jsxs14(Box7, { flexDirection: "column", marginBottom: 1, children: [
+      item.command ? /* @__PURE__ */ jsx25(Text8, { dimColor: true, children: item.command }) : null,
+      item.component && /* @__PURE__ */ jsx25(Box7, { marginLeft: 2, children: item.component })
     ] }, idx)),
-    /* @__PURE__ */ jsxs13(Box6, { children: [
-      /* @__PURE__ */ jsx25(Text5, { color: "green", children: "$ " }),
+    /* @__PURE__ */ jsxs14(Box7, { children: [
+      /* @__PURE__ */ jsx25(Text8, { color: "green", children: "$ " }),
       /* @__PURE__ */ jsx25(
         TextInput,
         {

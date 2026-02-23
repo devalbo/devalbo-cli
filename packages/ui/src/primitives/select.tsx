@@ -1,5 +1,5 @@
 import React from 'react';
-import SelectInput from 'ink-select-input';
+import { Box, Text, useInput } from 'ink';
 
 export interface SelectItem {
   label: string;
@@ -11,6 +11,46 @@ interface SelectProps {
   onSelect: (item: SelectItem) => void;
 }
 
+interface InputKey {
+  upArrow?: boolean;
+  downArrow?: boolean;
+  return?: boolean;
+}
+
 export const Select: React.FC<SelectProps> = ({ items, onSelect }) => {
-  return <SelectInput items={items} onSelect={onSelect} />;
+  const [index, setIndex] = React.useState(0);
+
+  useInput((_input: string, key: InputKey) => {
+    if (items.length === 0) return;
+    if (key.upArrow) {
+      setIndex((n) => (n - 1 + items.length) % items.length);
+      return;
+    }
+    if (key.downArrow) {
+      setIndex((n) => (n + 1) % items.length);
+      return;
+    }
+    if (key.return) {
+      const selected = items[index];
+      if (selected) onSelect(selected);
+    }
+  });
+
+  return (
+    <Box flexDirection="column">
+      {items.map((item, idx) => (
+        idx === index ? (
+          <Text key={item.value} color="cyan">
+            {'› '}
+            {item.label}
+          </Text>
+        ) : (
+          <Text key={item.value}>
+            {'  '}
+            {item.label}
+          </Text>
+        )
+      ))}
+    </Box>
+  );
 };

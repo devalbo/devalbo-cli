@@ -1,5 +1,5 @@
-import React from 'react';
-import { TextInput as InkTextInput } from '@inkjs/ui';
+import React, { useEffect, useState } from 'react';
+import { Text, useInput } from 'ink';
 
 interface TextInputProps {
   value?: string;
@@ -11,25 +11,54 @@ interface TextInputProps {
   suggestions?: string[];
 }
 
+interface InputKey {
+  return?: boolean;
+  backspace?: boolean;
+  delete?: boolean;
+  ctrl?: boolean;
+  meta?: boolean;
+}
+
 export const TextInput: React.FC<TextInputProps> = ({
   value,
   defaultValue,
   onChange,
   onSubmit,
   placeholder,
-  isDisabled,
-  suggestions
+  isDisabled
 }) => {
-  const inputProps = {
-    onChange,
-    onSubmit: (nextValue: string) => onSubmit?.(nextValue),
-    ...(typeof isDisabled === 'boolean' ? { isDisabled } : {}),
-    ...(typeof placeholder === 'string' ? { placeholder } : {}),
-    ...(typeof (value ?? defaultValue) === 'string' ? { defaultValue: value ?? defaultValue } : {}),
-    ...(Array.isArray(suggestions) ? { suggestions } : {})
-  };
+  const [internalValue, setInternalValue] = useState<string>(value ?? defaultValue ?? '');
+  const controlled = typeof value === 'string';
+  const renderedValue = controlled ? value : internalValue;
 
-  return (
-    <InkTextInput {...inputProps} />
-  );
+  useEffect(() => {
+    if (controlled) setInternalValue(value);
+  }, [controlled, value]);
+
+  useInput((input: string, key: InputKey) => {
+    if (isDisabled) return;
+
+    if (key.return) {
+      onSubmit?.(renderedValue ?? '');
+      return;
+    }
+
+    if (key.backspace || key.delete) {
+      const next = (renderedValue ?? '').slice(0, -1);
+      if (!controlled) setInternalValue(next);
+      onChange(next);
+      return;
+    }
+
+    if (input && !key.ctrl && !key.meta) {
+      const next = `${renderedValue ?? ''}${input}`;
+      if (!controlled) setInternalValue(next);
+      onChange(next);
+    }
+  });
+
+  const display = renderedValue && renderedValue.length > 0 ? renderedValue : (placeholder ?? '');
+  const dimColor = !renderedValue || renderedValue.length === 0;
+
+  return <Text dimColor={dimColor}>{display}</Text>;
 };

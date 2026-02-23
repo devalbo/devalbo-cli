@@ -1,5 +1,3 @@
-import * as commander from 'commander';
-import { Command } from 'commander';
 import React$1, { Context, ReactNode } from 'react';
 import { Store } from 'tinybase';
 
@@ -87,6 +85,24 @@ interface IFilesystemDriver {
 
 declare const createFilesystemDriver: () => Promise<IFilesystemDriver>;
 
+type ProgramArgumentLike = {
+    required?: boolean;
+    name: () => string;
+};
+type ProgramCommandLike = {
+    name: () => string;
+    description: () => string;
+    registeredArguments?: readonly ProgramArgumentLike[];
+};
+type ProgramLike = {
+    command: (spec: string) => {
+        description: (text: string) => unknown;
+    };
+    name: () => string;
+    description: () => string;
+    commands: readonly ProgramCommandLike[];
+};
+
 type CommandOptionsBase = CommandOptions & {
     cwd?: string;
     setCwd?: (nextCwd: string) => void;
@@ -96,7 +112,7 @@ type CommandOptionsBase = CommandOptions & {
     config?: AppConfig;
     driver?: IFilesystemDriver;
     connectivity?: IConnectivityService;
-    createProgram?: () => commander.Command;
+    createProgram?: () => ProgramLike;
 };
 type ExtendedCommandOptions = CommandOptionsBase | (CommandOptionsBase & {
     store: Store;
@@ -146,7 +162,7 @@ declare const useAppConfig: () => AppConfig;
 
 declare const InteractiveShell: React$1.FC<{
     commands: Record<string, CommandHandler>;
-    createProgram?: () => commander.Command;
+    createProgram?: () => ProgramLike;
     runtime?: 'browser' | 'terminal';
     store?: DevalboStore;
     config?: AppConfig;
@@ -166,7 +182,7 @@ type CommandRuntimeContext = {
     connectivity?: IConnectivityService;
     cwd: string;
     setCwd: (next: string) => void;
-    createProgram?: () => commander.Command;
+    createProgram?: () => ProgramLike;
     clearScreen?: () => void;
     exit?: () => void;
 };
@@ -221,7 +237,7 @@ declare const cli: {
  * `help` displays everything. Built-in commands include filesystem
  * operations, system commands, and app-config.
  */
-declare const registerBuiltinCommands: (program: Command) => void;
+declare const registerBuiltinCommands: (program: ProgramLike) => void;
 /**
  * Generate a default shell welcome message from AppConfig.
  *

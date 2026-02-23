@@ -1,15 +1,15 @@
 import { createRequire } from 'node:module'; const require = createRequire(import.meta.url);
 import {
   unsafeAsFilePath
-} from "./chunk-SZXJCQYO.js";
-import "./chunk-H32PEK2K.js";
+} from "./chunk-6JN7P56Y.js";
+import "./chunk-TWWXOWDW.js";
 
 // packages/filesystem/src/drivers/tauri.ts
 import path from "path";
 var tauriInvoke;
 var getInvoke = async () => {
   if (tauriInvoke) return tauriInvoke;
-  const mod = await import("./core-6K24BXAT.js");
+  const mod = await import("./core-NSCNAISW.js");
   tauriInvoke = mod.invoke;
   return tauriInvoke;
 };
