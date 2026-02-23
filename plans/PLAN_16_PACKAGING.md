@@ -78,7 +78,7 @@ Unchanged. The single-bundle package still exposes the same exports; desktop app
 ## Repo developer workflow (after plan)
 
 - **main:** Monorepo with workspaces, `file:` deps, tsc builds per package. Root may still have a “bundle for release” script that produces the artifact.
-- **Release ref:** Updated by CI or manually: simplified root `package.json` + committed `dist/` (single bundle + node / node.browser files). No workspace deps on that ref.
+- **Release ref:** Updated by CI or manually: simplified root `package.json` + committed `dist/` (single bundle + node / node.browser files). No workspace deps on that ref. To create/update locally: `bash scripts/prepare-release-ref.sh` then `git push origin release`.
 - **Fresh checkout (for repo dev):**  
   `npm install`  
   `npm run build:dist`  

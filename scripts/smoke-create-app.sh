@@ -20,6 +20,7 @@ Walks through the CREATE_AN_APP.md quickstart exactly as a user would:
 
 Options:
   --dir <path>           Target directory (default: /tmp/devalbo-create-app-smoke)
+  --app-dir <path>       Alias for --dir
   --devalbo-spec <spec>  npm dependency spec for devalbo-cli
                          (default: git+https://github.com/devalbo/devalbo-cli.git#release)
   --force                Remove target directory if it already exists
@@ -32,10 +33,23 @@ TARGET_DIR="/tmp/devalbo-create-app-smoke"
 DEVALBO_SPEC="git+https://github.com/devalbo/devalbo-cli.git#release"
 FORCE=0
 NPM_CACHE_DIR=""
+NPM_USERCONFIG=""
+
+run_npm() {
+  run_cmd env -u NPM_CONFIG_GLOBALCONFIG \
+    NODE_AUTH_TOKEN= NPM_TOKEN= \
+    NPM_CONFIG_USERCONFIG="$NPM_USERCONFIG" \
+    NPM_CONFIG_REGISTRY=https://registry.npmjs.org \
+    npm "$@"
+}
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --dir)
+      TARGET_DIR="$2"
+      shift 2
+      ;;
+    --app-dir)
       TARGET_DIR="$2"
       shift 2
       ;;
@@ -68,6 +82,8 @@ done
 # Always run with a fresh npm cache to emulate first-time installs.
 NPM_CACHE_DIR="$(mktemp -d "${TMPDIR:-/tmp}/devalbo-create-app-npm-cache.XXXXXX")"
 export NPM_CONFIG_CACHE="$NPM_CACHE_DIR"
+NPM_USERCONFIG="$NPM_CACHE_DIR/.npmrc"
+touch "$NPM_USERCONFIG"
 cleanup() {
   log "Cleaning npm cache dir: $NPM_CACHE_DIR"
   rm -rf "$NPM_CACHE_DIR"
@@ -92,7 +108,7 @@ log "Step 1: Initialize project in $TARGET_DIR"
 mkdir -p "$TARGET_DIR"
 pushd "$TARGET_DIR" >/dev/null
 
-run_cmd npm init -y
+run_npm init -y
 mkdir -p src/commands
 
 # ── Step 2: Install dependencies ─────────────────────────────────────────────
@@ -103,9 +119,8 @@ mkdir -p src/commands
 
 log "Step 2: Install dependencies"
 log "devalbo-cli dependency spec: $DEVALBO_SPEC"
-# npx npm@11.10.1 + --legacy-peer-deps avoids "null parent" when installing git dep with file: sub-deps
-run_cmd npx --yes npm@11.10.1 install --legacy-peer-deps "$DEVALBO_SPEC" commander react
-run_cmd npx --yes npm@11.10.1 install --save-dev --legacy-peer-deps typescript tsx @types/node @types/react
+run_npm install "$DEVALBO_SPEC" commander react
+run_npm install --save-dev typescript tsx @types/node @types/react
 
 log "Updating package.json (type: module, scripts)"
 node -e "
@@ -223,13 +238,13 @@ log "Created scaffold in: $TARGET_DIR"
 # (npm run start requires a TTY so it stays a manual step)
 
 log "Step 8: Verify CLI (type-check)"
-run_cmd npm run type-check
+run_npm run type-check
 
 # ── Step 9: Install browser dependencies ─────────────────────────────────────
 
 log "Step 9: Install browser dependencies"
-run_cmd npx --yes npm@11.10.1 install --legacy-peer-deps react-dom ink-web @xterm/xterm
-run_cmd npx --yes npm@11.10.1 install --save-dev --legacy-peer-deps vite @vitejs/plugin-react @types/react-dom
+run_npm install react-dom ink-web @xterm/xterm
+run_npm install --save-dev vite @vitejs/plugin-react @types/react-dom
 
 log "Updating package.json (browser scripts)"
 node -e "
@@ -383,7 +398,7 @@ EOF
 # vite build is headless — no browser needed. Verifies the full pipeline.
 
 log "Step 11: Verify browser build"
-run_cmd npm run build:browser
+run_npm run build:browser
 
 popd >/dev/null
 
