@@ -1,25 +1,50 @@
 import { defineConfig } from 'tsup';
 
-export default defineConfig({
-  entry: {
-    index: 'src/devalbo-cli.ts',
-    vite: 'src/vite-plugin.ts'
+// Node built-ins must be external so the bundle doesn't inject a fake require() that fails on "assert", "fs", etc.
+const nodeBuiltins = [
+  'assert', 'buffer', 'child_process', 'crypto', 'events', 'fs', 'http', 'https',
+  'module', 'net', 'os', 'path', 'process', 'querystring', 'stream', 'string_decoder',
+  'timers', 'tty', 'url', 'util', 'zlib',
+  'node:assert', 'node:buffer', 'node:child_process', 'node:crypto', 'node:events',
+  'node:fs', 'node:http', 'node:https', 'node:module', 'node:net', 'node:os', 'node:path',
+  'node:process', 'node:querystring', 'node:stream', 'node:string_decoder',
+  'node:timers', 'node:tty', 'node:url', 'node:util', 'node:zlib'
+];
+
+export default defineConfig([
+  // Node CLI entry — needs createRequire banner so bundled CJS deps (signal-exit etc.)
+  // can call require("assert") and other Node built-ins in ESM mode.
+  {
+    entry: { index: 'src/index.ts' },
+    format: ['esm'],
+    dts: true,
+    outDir: 'dist',
+    clean: true,
+    tsconfig: 'tsconfig.npm.json',
+    banner: {
+      js: "import { createRequire } from 'node:module'; const require = createRequire(import.meta.url);"
+    },
+    external: ['react-devtools-core', 'vite-plugin-node-polyfills', ...nodeBuiltins],
+    noExternal: [
+      '@devalbo-cli/cli-shell',
+      '@devalbo-cli/shared',
+      '@devalbo-cli/state',
+      '@devalbo-cli/filesystem',
+      '@devalbo-cli/commands',
+      '@devalbo-cli/ui',
+      '@devalbo-cli/branded-types',
+      'react',
+      'react-dom'
+    ]
   },
-  format: ['esm'],
-  dts: true,
-  outDir: 'dist',
-  clean: true,
-  tsconfig: 'tsconfig.npm.json',
-  external: ['react-devtools-core', 'vite-plugin-node-polyfills'],
-  noExternal: [
-    '@devalbo/cli-shell',
-    '@devalbo/shared',
-    '@devalbo/state',
-    '@devalbo/filesystem',
-    '@devalbo/commands',
-    '@devalbo/ui',
-    '@devalbo/branded-types',
-    'react',
-    'react-dom'
-  ]
-});
+  // Vite plugin entry — NO banner (node:module's createRequire breaks browser builds).
+  {
+    entry: { vite: 'src/vite-plugin.ts' },
+    format: ['esm'],
+    dts: true,
+    outDir: 'dist',
+    clean: false,
+    tsconfig: 'tsconfig.npm.json',
+    external: ['react-devtools-core', 'vite-plugin-node-polyfills', ...nodeBuiltins],
+  }
+]);

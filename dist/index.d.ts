@@ -133,7 +133,7 @@ declare const makeResultError: (message: string, data?: unknown) => CommandResul
  *
  * @example
  * ```ts
- * import { mergeCommands, builtinCommands } from '@devalbo/cli-shell';
+ * import { mergeCommands, builtinCommands } from '@devalbo-cli/cli-shell';
  *
  * export const commands = mergeCommands(builtinCommands, myAppCommands);
  * ```

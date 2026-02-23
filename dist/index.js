@@ -1,6 +1,7 @@
+import { createRequire } from 'node:module'; const require = createRequire(import.meta.url);
 import {
   createStore
-} from "./chunk-R6DTHTIZ.js";
+} from "./chunk-ES4XFOWA.js";
 import {
   ActivityRowStoreSchema,
   BrowserConnectivityService,
@@ -14,13 +15,13 @@ import {
   pathArgSchema,
   unsafeAsDirectoryPath,
   unsafeAsFilePath
-} from "./chunk-S4GCCXXR.js";
+} from "./chunk-IQRLQ6B6.js";
 import {
   __commonJS,
   __export,
   __require,
   __toESM
-} from "./chunk-4VNS5WPM.js";
+} from "./chunk-WPQ5MXLX.js";
 
 // node_modules/.pnpm/react@19.2.4/node_modules/react/cjs/react.production.js
 var require_react_production = __commonJS({
@@ -25022,15 +25023,15 @@ var createFilesystemDriver = async () => {
     if (env3.platform === "nodejs" /* NodeJS */) {
       const { NativeFSDriver } = await import(
         /* @vite-ignore */
-        "./node-J7QOAGQH.js"
+        "./node-4CCLYT3S.js"
       );
       return new NativeFSDriver();
     }
     if (env3.platform === "tauri" /* Tauri */) {
-      const { TauriFSDriver } = await import("./tauri-RUQCLLVE.js");
+      const { TauriFSDriver } = await import("./tauri-RYB7RGZP.js");
       return new TauriFSDriver();
     }
-    const { BrowserStoreFSDriver } = await import("./browser-store-AAKPKTYH.js");
+    const { BrowserStoreFSDriver } = await import("./browser-store-RHPCZU6J.js");
     return new BrowserStoreFSDriver();
   })();
   return driverPromise;
@@ -29975,7 +29976,7 @@ var styles_default = styles2;
 // node_modules/.pnpm/ink@6.7.0_@types+react@19.2.14_react@19.2.4/node_modules/ink/build/reconciler.js
 if (process4.env["DEV"] === "true") {
   try {
-    await import("./devtools-WW5ZRA43.js");
+    await import("./devtools-JP2OUA3B.js");
   } catch (error) {
     if (error.code === "ERR_MODULE_NOT_FOUND") {
       console.warn(`

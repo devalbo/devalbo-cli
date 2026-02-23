@@ -1,7 +1,8 @@
+import { createRequire } from 'node:module'; const require = createRequire(import.meta.url);
 import {
   unsafeAsDirectoryPath,
   unsafeAsFilePath
-} from "./chunk-S4GCCXXR.js";
+} from "./chunk-IQRLQ6B6.js";
 
 // node_modules/.pnpm/tinybase@7.3.4_@sqlite.org+sqlite-wasm@3.51.2-build6_effect@3.19.18_react-dom@19.2.4_re_6b17624b1e1b989d6af746770c44149e/node_modules/tinybase/index.js
 var getTypeOf = (thing) => typeof thing;
@@ -3066,7 +3067,7 @@ var BrowserStoreFSDriver = class {
     if (this.initPromise) return this.initPromise;
     this.initPromise = (async () => {
       try {
-        const { createOpfsPersister } = await import("./persister-browser-URNEMMIX.js");
+        const { createOpfsPersister } = await import("./persister-browser-FWKT6I2E.js");
         const opfsRoot = await navigator.storage.getDirectory();
         const opfsHandle = await opfsRoot.getFileHandle(`${FS_STORAGE_KEY}.json`, { create: true });
         const opfsPersister = createOpfsPersister(this.store, opfsHandle);
@@ -3080,7 +3081,7 @@ var BrowserStoreFSDriver = class {
       } catch (opfsError) {
         console.warn("OPFS init failed, trying IndexedDB persister:", opfsError);
         try {
-          const { createIndexedDbPersister } = await import("./persister-indexed-db-DZC6RMON.js");
+          const { createIndexedDbPersister } = await import("./persister-indexed-db-LDIIGSNI.js");
           this.persistenceMode = "indexeddb";
           const indexedDbPersister = createIndexedDbPersister(this.store, FS_STORAGE_KEY);
           this.persister = indexedDbPersister;
@@ -3091,7 +3092,7 @@ var BrowserStoreFSDriver = class {
           await indexedDbPersister.startAutoLoad();
         } catch (indexedDbError) {
           console.warn("IndexedDB init failed, falling back to localStorage persister:", indexedDbError);
-          const { createLocalPersister } = await import("./persister-browser-URNEMMIX.js");
+          const { createLocalPersister } = await import("./persister-browser-FWKT6I2E.js");
           this.persistenceMode = "localStorage";
           const localPersister = createLocalPersister(this.store, FS_STORAGE_KEY);
           this.persister = localPersister;

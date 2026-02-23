@@ -1,18 +1,12 @@
-import "./chunk-4VNS5WPM.js";
+import { createRequire } from 'node:module'; const require = createRequire(import.meta.url);
+import "./chunk-WPQ5MXLX.js";
 
-// node_modules/.pnpm/tinybase@7.3.4_@sqlite.org+sqlite-wasm@3.51.2-build6_effect@3.19.18_react-dom@19.2.4_re_6b17624b1e1b989d6af746770c44149e/node_modules/tinybase/persisters/persister-indexed-db/index.js
+// node_modules/.pnpm/tinybase@7.3.4_@sqlite.org+sqlite-wasm@3.51.2-build6_effect@3.19.18_react-dom@19.2.4_re_6b17624b1e1b989d6af746770c44149e/node_modules/tinybase/persisters/persister-browser/index.js
 var EMPTY_STRING = "";
-var T = "t";
-var V = "v";
-var promise = Promise;
+var UNDEFINED = "\uFFFC";
 var getIfNotFunction = (predicate) => (value, then, otherwise) => predicate(value) ? otherwise?.() : then(value);
 var GLOBAL = globalThis;
 var WINDOW = GLOBAL.window;
-var THOUSAND = 1e3;
-var startInterval = (callback, sec, immediate) => {
-  return setInterval(callback, sec * THOUSAND);
-};
-var stopInterval = clearInterval;
 var isNullish = (thing) => thing == null;
 var isUndefined = (thing) => thing === void 0;
 var isNull = (thing) => thing === null;
@@ -21,8 +15,6 @@ var ifNotUndefined = getIfNotFunction(isUndefined);
 var isArray = (thing) => Array.isArray(thing);
 var size = (arrayOrString) => arrayOrString.length;
 var test = (regex, subject) => regex.test(subject);
-var promiseNew = (resolver) => new promise(resolver);
-var promiseAll = async (promises) => promise.all(promises);
 var errorNew = (message) => {
   throw new Error(message);
 };
@@ -50,10 +42,18 @@ var isObject = (obj) => !isNullish(obj) && ifNotNullish(
 var objIds = object.keys;
 var objFreeze = object.freeze;
 var objNew = (entries = []) => object.fromEntries(entries);
-var objHas = (obj, id) => id in obj;
 var objToArray = (obj, cb) => arrayMap(objEntries(obj), ([id, value]) => cb(value, id));
+var objMap = (obj, cb) => objNew(objToArray(obj, (value, id) => [id, cb(value, id)]));
 var objSize = (obj) => size(objIds(obj));
 var objIsEmpty = (obj) => isObject(obj) && objSize(obj) == 0;
+var jsonString = JSON.stringify;
+var jsonParse = JSON.parse;
+var jsonStringWithUndefined = (obj) => jsonString(obj, (_key, value) => isUndefined(value) ? UNDEFINED : value);
+var jsonParseWithUndefined = (str) => (
+  // JSON.parse reviver removes properties with undefined values
+  replaceUndefinedString(jsonParse(str))
+);
+var replaceUndefinedString = (obj) => obj === UNDEFINED ? void 0 : isArray(obj) ? arrayMap(obj, replaceUndefinedString) : isObject(obj) ? objMap(obj, replaceUndefinedString) : obj;
 var collSize = (coll) => coll?.size ?? 0;
 var collHas = (coll, keyOrValue) => coll?.has(keyOrValue) ?? false;
 var collIsEmpty = (coll) => isUndefined(coll) || collSize(coll) == 0;
@@ -387,76 +387,23 @@ var createCustomPersister = (store, getPersisted, setPersisted, addPersisterList
   };
   return objFreeze(persister);
 };
-var OBJECT_STORE_NAMES = [T, V];
-var KEY_PATH = { keyPath: "k" };
-var objectStoreMatch = async (objectStore, obj) => {
-  const actions = objToArray(
-    obj,
-    (v, k) => execObjectStore(objectStore, "put", { k, v })
-  );
-  arrayMap(
-    await execObjectStore(objectStore, "getAllKeys"),
-    (id) => objHas(obj, id) ? 0 : arrayPush(actions, execObjectStore(objectStore, "delete", id))
-  );
-  await promiseAll(actions);
-};
-var execObjectStore = async (objectStore, func, arg) => promiseNew((resolve, reject) => {
-  const request = objectStore[func](arg);
-  request.onsuccess = () => resolve(request.result);
-  request.onerror = () => reject(`objectStore.${func} error`);
-});
-var createIndexedDbPersister = (store, dbName, autoLoadIntervalSeconds = 1, onIgnoredError) => {
-  const forObjectStores = async (forObjectStore, params = [], create = 0) => promiseNew((resolve, reject) => {
-    const request = (WINDOW ? WINDOW.indexedDB : indexedDB).open(
-      dbName,
-      create ? 2 : void 0
-    );
-    request.onupgradeneeded = () => create && arrayMap(
-      OBJECT_STORE_NAMES,
-      (objectStoreName) => tryCatch(
-        () => request.result.createObjectStore(objectStoreName, KEY_PATH)
-      )
-    );
-    request.onsuccess = () => tryCatch(
-      async () => {
-        const transaction = request.result.transaction(
-          OBJECT_STORE_NAMES,
-          "readwrite"
+var STORAGE = "storage";
+var createStoragePersister = (store, storageName, storage, onIgnoredError) => {
+  const getPersisted = async () => jsonParseWithUndefined(storage.getItem(storageName));
+  const setPersisted = async (getContent) => storage.setItem(storageName, jsonStringWithUndefined(getContent()));
+  const addPersisterListener = (listener) => {
+    const storageListener = (event) => {
+      if (event.storageArea === storage && event.key === storageName) {
+        tryCatch(
+          () => listener(jsonParseWithUndefined(event.newValue)),
+          listener
         );
-        const result = await promiseAll(
-          arrayMap(
-            OBJECT_STORE_NAMES,
-            (objectStoreName, index) => forObjectStore(
-              transaction.objectStore(objectStoreName),
-              params[index]
-            )
-          )
-        );
-        request.result.close();
-        resolve(result);
-      },
-      (error) => {
-        request.result.close();
-        reject(error);
       }
-    );
-    request.onerror = () => reject("indexedDB.open error");
-  });
-  const getPersisted = async () => await forObjectStores(
-    async (objectStore) => objNew(
-      arrayMap(await execObjectStore(objectStore, "getAll"), ({ k, v }) => [
-        k,
-        v
-      ])
-    )
-  );
-  const setPersisted = (getContent) => forObjectStores(
-    (objectStore, content) => objectStoreMatch(objectStore, content),
-    getContent(),
-    1
-  );
-  const addPersisterListener = (listener) => startInterval(listener, autoLoadIntervalSeconds);
-  const delPersisterListener = (interval) => stopInterval(interval);
+    };
+    WINDOW.addEventListener(STORAGE, storageListener);
+    return storageListener;
+  };
+  const delPersisterListener = (storageListener) => WINDOW.removeEventListener(STORAGE, storageListener);
   return createCustomPersister(
     store,
     getPersisted,
@@ -464,12 +411,40 @@ var createIndexedDbPersister = (store, dbName, autoLoadIntervalSeconds = 1, onIg
     addPersisterListener,
     delPersisterListener,
     onIgnoredError,
-    1,
-    // StoreOnly,
-    { getDbName: () => dbName }
+    3,
+    // StoreOrMergeableStore,
+    { getStorageName: () => storageName }
+  );
+};
+var createLocalPersister = (store, storageName, onIgnoredError) => createStoragePersister(store, storageName, localStorage, onIgnoredError);
+var createSessionPersister = (store, storageName, onIgnoredError) => createStoragePersister(store, storageName, sessionStorage, onIgnoredError);
+var createOpfsPersister = (store, handle, onIgnoredError) => {
+  const getPersisted = async () => jsonParseWithUndefined(await (await handle.getFile()).text());
+  const setPersisted = async (getContent) => {
+    const writable = await handle.createWritable();
+    await writable.write(jsonStringWithUndefined(getContent()));
+    await writable.close();
+  };
+  const addPersisterListener = async (listener) => {
+    const observer = new FileSystemObserver(() => listener());
+    await observer.observe(handle);
+    return observer;
+  };
+  const delPersisterListener = (observer) => observer?.disconnect();
+  return createCustomPersister(
+    store,
+    getPersisted,
+    setPersisted,
+    addPersisterListener,
+    delPersisterListener,
+    onIgnoredError,
+    3,
+    // StoreOrMergeableStore,
+    { getHandle: () => handle }
   );
 };
 export {
-  createIndexedDbPersister,
-  objectStoreMatch
+  createLocalPersister,
+  createOpfsPersister,
+  createSessionPersister
 };
