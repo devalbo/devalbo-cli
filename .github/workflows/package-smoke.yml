@@ -60,4 +60,4 @@ jobs:
           cd "$TMP_DIR"
           npm init -y >/dev/null
           npm install "./$PKG_TGZ" >/dev/null
-          node --input-type=module -e "import * as m from '@devalbo-cli/cli'; const required=['startInteractiveCli','InteractiveShell','bindCliRuntimeSource','unbindCliRuntimeSource','cli','builtinCommands','registerBuiltinCommands','mergeCommands','createCliAppConfig','defaultWelcomeMessage']; const missing=required.filter((k)=>!(k in m)); if(missing.length) {console.error('Missing exports:', missing.join(',')); process.exit(1);} console.log('Packed install/import check passed.');"
+          node --input-type=module -e "import * as m from 'devalbo-cli'; const required=['startInteractiveCli','InteractiveShell','bindCliRuntimeSource','unbindCliRuntimeSource','cli','builtinCommands','registerBuiltinCommands','mergeCommands','createCliAppConfig','defaultWelcomeMessage']; const missing=required.filter((k)=>!(k in m)); if(missing.length) {console.error('Missing exports:', missing.join(',')); process.exit(1);} console.log('Packed install/import check passed.');"

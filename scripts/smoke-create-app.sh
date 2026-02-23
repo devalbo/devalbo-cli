@@ -102,7 +102,8 @@ mkdir -p src/commands
 
 log "Step 2: Install dependencies"
 log "@devalbo-cli/cli dependency spec: $DEVALBO_SPEC"
-run_cmd npm install "$DEVALBO_SPEC" commander react
+run_cmd npm install "$DEVALBO_SPEC"
+run_cmd npm install commander react
 run_cmd npm install --save-dev typescript tsx @types/node @types/react
 
 log "Updating package.json (type: module, scripts)"

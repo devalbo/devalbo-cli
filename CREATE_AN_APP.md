@@ -35,7 +35,8 @@ mkdir -p src/commands
 Install `@devalbo-cli/cli` directly from GitHub, plus the other required packages:
 
 ```sh
-npm install git+https://github.com/devalbo/devalbo-cli.git commander react
+npm install git+https://github.com/devalbo/devalbo-cli.git
+npm install commander react
 npm install --save-dev typescript tsx @types/node @types/react
 ```
 
