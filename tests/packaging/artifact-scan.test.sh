@@ -26,12 +26,27 @@ if [[ -z "$target" ]]; then
   exit 0
 fi
 
-forbidden=("createRequire" "node:" " from 'fs'" " from \"fs\"" " from 'path'" " from \"path\"")
-for pat in "${forbidden[@]}"; do
-  if grep -q "$pat" "$target"; then
-    echo "[artifact-scan] Forbidden marker '$pat' found in $target" >&2
-    exit 1
-  fi
-done
+if grep -q "createRequire" "$target"; then
+  echo "[artifact-scan] Forbidden marker 'createRequire' found in $target" >&2
+  exit 1
+fi
+
+if rg -n '^import .*from "(node:[^"]+|fs|child_process|module)"' "$target" >/dev/null; then
+  echo "[artifact-scan] Forbidden Node import found in $target" >&2
+  rg -n '^import .*from "(node:[^"]+|fs|child_process|module)"' "$target" >&2
+  exit 1
+fi
+
+if rg -n '^import \{[^}]+\} from "process"' "$target" >/dev/null; then
+  echo "[artifact-scan] Forbidden named process import found in $target" >&2
+  rg -n '^import \{[^}]+\} from "process"' "$target" >&2
+  exit 1
+fi
+
+if rg -n '^import .*from "\./node-[^"]+\.js"' "$target" >/dev/null; then
+  echo "[artifact-scan] Forbidden browser -> node chunk import found in $target" >&2
+  rg -n '^import .*from "\./node-[^"]+\.js"' "$target" >&2
+  exit 1
+fi
 
 echo "Artifact scan passed on $target"

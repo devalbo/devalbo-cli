@@ -6,7 +6,7 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "exports": {
-    ".": { "types": "./dist/index.d.ts", "import": "./dist/index.js" },
+    ".": { "types": "./dist/index.d.ts", "browser": "./dist/browser.js", "import": "./dist/index.js" },
     "./vite": { "types": "./dist/vite.d.ts", "import": "./dist/vite.js" },
     "./node": { "types": "./dist/node.d.ts", "browser": "./dist/node.browser.js", "import": "./dist/node.js" }
   },

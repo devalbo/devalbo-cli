@@ -355,7 +355,7 @@ import { nodePolyfills } from 'devalbo-cli/vite';
 
 export default defineConfig({
   plugins: [react(), nodePolyfills()],
-  optimizeDeps: { exclude: ['devalbo-cli', 'react-devtools-core'] },
+  optimizeDeps: { exclude: ['react-devtools-core'] },
   build: {
     rollupOptions: {
       shimMissingExports: true,
@@ -365,7 +365,7 @@ export default defineConfig({
 });
 ```
 
-`nodePolyfills()` is required — the devalbo-cli dist references Node builtins (`assert`, `path`, etc.) that must be polyfilled for the browser. Excluding `devalbo-cli` from `optimizeDeps` prevents Vite dev pre-bundling from trying to statically resolve Node-only named imports. `shimMissingExports` allows Rollup to stub Node-only named exports (like `fs.promises`) that have no browser equivalent.
+`nodePolyfills()` is required — the devalbo-cli dist references Node builtins (`assert`, `path`, etc.) that must be polyfilled for the browser. `shimMissingExports` allows Rollup to stub Node-only named exports (like `fs.promises`) that have no browser equivalent.
 
 ---
 

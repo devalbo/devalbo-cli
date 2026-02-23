@@ -20,7 +20,7 @@ const main = exportsMap['.'] as Record<string, string>;
 if (!main || typeof main !== 'object') {
   throw new Error("Invalid exports['.'] structure");
 }
-for (const key of ['types', 'import']) {
+for (const key of ['types', 'browser', 'import']) {
   if (!(key in main)) {
     throw new Error(`Missing exports['.'] field: ${key}`);
   }
