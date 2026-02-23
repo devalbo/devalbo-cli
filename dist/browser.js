@@ -1,2151 +1,9 @@
 import {
   __commonJS,
   __export,
+  __require,
   __toESM
-} from "./chunk-U67V476Y.js";
-
-// node_modules/.pnpm/react@19.2.4/node_modules/react/cjs/react.production.js
-var require_react_production = __commonJS({
-  "node_modules/.pnpm/react@19.2.4/node_modules/react/cjs/react.production.js"(exports) {
-    "use strict";
-    var REACT_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.transitional.element");
-    var REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal");
-    var REACT_FRAGMENT_TYPE = /* @__PURE__ */ Symbol.for("react.fragment");
-    var REACT_STRICT_MODE_TYPE = /* @__PURE__ */ Symbol.for("react.strict_mode");
-    var REACT_PROFILER_TYPE = /* @__PURE__ */ Symbol.for("react.profiler");
-    var REACT_CONSUMER_TYPE = /* @__PURE__ */ Symbol.for("react.consumer");
-    var REACT_CONTEXT_TYPE = /* @__PURE__ */ Symbol.for("react.context");
-    var REACT_FORWARD_REF_TYPE = /* @__PURE__ */ Symbol.for("react.forward_ref");
-    var REACT_SUSPENSE_TYPE = /* @__PURE__ */ Symbol.for("react.suspense");
-    var REACT_MEMO_TYPE = /* @__PURE__ */ Symbol.for("react.memo");
-    var REACT_LAZY_TYPE = /* @__PURE__ */ Symbol.for("react.lazy");
-    var REACT_ACTIVITY_TYPE = /* @__PURE__ */ Symbol.for("react.activity");
-    var MAYBE_ITERATOR_SYMBOL = Symbol.iterator;
-    function getIteratorFn(maybeIterable) {
-      if (null === maybeIterable || "object" !== typeof maybeIterable) return null;
-      maybeIterable = MAYBE_ITERATOR_SYMBOL && maybeIterable[MAYBE_ITERATOR_SYMBOL] || maybeIterable["@@iterator"];
-      return "function" === typeof maybeIterable ? maybeIterable : null;
-    }
-    var ReactNoopUpdateQueue = {
-      isMounted: function() {
-        return false;
-      },
-      enqueueForceUpdate: function() {
-      },
-      enqueueReplaceState: function() {
-      },
-      enqueueSetState: function() {
-      }
-    };
-    var assign = Object.assign;
-    var emptyObject = {};
-    function Component(props, context, updater) {
-      this.props = props;
-      this.context = context;
-      this.refs = emptyObject;
-      this.updater = updater || ReactNoopUpdateQueue;
-    }
-    Component.prototype.isReactComponent = {};
-    Component.prototype.setState = function(partialState, callback) {
-      if ("object" !== typeof partialState && "function" !== typeof partialState && null != partialState)
-        throw Error(
-          "takes an object of state variables to update or a function which returns an object of state variables."
-        );
-      this.updater.enqueueSetState(this, partialState, callback, "setState");
-    };
-    Component.prototype.forceUpdate = function(callback) {
-      this.updater.enqueueForceUpdate(this, callback, "forceUpdate");
-    };
-    function ComponentDummy() {
-    }
-    ComponentDummy.prototype = Component.prototype;
-    function PureComponent2(props, context, updater) {
-      this.props = props;
-      this.context = context;
-      this.refs = emptyObject;
-      this.updater = updater || ReactNoopUpdateQueue;
-    }
-    var pureComponentPrototype = PureComponent2.prototype = new ComponentDummy();
-    pureComponentPrototype.constructor = PureComponent2;
-    assign(pureComponentPrototype, Component.prototype);
-    pureComponentPrototype.isPureReactComponent = true;
-    var isArrayImpl = Array.isArray;
-    function noop() {
-    }
-    var ReactSharedInternals = { H: null, A: null, T: null, S: null };
-    var hasOwnProperty = Object.prototype.hasOwnProperty;
-    function ReactElement(type, key, props) {
-      var refProp = props.ref;
-      return {
-        $$typeof: REACT_ELEMENT_TYPE,
-        type,
-        key,
-        ref: void 0 !== refProp ? refProp : null,
-        props
-      };
-    }
-    function cloneAndReplaceKey(oldElement, newKey) {
-      return ReactElement(oldElement.type, newKey, oldElement.props);
-    }
-    function isValidElement2(object5) {
-      return "object" === typeof object5 && null !== object5 && object5.$$typeof === REACT_ELEMENT_TYPE;
-    }
-    function escape(key) {
-      var escaperLookup = { "=": "=0", ":": "=2" };
-      return "$" + key.replace(/[=:]/g, function(match2) {
-        return escaperLookup[match2];
-      });
-    }
-    var userProvidedKeyEscapeRegex = /\/+/g;
-    function getElementKey(element, index) {
-      return "object" === typeof element && null !== element && null != element.key ? escape("" + element.key) : index.toString(36);
-    }
-    function resolveThenable(thenable) {
-      switch (thenable.status) {
-        case "fulfilled":
-          return thenable.value;
-        case "rejected":
-          throw thenable.reason;
-        default:
-          switch ("string" === typeof thenable.status ? thenable.then(noop, noop) : (thenable.status = "pending", thenable.then(
-            function(fulfilledValue) {
-              "pending" === thenable.status && (thenable.status = "fulfilled", thenable.value = fulfilledValue);
-            },
-            function(error48) {
-              "pending" === thenable.status && (thenable.status = "rejected", thenable.reason = error48);
-            }
-          )), thenable.status) {
-            case "fulfilled":
-              return thenable.value;
-            case "rejected":
-              throw thenable.reason;
-          }
-      }
-      throw thenable;
-    }
-    function mapIntoArray(children, array4, escapedPrefix, nameSoFar, callback) {
-      var type = typeof children;
-      if ("undefined" === type || "boolean" === type) children = null;
-      var invokeCallback = false;
-      if (null === children) invokeCallback = true;
-      else
-        switch (type) {
-          case "bigint":
-          case "string":
-          case "number":
-            invokeCallback = true;
-            break;
-          case "object":
-            switch (children.$$typeof) {
-              case REACT_ELEMENT_TYPE:
-              case REACT_PORTAL_TYPE:
-                invokeCallback = true;
-                break;
-              case REACT_LAZY_TYPE:
-                return invokeCallback = children._init, mapIntoArray(
-                  invokeCallback(children._payload),
-                  array4,
-                  escapedPrefix,
-                  nameSoFar,
-                  callback
-                );
-            }
-        }
-      if (invokeCallback)
-        return callback = callback(children), invokeCallback = "" === nameSoFar ? "." + getElementKey(children, 0) : nameSoFar, isArrayImpl(callback) ? (escapedPrefix = "", null != invokeCallback && (escapedPrefix = invokeCallback.replace(userProvidedKeyEscapeRegex, "$&/") + "/"), mapIntoArray(callback, array4, escapedPrefix, "", function(c) {
-          return c;
-        })) : null != callback && (isValidElement2(callback) && (callback = cloneAndReplaceKey(
-          callback,
-          escapedPrefix + (null == callback.key || children && children.key === callback.key ? "" : ("" + callback.key).replace(
-            userProvidedKeyEscapeRegex,
-            "$&/"
-          ) + "/") + invokeCallback
-        )), array4.push(callback)), 1;
-      invokeCallback = 0;
-      var nextNamePrefix = "" === nameSoFar ? "." : nameSoFar + ":";
-      if (isArrayImpl(children))
-        for (var i = 0; i < children.length; i++)
-          nameSoFar = children[i], type = nextNamePrefix + getElementKey(nameSoFar, i), invokeCallback += mapIntoArray(
-            nameSoFar,
-            array4,
-            escapedPrefix,
-            type,
-            callback
-          );
-      else if (i = getIteratorFn(children), "function" === typeof i)
-        for (children = i.call(children), i = 0; !(nameSoFar = children.next()).done; )
-          nameSoFar = nameSoFar.value, type = nextNamePrefix + getElementKey(nameSoFar, i++), invokeCallback += mapIntoArray(
-            nameSoFar,
-            array4,
-            escapedPrefix,
-            type,
-            callback
-          );
-      else if ("object" === type) {
-        if ("function" === typeof children.then)
-          return mapIntoArray(
-            resolveThenable(children),
-            array4,
-            escapedPrefix,
-            nameSoFar,
-            callback
-          );
-        array4 = String(children);
-        throw Error(
-          "Objects are not valid as a React child (found: " + ("[object Object]" === array4 ? "object with keys {" + Object.keys(children).join(", ") + "}" : array4) + "). If you meant to render a collection of children, use an array instead."
-        );
-      }
-      return invokeCallback;
-    }
-    function mapChildren(children, func, context) {
-      if (null == children) return children;
-      var result = [], count = 0;
-      mapIntoArray(children, result, "", "", function(child) {
-        return func.call(context, child, count++);
-      });
-      return result;
-    }
-    function lazyInitializer(payload) {
-      if (-1 === payload._status) {
-        var ctor = payload._result;
-        ctor = ctor();
-        ctor.then(
-          function(moduleObject) {
-            if (0 === payload._status || -1 === payload._status)
-              payload._status = 1, payload._result = moduleObject;
-          },
-          function(error48) {
-            if (0 === payload._status || -1 === payload._status)
-              payload._status = 2, payload._result = error48;
-          }
-        );
-        -1 === payload._status && (payload._status = 0, payload._result = ctor);
-      }
-      if (1 === payload._status) return payload._result.default;
-      throw payload._result;
-    }
-    var reportGlobalError = "function" === typeof reportError ? reportError : function(error48) {
-      if ("object" === typeof window && "function" === typeof window.ErrorEvent) {
-        var event = new window.ErrorEvent("error", {
-          bubbles: true,
-          cancelable: true,
-          message: "object" === typeof error48 && null !== error48 && "string" === typeof error48.message ? String(error48.message) : String(error48),
-          error: error48
-        });
-        if (!window.dispatchEvent(event)) return;
-      } else if ("object" === typeof process && "function" === typeof process.emit) {
-        process.emit("uncaughtException", error48);
-        return;
-      }
-      console.error(error48);
-    };
-    var Children = {
-      map: mapChildren,
-      forEach: function(children, forEachFunc, forEachContext) {
-        mapChildren(
-          children,
-          function() {
-            forEachFunc.apply(this, arguments);
-          },
-          forEachContext
-        );
-      },
-      count: function(children) {
-        var n = 0;
-        mapChildren(children, function() {
-          n++;
-        });
-        return n;
-      },
-      toArray: function(children) {
-        return mapChildren(children, function(child) {
-          return child;
-        }) || [];
-      },
-      only: function(children) {
-        if (!isValidElement2(children))
-          throw Error(
-            "React.Children.only expected to receive a single React element child."
-          );
-        return children;
-      }
-    };
-    exports.Activity = REACT_ACTIVITY_TYPE;
-    exports.Children = Children;
-    exports.Component = Component;
-    exports.Fragment = REACT_FRAGMENT_TYPE;
-    exports.Profiler = REACT_PROFILER_TYPE;
-    exports.PureComponent = PureComponent2;
-    exports.StrictMode = REACT_STRICT_MODE_TYPE;
-    exports.Suspense = REACT_SUSPENSE_TYPE;
-    exports.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE = ReactSharedInternals;
-    exports.__COMPILER_RUNTIME = {
-      __proto__: null,
-      c: function(size6) {
-        return ReactSharedInternals.H.useMemoCache(size6);
-      }
-    };
-    exports.cache = function(fn) {
-      return function() {
-        return fn.apply(null, arguments);
-      };
-    };
-    exports.cacheSignal = function() {
-      return null;
-    };
-    exports.cloneElement = function(element, config2, children) {
-      if (null === element || void 0 === element)
-        throw Error(
-          "The argument must be a React element, but you passed " + element + "."
-        );
-      var props = assign({}, element.props), key = element.key;
-      if (null != config2)
-        for (propName in void 0 !== config2.key && (key = "" + config2.key), config2)
-          !hasOwnProperty.call(config2, propName) || "key" === propName || "__self" === propName || "__source" === propName || "ref" === propName && void 0 === config2.ref || (props[propName] = config2[propName]);
-      var propName = arguments.length - 2;
-      if (1 === propName) props.children = children;
-      else if (1 < propName) {
-        for (var childArray = Array(propName), i = 0; i < propName; i++)
-          childArray[i] = arguments[i + 2];
-        props.children = childArray;
-      }
-      return ReactElement(element.type, key, props);
-    };
-    exports.createContext = function(defaultValue) {
-      defaultValue = {
-        $$typeof: REACT_CONTEXT_TYPE,
-        _currentValue: defaultValue,
-        _currentValue2: defaultValue,
-        _threadCount: 0,
-        Provider: null,
-        Consumer: null
-      };
-      defaultValue.Provider = defaultValue;
-      defaultValue.Consumer = {
-        $$typeof: REACT_CONSUMER_TYPE,
-        _context: defaultValue
-      };
-      return defaultValue;
-    };
-    exports.createElement = function(type, config2, children) {
-      var propName, props = {}, key = null;
-      if (null != config2)
-        for (propName in void 0 !== config2.key && (key = "" + config2.key), config2)
-          hasOwnProperty.call(config2, propName) && "key" !== propName && "__self" !== propName && "__source" !== propName && (props[propName] = config2[propName]);
-      var childrenLength = arguments.length - 2;
-      if (1 === childrenLength) props.children = children;
-      else if (1 < childrenLength) {
-        for (var childArray = Array(childrenLength), i = 0; i < childrenLength; i++)
-          childArray[i] = arguments[i + 2];
-        props.children = childArray;
-      }
-      if (type && type.defaultProps)
-        for (propName in childrenLength = type.defaultProps, childrenLength)
-          void 0 === props[propName] && (props[propName] = childrenLength[propName]);
-      return ReactElement(type, key, props);
-    };
-    exports.createRef = function() {
-      return { current: null };
-    };
-    exports.forwardRef = function(render) {
-      return { $$typeof: REACT_FORWARD_REF_TYPE, render };
-    };
-    exports.isValidElement = isValidElement2;
-    exports.lazy = function(ctor) {
-      return {
-        $$typeof: REACT_LAZY_TYPE,
-        _payload: { _status: -1, _result: ctor },
-        _init: lazyInitializer
-      };
-    };
-    exports.memo = function(type, compare) {
-      return {
-        $$typeof: REACT_MEMO_TYPE,
-        type,
-        compare: void 0 === compare ? null : compare
-      };
-    };
-    exports.startTransition = function(scope) {
-      var prevTransition = ReactSharedInternals.T, currentTransition = {};
-      ReactSharedInternals.T = currentTransition;
-      try {
-        var returnValue = scope(), onStartTransitionFinish = ReactSharedInternals.S;
-        null !== onStartTransitionFinish && onStartTransitionFinish(currentTransition, returnValue);
-        "object" === typeof returnValue && null !== returnValue && "function" === typeof returnValue.then && returnValue.then(noop, reportGlobalError);
-      } catch (error48) {
-        reportGlobalError(error48);
-      } finally {
-        null !== prevTransition && null !== currentTransition.types && (prevTransition.types = currentTransition.types), ReactSharedInternals.T = prevTransition;
-      }
-    };
-    exports.unstable_useCacheRefresh = function() {
-      return ReactSharedInternals.H.useCacheRefresh();
-    };
-    exports.use = function(usable) {
-      return ReactSharedInternals.H.use(usable);
-    };
-    exports.useActionState = function(action, initialState, permalink) {
-      return ReactSharedInternals.H.useActionState(action, initialState, permalink);
-    };
-    exports.useCallback = function(callback, deps) {
-      return ReactSharedInternals.H.useCallback(callback, deps);
-    };
-    exports.useContext = function(Context) {
-      return ReactSharedInternals.H.useContext(Context);
-    };
-    exports.useDebugValue = function() {
-    };
-    exports.useDeferredValue = function(value2, initialValue) {
-      return ReactSharedInternals.H.useDeferredValue(value2, initialValue);
-    };
-    exports.useEffect = function(create, deps) {
-      return ReactSharedInternals.H.useEffect(create, deps);
-    };
-    exports.useEffectEvent = function(callback) {
-      return ReactSharedInternals.H.useEffectEvent(callback);
-    };
-    exports.useId = function() {
-      return ReactSharedInternals.H.useId();
-    };
-    exports.useImperativeHandle = function(ref, create, deps) {
-      return ReactSharedInternals.H.useImperativeHandle(ref, create, deps);
-    };
-    exports.useInsertionEffect = function(create, deps) {
-      return ReactSharedInternals.H.useInsertionEffect(create, deps);
-    };
-    exports.useLayoutEffect = function(create, deps) {
-      return ReactSharedInternals.H.useLayoutEffect(create, deps);
-    };
-    exports.useMemo = function(create, deps) {
-      return ReactSharedInternals.H.useMemo(create, deps);
-    };
-    exports.useOptimistic = function(passthrough, reducer2) {
-      return ReactSharedInternals.H.useOptimistic(passthrough, reducer2);
-    };
-    exports.useReducer = function(reducer2, initialArg, init) {
-      return ReactSharedInternals.H.useReducer(reducer2, initialArg, init);
-    };
-    exports.useRef = function(initialValue) {
-      return ReactSharedInternals.H.useRef(initialValue);
-    };
-    exports.useState = function(initialState) {
-      return ReactSharedInternals.H.useState(initialState);
-    };
-    exports.useSyncExternalStore = function(subscribe, getSnapshot, getServerSnapshot) {
-      return ReactSharedInternals.H.useSyncExternalStore(
-        subscribe,
-        getSnapshot,
-        getServerSnapshot
-      );
-    };
-    exports.useTransition = function() {
-      return ReactSharedInternals.H.useTransition();
-    };
-    exports.version = "19.2.4";
-  }
-});
-
-// node_modules/.pnpm/react@19.2.4/node_modules/react/cjs/react.development.js
-var require_react_development = __commonJS({
-  "node_modules/.pnpm/react@19.2.4/node_modules/react/cjs/react.development.js"(exports, module) {
-    "use strict";
-    "production" !== process.env.NODE_ENV && (function() {
-      function defineDeprecationWarning(methodName, info) {
-        Object.defineProperty(Component.prototype, methodName, {
-          get: function() {
-            console.warn(
-              "%s(...) is deprecated in plain JavaScript React classes. %s",
-              info[0],
-              info[1]
-            );
-          }
-        });
-      }
-      function getIteratorFn(maybeIterable) {
-        if (null === maybeIterable || "object" !== typeof maybeIterable)
-          return null;
-        maybeIterable = MAYBE_ITERATOR_SYMBOL && maybeIterable[MAYBE_ITERATOR_SYMBOL] || maybeIterable["@@iterator"];
-        return "function" === typeof maybeIterable ? maybeIterable : null;
-      }
-      function warnNoop(publicInstance, callerName) {
-        publicInstance = (publicInstance = publicInstance.constructor) && (publicInstance.displayName || publicInstance.name) || "ReactClass";
-        var warningKey = publicInstance + "." + callerName;
-        didWarnStateUpdateForUnmountedComponent[warningKey] || (console.error(
-          "Can't call %s on a component that is not yet mounted. This is a no-op, but it might indicate a bug in your application. Instead, assign to `this.state` directly or define a `state = {};` class property with the desired state in the %s component.",
-          callerName,
-          publicInstance
-        ), didWarnStateUpdateForUnmountedComponent[warningKey] = true);
-      }
-      function Component(props, context, updater) {
-        this.props = props;
-        this.context = context;
-        this.refs = emptyObject;
-        this.updater = updater || ReactNoopUpdateQueue;
-      }
-      function ComponentDummy() {
-      }
-      function PureComponent2(props, context, updater) {
-        this.props = props;
-        this.context = context;
-        this.refs = emptyObject;
-        this.updater = updater || ReactNoopUpdateQueue;
-      }
-      function noop() {
-      }
-      function testStringCoercion(value2) {
-        return "" + value2;
-      }
-      function checkKeyStringCoercion(value2) {
-        try {
-          testStringCoercion(value2);
-          var JSCompiler_inline_result = false;
-        } catch (e) {
-          JSCompiler_inline_result = true;
-        }
-        if (JSCompiler_inline_result) {
-          JSCompiler_inline_result = console;
-          var JSCompiler_temp_const = JSCompiler_inline_result.error;
-          var JSCompiler_inline_result$jscomp$0 = "function" === typeof Symbol && Symbol.toStringTag && value2[Symbol.toStringTag] || value2.constructor.name || "Object";
-          JSCompiler_temp_const.call(
-            JSCompiler_inline_result,
-            "The provided key is an unsupported type %s. This value must be coerced to a string before using it here.",
-            JSCompiler_inline_result$jscomp$0
-          );
-          return testStringCoercion(value2);
-        }
-      }
-      function getComponentNameFromType(type) {
-        if (null == type) return null;
-        if ("function" === typeof type)
-          return type.$$typeof === REACT_CLIENT_REFERENCE ? null : type.displayName || type.name || null;
-        if ("string" === typeof type) return type;
-        switch (type) {
-          case REACT_FRAGMENT_TYPE:
-            return "Fragment";
-          case REACT_PROFILER_TYPE:
-            return "Profiler";
-          case REACT_STRICT_MODE_TYPE:
-            return "StrictMode";
-          case REACT_SUSPENSE_TYPE:
-            return "Suspense";
-          case REACT_SUSPENSE_LIST_TYPE:
-            return "SuspenseList";
-          case REACT_ACTIVITY_TYPE:
-            return "Activity";
-        }
-        if ("object" === typeof type)
-          switch ("number" === typeof type.tag && console.error(
-            "Received an unexpected object in getComponentNameFromType(). This is likely a bug in React. Please file an issue."
-          ), type.$$typeof) {
-            case REACT_PORTAL_TYPE:
-              return "Portal";
-            case REACT_CONTEXT_TYPE:
-              return type.displayName || "Context";
-            case REACT_CONSUMER_TYPE:
-              return (type._context.displayName || "Context") + ".Consumer";
-            case REACT_FORWARD_REF_TYPE:
-              var innerType = type.render;
-              type = type.displayName;
-              type || (type = innerType.displayName || innerType.name || "", type = "" !== type ? "ForwardRef(" + type + ")" : "ForwardRef");
-              return type;
-            case REACT_MEMO_TYPE:
-              return innerType = type.displayName || null, null !== innerType ? innerType : getComponentNameFromType(type.type) || "Memo";
-            case REACT_LAZY_TYPE:
-              innerType = type._payload;
-              type = type._init;
-              try {
-                return getComponentNameFromType(type(innerType));
-              } catch (x) {
-              }
-          }
-        return null;
-      }
-      function getTaskName(type) {
-        if (type === REACT_FRAGMENT_TYPE) return "<>";
-        if ("object" === typeof type && null !== type && type.$$typeof === REACT_LAZY_TYPE)
-          return "<...>";
-        try {
-          var name = getComponentNameFromType(type);
-          return name ? "<" + name + ">" : "<...>";
-        } catch (x) {
-          return "<...>";
-        }
-      }
-      function getOwner() {
-        var dispatcher = ReactSharedInternals.A;
-        return null === dispatcher ? null : dispatcher.getOwner();
-      }
-      function UnknownOwner() {
-        return Error("react-stack-top-frame");
-      }
-      function hasValidKey(config2) {
-        if (hasOwnProperty.call(config2, "key")) {
-          var getter = Object.getOwnPropertyDescriptor(config2, "key").get;
-          if (getter && getter.isReactWarning) return false;
-        }
-        return void 0 !== config2.key;
-      }
-      function defineKeyPropWarningGetter(props, displayName) {
-        function warnAboutAccessingKey() {
-          specialPropKeyWarningShown || (specialPropKeyWarningShown = true, console.error(
-            "%s: `key` is not a prop. Trying to access it will result in `undefined` being returned. If you need to access the same value within the child component, you should pass it as a different prop. (https://react.dev/link/special-props)",
-            displayName
-          ));
-        }
-        warnAboutAccessingKey.isReactWarning = true;
-        Object.defineProperty(props, "key", {
-          get: warnAboutAccessingKey,
-          configurable: true
-        });
-      }
-      function elementRefGetterWithDeprecationWarning() {
-        var componentName = getComponentNameFromType(this.type);
-        didWarnAboutElementRef[componentName] || (didWarnAboutElementRef[componentName] = true, console.error(
-          "Accessing element.ref was removed in React 19. ref is now a regular prop. It will be removed from the JSX Element type in a future release."
-        ));
-        componentName = this.props.ref;
-        return void 0 !== componentName ? componentName : null;
-      }
-      function ReactElement(type, key, props, owner, debugStack, debugTask) {
-        var refProp = props.ref;
-        type = {
-          $$typeof: REACT_ELEMENT_TYPE,
-          type,
-          key,
-          props,
-          _owner: owner
-        };
-        null !== (void 0 !== refProp ? refProp : null) ? Object.defineProperty(type, "ref", {
-          enumerable: false,
-          get: elementRefGetterWithDeprecationWarning
-        }) : Object.defineProperty(type, "ref", { enumerable: false, value: null });
-        type._store = {};
-        Object.defineProperty(type._store, "validated", {
-          configurable: false,
-          enumerable: false,
-          writable: true,
-          value: 0
-        });
-        Object.defineProperty(type, "_debugInfo", {
-          configurable: false,
-          enumerable: false,
-          writable: true,
-          value: null
-        });
-        Object.defineProperty(type, "_debugStack", {
-          configurable: false,
-          enumerable: false,
-          writable: true,
-          value: debugStack
-        });
-        Object.defineProperty(type, "_debugTask", {
-          configurable: false,
-          enumerable: false,
-          writable: true,
-          value: debugTask
-        });
-        Object.freeze && (Object.freeze(type.props), Object.freeze(type));
-        return type;
-      }
-      function cloneAndReplaceKey(oldElement, newKey) {
-        newKey = ReactElement(
-          oldElement.type,
-          newKey,
-          oldElement.props,
-          oldElement._owner,
-          oldElement._debugStack,
-          oldElement._debugTask
-        );
-        oldElement._store && (newKey._store.validated = oldElement._store.validated);
-        return newKey;
-      }
-      function validateChildKeys(node) {
-        isValidElement2(node) ? node._store && (node._store.validated = 1) : "object" === typeof node && null !== node && node.$$typeof === REACT_LAZY_TYPE && ("fulfilled" === node._payload.status ? isValidElement2(node._payload.value) && node._payload.value._store && (node._payload.value._store.validated = 1) : node._store && (node._store.validated = 1));
-      }
-      function isValidElement2(object5) {
-        return "object" === typeof object5 && null !== object5 && object5.$$typeof === REACT_ELEMENT_TYPE;
-      }
-      function escape(key) {
-        var escaperLookup = { "=": "=0", ":": "=2" };
-        return "$" + key.replace(/[=:]/g, function(match2) {
-          return escaperLookup[match2];
-        });
-      }
-      function getElementKey(element, index) {
-        return "object" === typeof element && null !== element && null != element.key ? (checkKeyStringCoercion(element.key), escape("" + element.key)) : index.toString(36);
-      }
-      function resolveThenable(thenable) {
-        switch (thenable.status) {
-          case "fulfilled":
-            return thenable.value;
-          case "rejected":
-            throw thenable.reason;
-          default:
-            switch ("string" === typeof thenable.status ? thenable.then(noop, noop) : (thenable.status = "pending", thenable.then(
-              function(fulfilledValue) {
-                "pending" === thenable.status && (thenable.status = "fulfilled", thenable.value = fulfilledValue);
-              },
-              function(error48) {
-                "pending" === thenable.status && (thenable.status = "rejected", thenable.reason = error48);
-              }
-            )), thenable.status) {
-              case "fulfilled":
-                return thenable.value;
-              case "rejected":
-                throw thenable.reason;
-            }
-        }
-        throw thenable;
-      }
-      function mapIntoArray(children, array4, escapedPrefix, nameSoFar, callback) {
-        var type = typeof children;
-        if ("undefined" === type || "boolean" === type) children = null;
-        var invokeCallback = false;
-        if (null === children) invokeCallback = true;
-        else
-          switch (type) {
-            case "bigint":
-            case "string":
-            case "number":
-              invokeCallback = true;
-              break;
-            case "object":
-              switch (children.$$typeof) {
-                case REACT_ELEMENT_TYPE:
-                case REACT_PORTAL_TYPE:
-                  invokeCallback = true;
-                  break;
-                case REACT_LAZY_TYPE:
-                  return invokeCallback = children._init, mapIntoArray(
-                    invokeCallback(children._payload),
-                    array4,
-                    escapedPrefix,
-                    nameSoFar,
-                    callback
-                  );
-              }
-          }
-        if (invokeCallback) {
-          invokeCallback = children;
-          callback = callback(invokeCallback);
-          var childKey = "" === nameSoFar ? "." + getElementKey(invokeCallback, 0) : nameSoFar;
-          isArrayImpl(callback) ? (escapedPrefix = "", null != childKey && (escapedPrefix = childKey.replace(userProvidedKeyEscapeRegex, "$&/") + "/"), mapIntoArray(callback, array4, escapedPrefix, "", function(c) {
-            return c;
-          })) : null != callback && (isValidElement2(callback) && (null != callback.key && (invokeCallback && invokeCallback.key === callback.key || checkKeyStringCoercion(callback.key)), escapedPrefix = cloneAndReplaceKey(
-            callback,
-            escapedPrefix + (null == callback.key || invokeCallback && invokeCallback.key === callback.key ? "" : ("" + callback.key).replace(
-              userProvidedKeyEscapeRegex,
-              "$&/"
-            ) + "/") + childKey
-          ), "" !== nameSoFar && null != invokeCallback && isValidElement2(invokeCallback) && null == invokeCallback.key && invokeCallback._store && !invokeCallback._store.validated && (escapedPrefix._store.validated = 2), callback = escapedPrefix), array4.push(callback));
-          return 1;
-        }
-        invokeCallback = 0;
-        childKey = "" === nameSoFar ? "." : nameSoFar + ":";
-        if (isArrayImpl(children))
-          for (var i = 0; i < children.length; i++)
-            nameSoFar = children[i], type = childKey + getElementKey(nameSoFar, i), invokeCallback += mapIntoArray(
-              nameSoFar,
-              array4,
-              escapedPrefix,
-              type,
-              callback
-            );
-        else if (i = getIteratorFn(children), "function" === typeof i)
-          for (i === children.entries && (didWarnAboutMaps || console.warn(
-            "Using Maps as children is not supported. Use an array of keyed ReactElements instead."
-          ), didWarnAboutMaps = true), children = i.call(children), i = 0; !(nameSoFar = children.next()).done; )
-            nameSoFar = nameSoFar.value, type = childKey + getElementKey(nameSoFar, i++), invokeCallback += mapIntoArray(
-              nameSoFar,
-              array4,
-              escapedPrefix,
-              type,
-              callback
-            );
-        else if ("object" === type) {
-          if ("function" === typeof children.then)
-            return mapIntoArray(
-              resolveThenable(children),
-              array4,
-              escapedPrefix,
-              nameSoFar,
-              callback
-            );
-          array4 = String(children);
-          throw Error(
-            "Objects are not valid as a React child (found: " + ("[object Object]" === array4 ? "object with keys {" + Object.keys(children).join(", ") + "}" : array4) + "). If you meant to render a collection of children, use an array instead."
-          );
-        }
-        return invokeCallback;
-      }
-      function mapChildren(children, func, context) {
-        if (null == children) return children;
-        var result = [], count = 0;
-        mapIntoArray(children, result, "", "", function(child) {
-          return func.call(context, child, count++);
-        });
-        return result;
-      }
-      function lazyInitializer(payload) {
-        if (-1 === payload._status) {
-          var ioInfo = payload._ioInfo;
-          null != ioInfo && (ioInfo.start = ioInfo.end = performance.now());
-          ioInfo = payload._result;
-          var thenable = ioInfo();
-          thenable.then(
-            function(moduleObject) {
-              if (0 === payload._status || -1 === payload._status) {
-                payload._status = 1;
-                payload._result = moduleObject;
-                var _ioInfo = payload._ioInfo;
-                null != _ioInfo && (_ioInfo.end = performance.now());
-                void 0 === thenable.status && (thenable.status = "fulfilled", thenable.value = moduleObject);
-              }
-            },
-            function(error48) {
-              if (0 === payload._status || -1 === payload._status) {
-                payload._status = 2;
-                payload._result = error48;
-                var _ioInfo2 = payload._ioInfo;
-                null != _ioInfo2 && (_ioInfo2.end = performance.now());
-                void 0 === thenable.status && (thenable.status = "rejected", thenable.reason = error48);
-              }
-            }
-          );
-          ioInfo = payload._ioInfo;
-          if (null != ioInfo) {
-            ioInfo.value = thenable;
-            var displayName = thenable.displayName;
-            "string" === typeof displayName && (ioInfo.name = displayName);
-          }
-          -1 === payload._status && (payload._status = 0, payload._result = thenable);
-        }
-        if (1 === payload._status)
-          return ioInfo = payload._result, void 0 === ioInfo && console.error(
-            "lazy: Expected the result of a dynamic import() call. Instead received: %s\n\nYour code should look like: \n  const MyComponent = lazy(() => import('./MyComponent'))\n\nDid you accidentally put curly braces around the import?",
-            ioInfo
-          ), "default" in ioInfo || console.error(
-            "lazy: Expected the result of a dynamic import() call. Instead received: %s\n\nYour code should look like: \n  const MyComponent = lazy(() => import('./MyComponent'))",
-            ioInfo
-          ), ioInfo.default;
-        throw payload._result;
-      }
-      function resolveDispatcher() {
-        var dispatcher = ReactSharedInternals.H;
-        null === dispatcher && console.error(
-          "Invalid hook call. Hooks can only be called inside of the body of a function component. This could happen for one of the following reasons:\n1. You might have mismatching versions of React and the renderer (such as React DOM)\n2. You might be breaking the Rules of Hooks\n3. You might have more than one copy of React in the same app\nSee https://react.dev/link/invalid-hook-call for tips about how to debug and fix this problem."
-        );
-        return dispatcher;
-      }
-      function releaseAsyncTransition() {
-        ReactSharedInternals.asyncTransitions--;
-      }
-      function enqueueTask(task) {
-        if (null === enqueueTaskImpl)
-          try {
-            var requireString = ("require" + Math.random()).slice(0, 7);
-            enqueueTaskImpl = (module && module[requireString]).call(
-              module,
-              "timers"
-            ).setImmediate;
-          } catch (_err) {
-            enqueueTaskImpl = function(callback) {
-              false === didWarnAboutMessageChannel && (didWarnAboutMessageChannel = true, "undefined" === typeof MessageChannel && console.error(
-                "This browser does not have a MessageChannel implementation, so enqueuing tasks via await act(async () => ...) will fail. Please file an issue at https://github.com/facebook/react/issues if you encounter this warning."
-              ));
-              var channel = new MessageChannel();
-              channel.port1.onmessage = callback;
-              channel.port2.postMessage(void 0);
-            };
-          }
-        return enqueueTaskImpl(task);
-      }
-      function aggregateErrors(errors) {
-        return 1 < errors.length && "function" === typeof AggregateError ? new AggregateError(errors) : errors[0];
-      }
-      function popActScope(prevActQueue, prevActScopeDepth) {
-        prevActScopeDepth !== actScopeDepth - 1 && console.error(
-          "You seem to have overlapping act() calls, this is not supported. Be sure to await previous act() calls before making a new one. "
-        );
-        actScopeDepth = prevActScopeDepth;
-      }
-      function recursivelyFlushAsyncActWork(returnValue, resolve, reject) {
-        var queue = ReactSharedInternals.actQueue;
-        if (null !== queue)
-          if (0 !== queue.length)
-            try {
-              flushActQueue(queue);
-              enqueueTask(function() {
-                return recursivelyFlushAsyncActWork(returnValue, resolve, reject);
-              });
-              return;
-            } catch (error48) {
-              ReactSharedInternals.thrownErrors.push(error48);
-            }
-          else ReactSharedInternals.actQueue = null;
-        0 < ReactSharedInternals.thrownErrors.length ? (queue = aggregateErrors(ReactSharedInternals.thrownErrors), ReactSharedInternals.thrownErrors.length = 0, reject(queue)) : resolve(returnValue);
-      }
-      function flushActQueue(queue) {
-        if (!isFlushing) {
-          isFlushing = true;
-          var i = 0;
-          try {
-            for (; i < queue.length; i++) {
-              var callback = queue[i];
-              do {
-                ReactSharedInternals.didUsePromise = false;
-                var continuation = callback(false);
-                if (null !== continuation) {
-                  if (ReactSharedInternals.didUsePromise) {
-                    queue[i] = callback;
-                    queue.splice(0, i);
-                    return;
-                  }
-                  callback = continuation;
-                } else break;
-              } while (1);
-            }
-            queue.length = 0;
-          } catch (error48) {
-            queue.splice(0, i + 1), ReactSharedInternals.thrownErrors.push(error48);
-          } finally {
-            isFlushing = false;
-          }
-        }
-      }
-      "undefined" !== typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ && "function" === typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart && __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart(Error());
-      var REACT_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.transitional.element"), REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), REACT_FRAGMENT_TYPE = /* @__PURE__ */ Symbol.for("react.fragment"), REACT_STRICT_MODE_TYPE = /* @__PURE__ */ Symbol.for("react.strict_mode"), REACT_PROFILER_TYPE = /* @__PURE__ */ Symbol.for("react.profiler"), REACT_CONSUMER_TYPE = /* @__PURE__ */ Symbol.for("react.consumer"), REACT_CONTEXT_TYPE = /* @__PURE__ */ Symbol.for("react.context"), REACT_FORWARD_REF_TYPE = /* @__PURE__ */ Symbol.for("react.forward_ref"), REACT_SUSPENSE_TYPE = /* @__PURE__ */ Symbol.for("react.suspense"), REACT_SUSPENSE_LIST_TYPE = /* @__PURE__ */ Symbol.for("react.suspense_list"), REACT_MEMO_TYPE = /* @__PURE__ */ Symbol.for("react.memo"), REACT_LAZY_TYPE = /* @__PURE__ */ Symbol.for("react.lazy"), REACT_ACTIVITY_TYPE = /* @__PURE__ */ Symbol.for("react.activity"), MAYBE_ITERATOR_SYMBOL = Symbol.iterator, didWarnStateUpdateForUnmountedComponent = {}, ReactNoopUpdateQueue = {
-        isMounted: function() {
-          return false;
-        },
-        enqueueForceUpdate: function(publicInstance) {
-          warnNoop(publicInstance, "forceUpdate");
-        },
-        enqueueReplaceState: function(publicInstance) {
-          warnNoop(publicInstance, "replaceState");
-        },
-        enqueueSetState: function(publicInstance) {
-          warnNoop(publicInstance, "setState");
-        }
-      }, assign = Object.assign, emptyObject = {};
-      Object.freeze(emptyObject);
-      Component.prototype.isReactComponent = {};
-      Component.prototype.setState = function(partialState, callback) {
-        if ("object" !== typeof partialState && "function" !== typeof partialState && null != partialState)
-          throw Error(
-            "takes an object of state variables to update or a function which returns an object of state variables."
-          );
-        this.updater.enqueueSetState(this, partialState, callback, "setState");
-      };
-      Component.prototype.forceUpdate = function(callback) {
-        this.updater.enqueueForceUpdate(this, callback, "forceUpdate");
-      };
-      var deprecatedAPIs = {
-        isMounted: [
-          "isMounted",
-          "Instead, make sure to clean up subscriptions and pending requests in componentWillUnmount to prevent memory leaks."
-        ],
-        replaceState: [
-          "replaceState",
-          "Refactor your code to use setState instead (see https://github.com/facebook/react/issues/3236)."
-        ]
-      };
-      for (fnName in deprecatedAPIs)
-        deprecatedAPIs.hasOwnProperty(fnName) && defineDeprecationWarning(fnName, deprecatedAPIs[fnName]);
-      ComponentDummy.prototype = Component.prototype;
-      deprecatedAPIs = PureComponent2.prototype = new ComponentDummy();
-      deprecatedAPIs.constructor = PureComponent2;
-      assign(deprecatedAPIs, Component.prototype);
-      deprecatedAPIs.isPureReactComponent = true;
-      var isArrayImpl = Array.isArray, REACT_CLIENT_REFERENCE = /* @__PURE__ */ Symbol.for("react.client.reference"), ReactSharedInternals = {
-        H: null,
-        A: null,
-        T: null,
-        S: null,
-        actQueue: null,
-        asyncTransitions: 0,
-        isBatchingLegacy: false,
-        didScheduleLegacyUpdate: false,
-        didUsePromise: false,
-        thrownErrors: [],
-        getCurrentStack: null,
-        recentlyCreatedOwnerStacks: 0
-      }, hasOwnProperty = Object.prototype.hasOwnProperty, createTask = console.createTask ? console.createTask : function() {
-        return null;
-      };
-      deprecatedAPIs = {
-        react_stack_bottom_frame: function(callStackForError) {
-          return callStackForError();
-        }
-      };
-      var specialPropKeyWarningShown, didWarnAboutOldJSXRuntime;
-      var didWarnAboutElementRef = {};
-      var unknownOwnerDebugStack = deprecatedAPIs.react_stack_bottom_frame.bind(
-        deprecatedAPIs,
-        UnknownOwner
-      )();
-      var unknownOwnerDebugTask = createTask(getTaskName(UnknownOwner));
-      var didWarnAboutMaps = false, userProvidedKeyEscapeRegex = /\/+/g, reportGlobalError = "function" === typeof reportError ? reportError : function(error48) {
-        if ("object" === typeof window && "function" === typeof window.ErrorEvent) {
-          var event = new window.ErrorEvent("error", {
-            bubbles: true,
-            cancelable: true,
-            message: "object" === typeof error48 && null !== error48 && "string" === typeof error48.message ? String(error48.message) : String(error48),
-            error: error48
-          });
-          if (!window.dispatchEvent(event)) return;
-        } else if ("object" === typeof process && "function" === typeof process.emit) {
-          process.emit("uncaughtException", error48);
-          return;
-        }
-        console.error(error48);
-      }, didWarnAboutMessageChannel = false, enqueueTaskImpl = null, actScopeDepth = 0, didWarnNoAwaitAct = false, isFlushing = false, queueSeveralMicrotasks = "function" === typeof queueMicrotask ? function(callback) {
-        queueMicrotask(function() {
-          return queueMicrotask(callback);
-        });
-      } : enqueueTask;
-      deprecatedAPIs = Object.freeze({
-        __proto__: null,
-        c: function(size6) {
-          return resolveDispatcher().useMemoCache(size6);
-        }
-      });
-      var fnName = {
-        map: mapChildren,
-        forEach: function(children, forEachFunc, forEachContext) {
-          mapChildren(
-            children,
-            function() {
-              forEachFunc.apply(this, arguments);
-            },
-            forEachContext
-          );
-        },
-        count: function(children) {
-          var n = 0;
-          mapChildren(children, function() {
-            n++;
-          });
-          return n;
-        },
-        toArray: function(children) {
-          return mapChildren(children, function(child) {
-            return child;
-          }) || [];
-        },
-        only: function(children) {
-          if (!isValidElement2(children))
-            throw Error(
-              "React.Children.only expected to receive a single React element child."
-            );
-          return children;
-        }
-      };
-      exports.Activity = REACT_ACTIVITY_TYPE;
-      exports.Children = fnName;
-      exports.Component = Component;
-      exports.Fragment = REACT_FRAGMENT_TYPE;
-      exports.Profiler = REACT_PROFILER_TYPE;
-      exports.PureComponent = PureComponent2;
-      exports.StrictMode = REACT_STRICT_MODE_TYPE;
-      exports.Suspense = REACT_SUSPENSE_TYPE;
-      exports.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE = ReactSharedInternals;
-      exports.__COMPILER_RUNTIME = deprecatedAPIs;
-      exports.act = function(callback) {
-        var prevActQueue = ReactSharedInternals.actQueue, prevActScopeDepth = actScopeDepth;
-        actScopeDepth++;
-        var queue = ReactSharedInternals.actQueue = null !== prevActQueue ? prevActQueue : [], didAwaitActCall = false;
-        try {
-          var result = callback();
-        } catch (error48) {
-          ReactSharedInternals.thrownErrors.push(error48);
-        }
-        if (0 < ReactSharedInternals.thrownErrors.length)
-          throw popActScope(prevActQueue, prevActScopeDepth), callback = aggregateErrors(ReactSharedInternals.thrownErrors), ReactSharedInternals.thrownErrors.length = 0, callback;
-        if (null !== result && "object" === typeof result && "function" === typeof result.then) {
-          var thenable = result;
-          queueSeveralMicrotasks(function() {
-            didAwaitActCall || didWarnNoAwaitAct || (didWarnNoAwaitAct = true, console.error(
-              "You called act(async () => ...) without await. This could lead to unexpected testing behaviour, interleaving multiple act calls and mixing their scopes. You should - await act(async () => ...);"
-            ));
-          });
-          return {
-            then: function(resolve, reject) {
-              didAwaitActCall = true;
-              thenable.then(
-                function(returnValue) {
-                  popActScope(prevActQueue, prevActScopeDepth);
-                  if (0 === prevActScopeDepth) {
-                    try {
-                      flushActQueue(queue), enqueueTask(function() {
-                        return recursivelyFlushAsyncActWork(
-                          returnValue,
-                          resolve,
-                          reject
-                        );
-                      });
-                    } catch (error$0) {
-                      ReactSharedInternals.thrownErrors.push(error$0);
-                    }
-                    if (0 < ReactSharedInternals.thrownErrors.length) {
-                      var _thrownError = aggregateErrors(
-                        ReactSharedInternals.thrownErrors
-                      );
-                      ReactSharedInternals.thrownErrors.length = 0;
-                      reject(_thrownError);
-                    }
-                  } else resolve(returnValue);
-                },
-                function(error48) {
-                  popActScope(prevActQueue, prevActScopeDepth);
-                  0 < ReactSharedInternals.thrownErrors.length ? (error48 = aggregateErrors(
-                    ReactSharedInternals.thrownErrors
-                  ), ReactSharedInternals.thrownErrors.length = 0, reject(error48)) : reject(error48);
-                }
-              );
-            }
-          };
-        }
-        var returnValue$jscomp$0 = result;
-        popActScope(prevActQueue, prevActScopeDepth);
-        0 === prevActScopeDepth && (flushActQueue(queue), 0 !== queue.length && queueSeveralMicrotasks(function() {
-          didAwaitActCall || didWarnNoAwaitAct || (didWarnNoAwaitAct = true, console.error(
-            "A component suspended inside an `act` scope, but the `act` call was not awaited. When testing React components that depend on asynchronous data, you must await the result:\n\nawait act(() => ...)"
-          ));
-        }), ReactSharedInternals.actQueue = null);
-        if (0 < ReactSharedInternals.thrownErrors.length)
-          throw callback = aggregateErrors(ReactSharedInternals.thrownErrors), ReactSharedInternals.thrownErrors.length = 0, callback;
-        return {
-          then: function(resolve, reject) {
-            didAwaitActCall = true;
-            0 === prevActScopeDepth ? (ReactSharedInternals.actQueue = queue, enqueueTask(function() {
-              return recursivelyFlushAsyncActWork(
-                returnValue$jscomp$0,
-                resolve,
-                reject
-              );
-            })) : resolve(returnValue$jscomp$0);
-          }
-        };
-      };
-      exports.cache = function(fn) {
-        return function() {
-          return fn.apply(null, arguments);
-        };
-      };
-      exports.cacheSignal = function() {
-        return null;
-      };
-      exports.captureOwnerStack = function() {
-        var getCurrentStack = ReactSharedInternals.getCurrentStack;
-        return null === getCurrentStack ? null : getCurrentStack();
-      };
-      exports.cloneElement = function(element, config2, children) {
-        if (null === element || void 0 === element)
-          throw Error(
-            "The argument must be a React element, but you passed " + element + "."
-          );
-        var props = assign({}, element.props), key = element.key, owner = element._owner;
-        if (null != config2) {
-          var JSCompiler_inline_result;
-          a: {
-            if (hasOwnProperty.call(config2, "ref") && (JSCompiler_inline_result = Object.getOwnPropertyDescriptor(
-              config2,
-              "ref"
-            ).get) && JSCompiler_inline_result.isReactWarning) {
-              JSCompiler_inline_result = false;
-              break a;
-            }
-            JSCompiler_inline_result = void 0 !== config2.ref;
-          }
-          JSCompiler_inline_result && (owner = getOwner());
-          hasValidKey(config2) && (checkKeyStringCoercion(config2.key), key = "" + config2.key);
-          for (propName in config2)
-            !hasOwnProperty.call(config2, propName) || "key" === propName || "__self" === propName || "__source" === propName || "ref" === propName && void 0 === config2.ref || (props[propName] = config2[propName]);
-        }
-        var propName = arguments.length - 2;
-        if (1 === propName) props.children = children;
-        else if (1 < propName) {
-          JSCompiler_inline_result = Array(propName);
-          for (var i = 0; i < propName; i++)
-            JSCompiler_inline_result[i] = arguments[i + 2];
-          props.children = JSCompiler_inline_result;
-        }
-        props = ReactElement(
-          element.type,
-          key,
-          props,
-          owner,
-          element._debugStack,
-          element._debugTask
-        );
-        for (key = 2; key < arguments.length; key++)
-          validateChildKeys(arguments[key]);
-        return props;
-      };
-      exports.createContext = function(defaultValue) {
-        defaultValue = {
-          $$typeof: REACT_CONTEXT_TYPE,
-          _currentValue: defaultValue,
-          _currentValue2: defaultValue,
-          _threadCount: 0,
-          Provider: null,
-          Consumer: null
-        };
-        defaultValue.Provider = defaultValue;
-        defaultValue.Consumer = {
-          $$typeof: REACT_CONSUMER_TYPE,
-          _context: defaultValue
-        };
-        defaultValue._currentRenderer = null;
-        defaultValue._currentRenderer2 = null;
-        return defaultValue;
-      };
-      exports.createElement = function(type, config2, children) {
-        for (var i = 2; i < arguments.length; i++)
-          validateChildKeys(arguments[i]);
-        i = {};
-        var key = null;
-        if (null != config2)
-          for (propName in didWarnAboutOldJSXRuntime || !("__self" in config2) || "key" in config2 || (didWarnAboutOldJSXRuntime = true, console.warn(
-            "Your app (or one of its dependencies) is using an outdated JSX transform. Update to the modern JSX transform for faster performance: https://react.dev/link/new-jsx-transform"
-          )), hasValidKey(config2) && (checkKeyStringCoercion(config2.key), key = "" + config2.key), config2)
-            hasOwnProperty.call(config2, propName) && "key" !== propName && "__self" !== propName && "__source" !== propName && (i[propName] = config2[propName]);
-        var childrenLength = arguments.length - 2;
-        if (1 === childrenLength) i.children = children;
-        else if (1 < childrenLength) {
-          for (var childArray = Array(childrenLength), _i = 0; _i < childrenLength; _i++)
-            childArray[_i] = arguments[_i + 2];
-          Object.freeze && Object.freeze(childArray);
-          i.children = childArray;
-        }
-        if (type && type.defaultProps)
-          for (propName in childrenLength = type.defaultProps, childrenLength)
-            void 0 === i[propName] && (i[propName] = childrenLength[propName]);
-        key && defineKeyPropWarningGetter(
-          i,
-          "function" === typeof type ? type.displayName || type.name || "Unknown" : type
-        );
-        var propName = 1e4 > ReactSharedInternals.recentlyCreatedOwnerStacks++;
-        return ReactElement(
-          type,
-          key,
-          i,
-          getOwner(),
-          propName ? Error("react-stack-top-frame") : unknownOwnerDebugStack,
-          propName ? createTask(getTaskName(type)) : unknownOwnerDebugTask
-        );
-      };
-      exports.createRef = function() {
-        var refObject = { current: null };
-        Object.seal(refObject);
-        return refObject;
-      };
-      exports.forwardRef = function(render) {
-        null != render && render.$$typeof === REACT_MEMO_TYPE ? console.error(
-          "forwardRef requires a render function but received a `memo` component. Instead of forwardRef(memo(...)), use memo(forwardRef(...))."
-        ) : "function" !== typeof render ? console.error(
-          "forwardRef requires a render function but was given %s.",
-          null === render ? "null" : typeof render
-        ) : 0 !== render.length && 2 !== render.length && console.error(
-          "forwardRef render functions accept exactly two parameters: props and ref. %s",
-          1 === render.length ? "Did you forget to use the ref parameter?" : "Any additional parameter will be undefined."
-        );
-        null != render && null != render.defaultProps && console.error(
-          "forwardRef render functions do not support defaultProps. Did you accidentally pass a React component?"
-        );
-        var elementType = { $$typeof: REACT_FORWARD_REF_TYPE, render }, ownName;
-        Object.defineProperty(elementType, "displayName", {
-          enumerable: false,
-          configurable: true,
-          get: function() {
-            return ownName;
-          },
-          set: function(name) {
-            ownName = name;
-            render.name || render.displayName || (Object.defineProperty(render, "name", { value: name }), render.displayName = name);
-          }
-        });
-        return elementType;
-      };
-      exports.isValidElement = isValidElement2;
-      exports.lazy = function(ctor) {
-        ctor = { _status: -1, _result: ctor };
-        var lazyType = {
-          $$typeof: REACT_LAZY_TYPE,
-          _payload: ctor,
-          _init: lazyInitializer
-        }, ioInfo = {
-          name: "lazy",
-          start: -1,
-          end: -1,
-          value: null,
-          owner: null,
-          debugStack: Error("react-stack-top-frame"),
-          debugTask: console.createTask ? console.createTask("lazy()") : null
-        };
-        ctor._ioInfo = ioInfo;
-        lazyType._debugInfo = [{ awaited: ioInfo }];
-        return lazyType;
-      };
-      exports.memo = function(type, compare) {
-        null == type && console.error(
-          "memo: The first argument must be a component. Instead received: %s",
-          null === type ? "null" : typeof type
-        );
-        compare = {
-          $$typeof: REACT_MEMO_TYPE,
-          type,
-          compare: void 0 === compare ? null : compare
-        };
-        var ownName;
-        Object.defineProperty(compare, "displayName", {
-          enumerable: false,
-          configurable: true,
-          get: function() {
-            return ownName;
-          },
-          set: function(name) {
-            ownName = name;
-            type.name || type.displayName || (Object.defineProperty(type, "name", { value: name }), type.displayName = name);
-          }
-        });
-        return compare;
-      };
-      exports.startTransition = function(scope) {
-        var prevTransition = ReactSharedInternals.T, currentTransition = {};
-        currentTransition._updatedFibers = /* @__PURE__ */ new Set();
-        ReactSharedInternals.T = currentTransition;
-        try {
-          var returnValue = scope(), onStartTransitionFinish = ReactSharedInternals.S;
-          null !== onStartTransitionFinish && onStartTransitionFinish(currentTransition, returnValue);
-          "object" === typeof returnValue && null !== returnValue && "function" === typeof returnValue.then && (ReactSharedInternals.asyncTransitions++, returnValue.then(releaseAsyncTransition, releaseAsyncTransition), returnValue.then(noop, reportGlobalError));
-        } catch (error48) {
-          reportGlobalError(error48);
-        } finally {
-          null === prevTransition && currentTransition._updatedFibers && (scope = currentTransition._updatedFibers.size, currentTransition._updatedFibers.clear(), 10 < scope && console.warn(
-            "Detected a large number of updates inside startTransition. If this is due to a subscription please re-write it to use React provided hooks. Otherwise concurrent mode guarantees are off the table."
-          )), null !== prevTransition && null !== currentTransition.types && (null !== prevTransition.types && prevTransition.types !== currentTransition.types && console.error(
-            "We expected inner Transitions to have transferred the outer types set and that you cannot add to the outer Transition while inside the inner.This is a bug in React."
-          ), prevTransition.types = currentTransition.types), ReactSharedInternals.T = prevTransition;
-        }
-      };
-      exports.unstable_useCacheRefresh = function() {
-        return resolveDispatcher().useCacheRefresh();
-      };
-      exports.use = function(usable) {
-        return resolveDispatcher().use(usable);
-      };
-      exports.useActionState = function(action, initialState, permalink) {
-        return resolveDispatcher().useActionState(
-          action,
-          initialState,
-          permalink
-        );
-      };
-      exports.useCallback = function(callback, deps) {
-        return resolveDispatcher().useCallback(callback, deps);
-      };
-      exports.useContext = function(Context) {
-        var dispatcher = resolveDispatcher();
-        Context.$$typeof === REACT_CONSUMER_TYPE && console.error(
-          "Calling useContext(Context.Consumer) is not supported and will cause bugs. Did you mean to call useContext(Context) instead?"
-        );
-        return dispatcher.useContext(Context);
-      };
-      exports.useDebugValue = function(value2, formatterFn) {
-        return resolveDispatcher().useDebugValue(value2, formatterFn);
-      };
-      exports.useDeferredValue = function(value2, initialValue) {
-        return resolveDispatcher().useDeferredValue(value2, initialValue);
-      };
-      exports.useEffect = function(create, deps) {
-        null == create && console.warn(
-          "React Hook useEffect requires an effect callback. Did you forget to pass a callback to the hook?"
-        );
-        return resolveDispatcher().useEffect(create, deps);
-      };
-      exports.useEffectEvent = function(callback) {
-        return resolveDispatcher().useEffectEvent(callback);
-      };
-      exports.useId = function() {
-        return resolveDispatcher().useId();
-      };
-      exports.useImperativeHandle = function(ref, create, deps) {
-        return resolveDispatcher().useImperativeHandle(ref, create, deps);
-      };
-      exports.useInsertionEffect = function(create, deps) {
-        null == create && console.warn(
-          "React Hook useInsertionEffect requires an effect callback. Did you forget to pass a callback to the hook?"
-        );
-        return resolveDispatcher().useInsertionEffect(create, deps);
-      };
-      exports.useLayoutEffect = function(create, deps) {
-        null == create && console.warn(
-          "React Hook useLayoutEffect requires an effect callback. Did you forget to pass a callback to the hook?"
-        );
-        return resolveDispatcher().useLayoutEffect(create, deps);
-      };
-      exports.useMemo = function(create, deps) {
-        return resolveDispatcher().useMemo(create, deps);
-      };
-      exports.useOptimistic = function(passthrough, reducer2) {
-        return resolveDispatcher().useOptimistic(passthrough, reducer2);
-      };
-      exports.useReducer = function(reducer2, initialArg, init) {
-        return resolveDispatcher().useReducer(reducer2, initialArg, init);
-      };
-      exports.useRef = function(initialValue) {
-        return resolveDispatcher().useRef(initialValue);
-      };
-      exports.useState = function(initialState) {
-        return resolveDispatcher().useState(initialState);
-      };
-      exports.useSyncExternalStore = function(subscribe, getSnapshot, getServerSnapshot) {
-        return resolveDispatcher().useSyncExternalStore(
-          subscribe,
-          getSnapshot,
-          getServerSnapshot
-        );
-      };
-      exports.useTransition = function() {
-        return resolveDispatcher().useTransition();
-      };
-      exports.version = "19.2.4";
-      "undefined" !== typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ && "function" === typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStop && __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStop(Error());
-    })();
-  }
-});
-
-// node_modules/.pnpm/react@19.2.4/node_modules/react/index.js
-var require_react = __commonJS({
-  "node_modules/.pnpm/react@19.2.4/node_modules/react/index.js"(exports, module) {
-    "use strict";
-    if (process.env.NODE_ENV === "production") {
-      module.exports = require_react_production();
-    } else {
-      module.exports = require_react_development();
-    }
-  }
-});
-
-// node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom.production.js
-var require_react_dom_production = __commonJS({
-  "node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom.production.js"(exports) {
-    "use strict";
-    var React57 = require_react();
-    function formatProdErrorMessage(code) {
-      var url3 = "https://react.dev/errors/" + code;
-      if (1 < arguments.length) {
-        url3 += "?args[]=" + encodeURIComponent(arguments[1]);
-        for (var i = 2; i < arguments.length; i++)
-          url3 += "&args[]=" + encodeURIComponent(arguments[i]);
-      }
-      return "Minified React error #" + code + "; visit " + url3 + " for the full message or use the non-minified dev environment for full errors and additional helpful warnings.";
-    }
-    function noop() {
-    }
-    var Internals = {
-      d: {
-        f: noop,
-        r: function() {
-          throw Error(formatProdErrorMessage(522));
-        },
-        D: noop,
-        C: noop,
-        L: noop,
-        m: noop,
-        X: noop,
-        S: noop,
-        M: noop
-      },
-      p: 0,
-      findDOMNode: null
-    };
-    var REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal");
-    function createPortal$1(children, containerInfo, implementation) {
-      var key = 3 < arguments.length && void 0 !== arguments[3] ? arguments[3] : null;
-      return {
-        $$typeof: REACT_PORTAL_TYPE,
-        key: null == key ? null : "" + key,
-        children,
-        containerInfo,
-        implementation
-      };
-    }
-    var ReactSharedInternals = React57.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE;
-    function getCrossOriginStringAs(as, input) {
-      if ("font" === as) return "";
-      if ("string" === typeof input)
-        return "use-credentials" === input ? input : "";
-    }
-    exports.__DOM_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE = Internals;
-    exports.createPortal = function(children, container) {
-      var key = 2 < arguments.length && void 0 !== arguments[2] ? arguments[2] : null;
-      if (!container || 1 !== container.nodeType && 9 !== container.nodeType && 11 !== container.nodeType)
-        throw Error(formatProdErrorMessage(299));
-      return createPortal$1(children, container, null, key);
-    };
-    exports.flushSync = function(fn) {
-      var previousTransition = ReactSharedInternals.T, previousUpdatePriority = Internals.p;
-      try {
-        if (ReactSharedInternals.T = null, Internals.p = 2, fn) return fn();
-      } finally {
-        ReactSharedInternals.T = previousTransition, Internals.p = previousUpdatePriority, Internals.d.f();
-      }
-    };
-    exports.preconnect = function(href, options) {
-      "string" === typeof href && (options ? (options = options.crossOrigin, options = "string" === typeof options ? "use-credentials" === options ? options : "" : void 0) : options = null, Internals.d.C(href, options));
-    };
-    exports.prefetchDNS = function(href) {
-      "string" === typeof href && Internals.d.D(href);
-    };
-    exports.preinit = function(href, options) {
-      if ("string" === typeof href && options && "string" === typeof options.as) {
-        var as = options.as, crossOrigin = getCrossOriginStringAs(as, options.crossOrigin), integrity = "string" === typeof options.integrity ? options.integrity : void 0, fetchPriority = "string" === typeof options.fetchPriority ? options.fetchPriority : void 0;
-        "style" === as ? Internals.d.S(
-          href,
-          "string" === typeof options.precedence ? options.precedence : void 0,
-          {
-            crossOrigin,
-            integrity,
-            fetchPriority
-          }
-        ) : "script" === as && Internals.d.X(href, {
-          crossOrigin,
-          integrity,
-          fetchPriority,
-          nonce: "string" === typeof options.nonce ? options.nonce : void 0
-        });
-      }
-    };
-    exports.preinitModule = function(href, options) {
-      if ("string" === typeof href)
-        if ("object" === typeof options && null !== options) {
-          if (null == options.as || "script" === options.as) {
-            var crossOrigin = getCrossOriginStringAs(
-              options.as,
-              options.crossOrigin
-            );
-            Internals.d.M(href, {
-              crossOrigin,
-              integrity: "string" === typeof options.integrity ? options.integrity : void 0,
-              nonce: "string" === typeof options.nonce ? options.nonce : void 0
-            });
-          }
-        } else null == options && Internals.d.M(href);
-    };
-    exports.preload = function(href, options) {
-      if ("string" === typeof href && "object" === typeof options && null !== options && "string" === typeof options.as) {
-        var as = options.as, crossOrigin = getCrossOriginStringAs(as, options.crossOrigin);
-        Internals.d.L(href, as, {
-          crossOrigin,
-          integrity: "string" === typeof options.integrity ? options.integrity : void 0,
-          nonce: "string" === typeof options.nonce ? options.nonce : void 0,
-          type: "string" === typeof options.type ? options.type : void 0,
-          fetchPriority: "string" === typeof options.fetchPriority ? options.fetchPriority : void 0,
-          referrerPolicy: "string" === typeof options.referrerPolicy ? options.referrerPolicy : void 0,
-          imageSrcSet: "string" === typeof options.imageSrcSet ? options.imageSrcSet : void 0,
-          imageSizes: "string" === typeof options.imageSizes ? options.imageSizes : void 0,
-          media: "string" === typeof options.media ? options.media : void 0
-        });
-      }
-    };
-    exports.preloadModule = function(href, options) {
-      if ("string" === typeof href)
-        if (options) {
-          var crossOrigin = getCrossOriginStringAs(options.as, options.crossOrigin);
-          Internals.d.m(href, {
-            as: "string" === typeof options.as && "script" !== options.as ? options.as : void 0,
-            crossOrigin,
-            integrity: "string" === typeof options.integrity ? options.integrity : void 0
-          });
-        } else Internals.d.m(href);
-    };
-    exports.requestFormReset = function(form) {
-      Internals.d.r(form);
-    };
-    exports.unstable_batchedUpdates = function(fn, a) {
-      return fn(a);
-    };
-    exports.useFormState = function(action, initialState, permalink) {
-      return ReactSharedInternals.H.useFormState(action, initialState, permalink);
-    };
-    exports.useFormStatus = function() {
-      return ReactSharedInternals.H.useHostTransitionStatus();
-    };
-    exports.version = "19.2.4";
-  }
-});
-
-// node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom.development.js
-var require_react_dom_development = __commonJS({
-  "node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/cjs/react-dom.development.js"(exports) {
-    "use strict";
-    "production" !== process.env.NODE_ENV && (function() {
-      function noop() {
-      }
-      function testStringCoercion(value2) {
-        return "" + value2;
-      }
-      function createPortal$1(children, containerInfo, implementation) {
-        var key = 3 < arguments.length && void 0 !== arguments[3] ? arguments[3] : null;
-        try {
-          testStringCoercion(key);
-          var JSCompiler_inline_result = false;
-        } catch (e) {
-          JSCompiler_inline_result = true;
-        }
-        JSCompiler_inline_result && (console.error(
-          "The provided key is an unsupported type %s. This value must be coerced to a string before using it here.",
-          "function" === typeof Symbol && Symbol.toStringTag && key[Symbol.toStringTag] || key.constructor.name || "Object"
-        ), testStringCoercion(key));
-        return {
-          $$typeof: REACT_PORTAL_TYPE,
-          key: null == key ? null : "" + key,
-          children,
-          containerInfo,
-          implementation
-        };
-      }
-      function getCrossOriginStringAs(as, input) {
-        if ("font" === as) return "";
-        if ("string" === typeof input)
-          return "use-credentials" === input ? input : "";
-      }
-      function getValueDescriptorExpectingObjectForWarning(thing) {
-        return null === thing ? "`null`" : void 0 === thing ? "`undefined`" : "" === thing ? "an empty string" : 'something with type "' + typeof thing + '"';
-      }
-      function getValueDescriptorExpectingEnumForWarning(thing) {
-        return null === thing ? "`null`" : void 0 === thing ? "`undefined`" : "" === thing ? "an empty string" : "string" === typeof thing ? JSON.stringify(thing) : "number" === typeof thing ? "`" + thing + "`" : 'something with type "' + typeof thing + '"';
-      }
-      function resolveDispatcher() {
-        var dispatcher = ReactSharedInternals.H;
-        null === dispatcher && console.error(
-          "Invalid hook call. Hooks can only be called inside of the body of a function component. This could happen for one of the following reasons:\n1. You might have mismatching versions of React and the renderer (such as React DOM)\n2. You might be breaking the Rules of Hooks\n3. You might have more than one copy of React in the same app\nSee https://react.dev/link/invalid-hook-call for tips about how to debug and fix this problem."
-        );
-        return dispatcher;
-      }
-      "undefined" !== typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ && "function" === typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart && __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart(Error());
-      var React57 = require_react(), Internals = {
-        d: {
-          f: noop,
-          r: function() {
-            throw Error(
-              "Invalid form element. requestFormReset must be passed a form that was rendered by React."
-            );
-          },
-          D: noop,
-          C: noop,
-          L: noop,
-          m: noop,
-          X: noop,
-          S: noop,
-          M: noop
-        },
-        p: 0,
-        findDOMNode: null
-      }, REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), ReactSharedInternals = React57.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE;
-      "function" === typeof Map && null != Map.prototype && "function" === typeof Map.prototype.forEach && "function" === typeof Set && null != Set.prototype && "function" === typeof Set.prototype.clear && "function" === typeof Set.prototype.forEach || console.error(
-        "React depends on Map and Set built-in types. Make sure that you load a polyfill in older browsers. https://reactjs.org/link/react-polyfills"
-      );
-      exports.__DOM_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE = Internals;
-      exports.createPortal = function(children, container) {
-        var key = 2 < arguments.length && void 0 !== arguments[2] ? arguments[2] : null;
-        if (!container || 1 !== container.nodeType && 9 !== container.nodeType && 11 !== container.nodeType)
-          throw Error("Target container is not a DOM element.");
-        return createPortal$1(children, container, null, key);
-      };
-      exports.flushSync = function(fn) {
-        var previousTransition = ReactSharedInternals.T, previousUpdatePriority = Internals.p;
-        try {
-          if (ReactSharedInternals.T = null, Internals.p = 2, fn)
-            return fn();
-        } finally {
-          ReactSharedInternals.T = previousTransition, Internals.p = previousUpdatePriority, Internals.d.f() && console.error(
-            "flushSync was called from inside a lifecycle method. React cannot flush when React is already rendering. Consider moving this call to a scheduler task or micro task."
-          );
-        }
-      };
-      exports.preconnect = function(href, options) {
-        "string" === typeof href && href ? null != options && "object" !== typeof options ? console.error(
-          "ReactDOM.preconnect(): Expected the `options` argument (second) to be an object but encountered %s instead. The only supported option at this time is `crossOrigin` which accepts a string.",
-          getValueDescriptorExpectingEnumForWarning(options)
-        ) : null != options && "string" !== typeof options.crossOrigin && console.error(
-          "ReactDOM.preconnect(): Expected the `crossOrigin` option (second argument) to be a string but encountered %s instead. Try removing this option or passing a string value instead.",
-          getValueDescriptorExpectingObjectForWarning(options.crossOrigin)
-        ) : console.error(
-          "ReactDOM.preconnect(): Expected the `href` argument (first) to be a non-empty string but encountered %s instead.",
-          getValueDescriptorExpectingObjectForWarning(href)
-        );
-        "string" === typeof href && (options ? (options = options.crossOrigin, options = "string" === typeof options ? "use-credentials" === options ? options : "" : void 0) : options = null, Internals.d.C(href, options));
-      };
-      exports.prefetchDNS = function(href) {
-        if ("string" !== typeof href || !href)
-          console.error(
-            "ReactDOM.prefetchDNS(): Expected the `href` argument (first) to be a non-empty string but encountered %s instead.",
-            getValueDescriptorExpectingObjectForWarning(href)
-          );
-        else if (1 < arguments.length) {
-          var options = arguments[1];
-          "object" === typeof options && options.hasOwnProperty("crossOrigin") ? console.error(
-            "ReactDOM.prefetchDNS(): Expected only one argument, `href`, but encountered %s as a second argument instead. This argument is reserved for future options and is currently disallowed. It looks like the you are attempting to set a crossOrigin property for this DNS lookup hint. Browsers do not perform DNS queries using CORS and setting this attribute on the resource hint has no effect. Try calling ReactDOM.prefetchDNS() with just a single string argument, `href`.",
-            getValueDescriptorExpectingEnumForWarning(options)
-          ) : console.error(
-            "ReactDOM.prefetchDNS(): Expected only one argument, `href`, but encountered %s as a second argument instead. This argument is reserved for future options and is currently disallowed. Try calling ReactDOM.prefetchDNS() with just a single string argument, `href`.",
-            getValueDescriptorExpectingEnumForWarning(options)
-          );
-        }
-        "string" === typeof href && Internals.d.D(href);
-      };
-      exports.preinit = function(href, options) {
-        "string" === typeof href && href ? null == options || "object" !== typeof options ? console.error(
-          "ReactDOM.preinit(): Expected the `options` argument (second) to be an object with an `as` property describing the type of resource to be preinitialized but encountered %s instead.",
-          getValueDescriptorExpectingEnumForWarning(options)
-        ) : "style" !== options.as && "script" !== options.as && console.error(
-          'ReactDOM.preinit(): Expected the `as` property in the `options` argument (second) to contain a valid value describing the type of resource to be preinitialized but encountered %s instead. Valid values for `as` are "style" and "script".',
-          getValueDescriptorExpectingEnumForWarning(options.as)
-        ) : console.error(
-          "ReactDOM.preinit(): Expected the `href` argument (first) to be a non-empty string but encountered %s instead.",
-          getValueDescriptorExpectingObjectForWarning(href)
-        );
-        if ("string" === typeof href && options && "string" === typeof options.as) {
-          var as = options.as, crossOrigin = getCrossOriginStringAs(as, options.crossOrigin), integrity = "string" === typeof options.integrity ? options.integrity : void 0, fetchPriority = "string" === typeof options.fetchPriority ? options.fetchPriority : void 0;
-          "style" === as ? Internals.d.S(
-            href,
-            "string" === typeof options.precedence ? options.precedence : void 0,
-            {
-              crossOrigin,
-              integrity,
-              fetchPriority
-            }
-          ) : "script" === as && Internals.d.X(href, {
-            crossOrigin,
-            integrity,
-            fetchPriority,
-            nonce: "string" === typeof options.nonce ? options.nonce : void 0
-          });
-        }
-      };
-      exports.preinitModule = function(href, options) {
-        var encountered = "";
-        "string" === typeof href && href || (encountered += " The `href` argument encountered was " + getValueDescriptorExpectingObjectForWarning(href) + ".");
-        void 0 !== options && "object" !== typeof options ? encountered += " The `options` argument encountered was " + getValueDescriptorExpectingObjectForWarning(options) + "." : options && "as" in options && "script" !== options.as && (encountered += " The `as` option encountered was " + getValueDescriptorExpectingEnumForWarning(options.as) + ".");
-        if (encountered)
-          console.error(
-            "ReactDOM.preinitModule(): Expected up to two arguments, a non-empty `href` string and, optionally, an `options` object with a valid `as` property.%s",
-            encountered
-          );
-        else
-          switch (encountered = options && "string" === typeof options.as ? options.as : "script", encountered) {
-            case "script":
-              break;
-            default:
-              encountered = getValueDescriptorExpectingEnumForWarning(encountered), console.error(
-                'ReactDOM.preinitModule(): Currently the only supported "as" type for this function is "script" but received "%s" instead. This warning was generated for `href` "%s". In the future other module types will be supported, aligning with the import-attributes proposal. Learn more here: (https://github.com/tc39/proposal-import-attributes)',
-                encountered,
-                href
-              );
-          }
-        if ("string" === typeof href)
-          if ("object" === typeof options && null !== options) {
-            if (null == options.as || "script" === options.as)
-              encountered = getCrossOriginStringAs(
-                options.as,
-                options.crossOrigin
-              ), Internals.d.M(href, {
-                crossOrigin: encountered,
-                integrity: "string" === typeof options.integrity ? options.integrity : void 0,
-                nonce: "string" === typeof options.nonce ? options.nonce : void 0
-              });
-          } else null == options && Internals.d.M(href);
-      };
-      exports.preload = function(href, options) {
-        var encountered = "";
-        "string" === typeof href && href || (encountered += " The `href` argument encountered was " + getValueDescriptorExpectingObjectForWarning(href) + ".");
-        null == options || "object" !== typeof options ? encountered += " The `options` argument encountered was " + getValueDescriptorExpectingObjectForWarning(options) + "." : "string" === typeof options.as && options.as || (encountered += " The `as` option encountered was " + getValueDescriptorExpectingObjectForWarning(options.as) + ".");
-        encountered && console.error(
-          'ReactDOM.preload(): Expected two arguments, a non-empty `href` string and an `options` object with an `as` property valid for a `<link rel="preload" as="..." />` tag.%s',
-          encountered
-        );
-        if ("string" === typeof href && "object" === typeof options && null !== options && "string" === typeof options.as) {
-          encountered = options.as;
-          var crossOrigin = getCrossOriginStringAs(
-            encountered,
-            options.crossOrigin
-          );
-          Internals.d.L(href, encountered, {
-            crossOrigin,
-            integrity: "string" === typeof options.integrity ? options.integrity : void 0,
-            nonce: "string" === typeof options.nonce ? options.nonce : void 0,
-            type: "string" === typeof options.type ? options.type : void 0,
-            fetchPriority: "string" === typeof options.fetchPriority ? options.fetchPriority : void 0,
-            referrerPolicy: "string" === typeof options.referrerPolicy ? options.referrerPolicy : void 0,
-            imageSrcSet: "string" === typeof options.imageSrcSet ? options.imageSrcSet : void 0,
-            imageSizes: "string" === typeof options.imageSizes ? options.imageSizes : void 0,
-            media: "string" === typeof options.media ? options.media : void 0
-          });
-        }
-      };
-      exports.preloadModule = function(href, options) {
-        var encountered = "";
-        "string" === typeof href && href || (encountered += " The `href` argument encountered was " + getValueDescriptorExpectingObjectForWarning(href) + ".");
-        void 0 !== options && "object" !== typeof options ? encountered += " The `options` argument encountered was " + getValueDescriptorExpectingObjectForWarning(options) + "." : options && "as" in options && "string" !== typeof options.as && (encountered += " The `as` option encountered was " + getValueDescriptorExpectingObjectForWarning(options.as) + ".");
-        encountered && console.error(
-          'ReactDOM.preloadModule(): Expected two arguments, a non-empty `href` string and, optionally, an `options` object with an `as` property valid for a `<link rel="modulepreload" as="..." />` tag.%s',
-          encountered
-        );
-        "string" === typeof href && (options ? (encountered = getCrossOriginStringAs(
-          options.as,
-          options.crossOrigin
-        ), Internals.d.m(href, {
-          as: "string" === typeof options.as && "script" !== options.as ? options.as : void 0,
-          crossOrigin: encountered,
-          integrity: "string" === typeof options.integrity ? options.integrity : void 0
-        })) : Internals.d.m(href));
-      };
-      exports.requestFormReset = function(form) {
-        Internals.d.r(form);
-      };
-      exports.unstable_batchedUpdates = function(fn, a) {
-        return fn(a);
-      };
-      exports.useFormState = function(action, initialState, permalink) {
-        return resolveDispatcher().useFormState(action, initialState, permalink);
-      };
-      exports.useFormStatus = function() {
-        return resolveDispatcher().useHostTransitionStatus();
-      };
-      exports.version = "19.2.4";
-      "undefined" !== typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ && "function" === typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStop && __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStop(Error());
-    })();
-  }
-});
-
-// node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/index.js
-var require_react_dom = __commonJS({
-  "node_modules/.pnpm/react-dom@19.2.4_react@19.2.4/node_modules/react-dom/index.js"(exports, module) {
-    "use strict";
-    function checkDCE() {
-      if (typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ === "undefined" || typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.checkDCE !== "function") {
-        return;
-      }
-      if (process.env.NODE_ENV !== "production") {
-        throw new Error("^_^");
-      }
-      try {
-        __REACT_DEVTOOLS_GLOBAL_HOOK__.checkDCE(checkDCE);
-      } catch (err) {
-        console.error(err);
-      }
-    }
-    if (process.env.NODE_ENV === "production") {
-      checkDCE();
-      module.exports = require_react_dom_production();
-    } else {
-      module.exports = require_react_dom_development();
-    }
-  }
-});
-
-// node_modules/.pnpm/react@19.2.4/node_modules/react/cjs/react-jsx-runtime.production.js
-var require_react_jsx_runtime_production = __commonJS({
-  "node_modules/.pnpm/react@19.2.4/node_modules/react/cjs/react-jsx-runtime.production.js"(exports) {
-    "use strict";
-    var REACT_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.transitional.element");
-    var REACT_FRAGMENT_TYPE = /* @__PURE__ */ Symbol.for("react.fragment");
-    function jsxProd(type, config2, maybeKey) {
-      var key = null;
-      void 0 !== maybeKey && (key = "" + maybeKey);
-      void 0 !== config2.key && (key = "" + config2.key);
-      if ("key" in config2) {
-        maybeKey = {};
-        for (var propName in config2)
-          "key" !== propName && (maybeKey[propName] = config2[propName]);
-      } else maybeKey = config2;
-      config2 = maybeKey.ref;
-      return {
-        $$typeof: REACT_ELEMENT_TYPE,
-        type,
-        key,
-        ref: void 0 !== config2 ? config2 : null,
-        props: maybeKey
-      };
-    }
-    exports.Fragment = REACT_FRAGMENT_TYPE;
-    exports.jsx = jsxProd;
-    exports.jsxs = jsxProd;
-  }
-});
-
-// node_modules/.pnpm/react@19.2.4/node_modules/react/cjs/react-jsx-runtime.development.js
-var require_react_jsx_runtime_development = __commonJS({
-  "node_modules/.pnpm/react@19.2.4/node_modules/react/cjs/react-jsx-runtime.development.js"(exports) {
-    "use strict";
-    "production" !== process.env.NODE_ENV && (function() {
-      function getComponentNameFromType(type) {
-        if (null == type) return null;
-        if ("function" === typeof type)
-          return type.$$typeof === REACT_CLIENT_REFERENCE ? null : type.displayName || type.name || null;
-        if ("string" === typeof type) return type;
-        switch (type) {
-          case REACT_FRAGMENT_TYPE:
-            return "Fragment";
-          case REACT_PROFILER_TYPE:
-            return "Profiler";
-          case REACT_STRICT_MODE_TYPE:
-            return "StrictMode";
-          case REACT_SUSPENSE_TYPE:
-            return "Suspense";
-          case REACT_SUSPENSE_LIST_TYPE:
-            return "SuspenseList";
-          case REACT_ACTIVITY_TYPE:
-            return "Activity";
-        }
-        if ("object" === typeof type)
-          switch ("number" === typeof type.tag && console.error(
-            "Received an unexpected object in getComponentNameFromType(). This is likely a bug in React. Please file an issue."
-          ), type.$$typeof) {
-            case REACT_PORTAL_TYPE:
-              return "Portal";
-            case REACT_CONTEXT_TYPE:
-              return type.displayName || "Context";
-            case REACT_CONSUMER_TYPE:
-              return (type._context.displayName || "Context") + ".Consumer";
-            case REACT_FORWARD_REF_TYPE:
-              var innerType = type.render;
-              type = type.displayName;
-              type || (type = innerType.displayName || innerType.name || "", type = "" !== type ? "ForwardRef(" + type + ")" : "ForwardRef");
-              return type;
-            case REACT_MEMO_TYPE:
-              return innerType = type.displayName || null, null !== innerType ? innerType : getComponentNameFromType(type.type) || "Memo";
-            case REACT_LAZY_TYPE:
-              innerType = type._payload;
-              type = type._init;
-              try {
-                return getComponentNameFromType(type(innerType));
-              } catch (x) {
-              }
-          }
-        return null;
-      }
-      function testStringCoercion(value2) {
-        return "" + value2;
-      }
-      function checkKeyStringCoercion(value2) {
-        try {
-          testStringCoercion(value2);
-          var JSCompiler_inline_result = false;
-        } catch (e) {
-          JSCompiler_inline_result = true;
-        }
-        if (JSCompiler_inline_result) {
-          JSCompiler_inline_result = console;
-          var JSCompiler_temp_const = JSCompiler_inline_result.error;
-          var JSCompiler_inline_result$jscomp$0 = "function" === typeof Symbol && Symbol.toStringTag && value2[Symbol.toStringTag] || value2.constructor.name || "Object";
-          JSCompiler_temp_const.call(
-            JSCompiler_inline_result,
-            "The provided key is an unsupported type %s. This value must be coerced to a string before using it here.",
-            JSCompiler_inline_result$jscomp$0
-          );
-          return testStringCoercion(value2);
-        }
-      }
-      function getTaskName(type) {
-        if (type === REACT_FRAGMENT_TYPE) return "<>";
-        if ("object" === typeof type && null !== type && type.$$typeof === REACT_LAZY_TYPE)
-          return "<...>";
-        try {
-          var name = getComponentNameFromType(type);
-          return name ? "<" + name + ">" : "<...>";
-        } catch (x) {
-          return "<...>";
-        }
-      }
-      function getOwner() {
-        var dispatcher = ReactSharedInternals.A;
-        return null === dispatcher ? null : dispatcher.getOwner();
-      }
-      function UnknownOwner() {
-        return Error("react-stack-top-frame");
-      }
-      function hasValidKey(config2) {
-        if (hasOwnProperty.call(config2, "key")) {
-          var getter = Object.getOwnPropertyDescriptor(config2, "key").get;
-          if (getter && getter.isReactWarning) return false;
-        }
-        return void 0 !== config2.key;
-      }
-      function defineKeyPropWarningGetter(props, displayName) {
-        function warnAboutAccessingKey() {
-          specialPropKeyWarningShown || (specialPropKeyWarningShown = true, console.error(
-            "%s: `key` is not a prop. Trying to access it will result in `undefined` being returned. If you need to access the same value within the child component, you should pass it as a different prop. (https://react.dev/link/special-props)",
-            displayName
-          ));
-        }
-        warnAboutAccessingKey.isReactWarning = true;
-        Object.defineProperty(props, "key", {
-          get: warnAboutAccessingKey,
-          configurable: true
-        });
-      }
-      function elementRefGetterWithDeprecationWarning() {
-        var componentName = getComponentNameFromType(this.type);
-        didWarnAboutElementRef[componentName] || (didWarnAboutElementRef[componentName] = true, console.error(
-          "Accessing element.ref was removed in React 19. ref is now a regular prop. It will be removed from the JSX Element type in a future release."
-        ));
-        componentName = this.props.ref;
-        return void 0 !== componentName ? componentName : null;
-      }
-      function ReactElement(type, key, props, owner, debugStack, debugTask) {
-        var refProp = props.ref;
-        type = {
-          $$typeof: REACT_ELEMENT_TYPE,
-          type,
-          key,
-          props,
-          _owner: owner
-        };
-        null !== (void 0 !== refProp ? refProp : null) ? Object.defineProperty(type, "ref", {
-          enumerable: false,
-          get: elementRefGetterWithDeprecationWarning
-        }) : Object.defineProperty(type, "ref", { enumerable: false, value: null });
-        type._store = {};
-        Object.defineProperty(type._store, "validated", {
-          configurable: false,
-          enumerable: false,
-          writable: true,
-          value: 0
-        });
-        Object.defineProperty(type, "_debugInfo", {
-          configurable: false,
-          enumerable: false,
-          writable: true,
-          value: null
-        });
-        Object.defineProperty(type, "_debugStack", {
-          configurable: false,
-          enumerable: false,
-          writable: true,
-          value: debugStack
-        });
-        Object.defineProperty(type, "_debugTask", {
-          configurable: false,
-          enumerable: false,
-          writable: true,
-          value: debugTask
-        });
-        Object.freeze && (Object.freeze(type.props), Object.freeze(type));
-        return type;
-      }
-      function jsxDEVImpl(type, config2, maybeKey, isStaticChildren, debugStack, debugTask) {
-        var children = config2.children;
-        if (void 0 !== children)
-          if (isStaticChildren)
-            if (isArrayImpl(children)) {
-              for (isStaticChildren = 0; isStaticChildren < children.length; isStaticChildren++)
-                validateChildKeys(children[isStaticChildren]);
-              Object.freeze && Object.freeze(children);
-            } else
-              console.error(
-                "React.jsx: Static children should always be an array. You are likely explicitly calling React.jsxs or React.jsxDEV. Use the Babel transform instead."
-              );
-          else validateChildKeys(children);
-        if (hasOwnProperty.call(config2, "key")) {
-          children = getComponentNameFromType(type);
-          var keys2 = Object.keys(config2).filter(function(k) {
-            return "key" !== k;
-          });
-          isStaticChildren = 0 < keys2.length ? "{key: someKey, " + keys2.join(": ..., ") + ": ...}" : "{key: someKey}";
-          didWarnAboutKeySpread[children + isStaticChildren] || (keys2 = 0 < keys2.length ? "{" + keys2.join(": ..., ") + ": ...}" : "{}", console.error(
-            'A props object containing a "key" prop is being spread into JSX:\n  let props = %s;\n  <%s {...props} />\nReact keys must be passed directly to JSX without using spread:\n  let props = %s;\n  <%s key={someKey} {...props} />',
-            isStaticChildren,
-            children,
-            keys2,
-            children
-          ), didWarnAboutKeySpread[children + isStaticChildren] = true);
-        }
-        children = null;
-        void 0 !== maybeKey && (checkKeyStringCoercion(maybeKey), children = "" + maybeKey);
-        hasValidKey(config2) && (checkKeyStringCoercion(config2.key), children = "" + config2.key);
-        if ("key" in config2) {
-          maybeKey = {};
-          for (var propName in config2)
-            "key" !== propName && (maybeKey[propName] = config2[propName]);
-        } else maybeKey = config2;
-        children && defineKeyPropWarningGetter(
-          maybeKey,
-          "function" === typeof type ? type.displayName || type.name || "Unknown" : type
-        );
-        return ReactElement(
-          type,
-          children,
-          maybeKey,
-          getOwner(),
-          debugStack,
-          debugTask
-        );
-      }
-      function validateChildKeys(node) {
-        isValidElement2(node) ? node._store && (node._store.validated = 1) : "object" === typeof node && null !== node && node.$$typeof === REACT_LAZY_TYPE && ("fulfilled" === node._payload.status ? isValidElement2(node._payload.value) && node._payload.value._store && (node._payload.value._store.validated = 1) : node._store && (node._store.validated = 1));
-      }
-      function isValidElement2(object5) {
-        return "object" === typeof object5 && null !== object5 && object5.$$typeof === REACT_ELEMENT_TYPE;
-      }
-      var React57 = require_react(), REACT_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.transitional.element"), REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), REACT_FRAGMENT_TYPE = /* @__PURE__ */ Symbol.for("react.fragment"), REACT_STRICT_MODE_TYPE = /* @__PURE__ */ Symbol.for("react.strict_mode"), REACT_PROFILER_TYPE = /* @__PURE__ */ Symbol.for("react.profiler"), REACT_CONSUMER_TYPE = /* @__PURE__ */ Symbol.for("react.consumer"), REACT_CONTEXT_TYPE = /* @__PURE__ */ Symbol.for("react.context"), REACT_FORWARD_REF_TYPE = /* @__PURE__ */ Symbol.for("react.forward_ref"), REACT_SUSPENSE_TYPE = /* @__PURE__ */ Symbol.for("react.suspense"), REACT_SUSPENSE_LIST_TYPE = /* @__PURE__ */ Symbol.for("react.suspense_list"), REACT_MEMO_TYPE = /* @__PURE__ */ Symbol.for("react.memo"), REACT_LAZY_TYPE = /* @__PURE__ */ Symbol.for("react.lazy"), REACT_ACTIVITY_TYPE = /* @__PURE__ */ Symbol.for("react.activity"), REACT_CLIENT_REFERENCE = /* @__PURE__ */ Symbol.for("react.client.reference"), ReactSharedInternals = React57.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, hasOwnProperty = Object.prototype.hasOwnProperty, isArrayImpl = Array.isArray, createTask = console.createTask ? console.createTask : function() {
-        return null;
-      };
-      React57 = {
-        react_stack_bottom_frame: function(callStackForError) {
-          return callStackForError();
-        }
-      };
-      var specialPropKeyWarningShown;
-      var didWarnAboutElementRef = {};
-      var unknownOwnerDebugStack = React57.react_stack_bottom_frame.bind(
-        React57,
-        UnknownOwner
-      )();
-      var unknownOwnerDebugTask = createTask(getTaskName(UnknownOwner));
-      var didWarnAboutKeySpread = {};
-      exports.Fragment = REACT_FRAGMENT_TYPE;
-      exports.jsx = function(type, config2, maybeKey) {
-        var trackActualOwner = 1e4 > ReactSharedInternals.recentlyCreatedOwnerStacks++;
-        return jsxDEVImpl(
-          type,
-          config2,
-          maybeKey,
-          false,
-          trackActualOwner ? Error("react-stack-top-frame") : unknownOwnerDebugStack,
-          trackActualOwner ? createTask(getTaskName(type)) : unknownOwnerDebugTask
-        );
-      };
-      exports.jsxs = function(type, config2, maybeKey) {
-        var trackActualOwner = 1e4 > ReactSharedInternals.recentlyCreatedOwnerStacks++;
-        return jsxDEVImpl(
-          type,
-          config2,
-          maybeKey,
-          true,
-          trackActualOwner ? Error("react-stack-top-frame") : unknownOwnerDebugStack,
-          trackActualOwner ? createTask(getTaskName(type)) : unknownOwnerDebugTask
-        );
-      };
-    })();
-  }
-});
-
-// node_modules/.pnpm/react@19.2.4/node_modules/react/jsx-runtime.js
-var require_jsx_runtime = __commonJS({
-  "node_modules/.pnpm/react@19.2.4/node_modules/react/jsx-runtime.js"(exports, module) {
-    "use strict";
-    if (process.env.NODE_ENV === "production") {
-      module.exports = require_react_jsx_runtime_production();
-    } else {
-      module.exports = require_react_jsx_runtime_development();
-    }
-  }
-});
+} from "./chunk-4VNS5WPM.js";
 
 // node_modules/.pnpm/scheduler@0.27.0/node_modules/scheduler/cjs/scheduler.production.js
 var require_scheduler_production = __commonJS({
@@ -10083,7 +7941,7 @@ var require_react_reconciler_production = __commonJS({
       }
       var exports2 = {};
       "use strict";
-      var React57 = require_react(), Scheduler = require_scheduler(), assign = Object.assign, REACT_LEGACY_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.element"), REACT_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.transitional.element"), REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), REACT_FRAGMENT_TYPE = /* @__PURE__ */ Symbol.for("react.fragment"), REACT_STRICT_MODE_TYPE = /* @__PURE__ */ Symbol.for("react.strict_mode"), REACT_PROFILER_TYPE = /* @__PURE__ */ Symbol.for("react.profiler"), REACT_CONSUMER_TYPE = /* @__PURE__ */ Symbol.for("react.consumer"), REACT_CONTEXT_TYPE = /* @__PURE__ */ Symbol.for("react.context"), REACT_FORWARD_REF_TYPE = /* @__PURE__ */ Symbol.for("react.forward_ref"), REACT_SUSPENSE_TYPE = /* @__PURE__ */ Symbol.for("react.suspense"), REACT_SUSPENSE_LIST_TYPE = /* @__PURE__ */ Symbol.for("react.suspense_list"), REACT_MEMO_TYPE = /* @__PURE__ */ Symbol.for("react.memo"), REACT_LAZY_TYPE = /* @__PURE__ */ Symbol.for("react.lazy");
+      var React57 = __require("react"), Scheduler = require_scheduler(), assign = Object.assign, REACT_LEGACY_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.element"), REACT_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.transitional.element"), REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), REACT_FRAGMENT_TYPE = /* @__PURE__ */ Symbol.for("react.fragment"), REACT_STRICT_MODE_TYPE = /* @__PURE__ */ Symbol.for("react.strict_mode"), REACT_PROFILER_TYPE = /* @__PURE__ */ Symbol.for("react.profiler"), REACT_CONSUMER_TYPE = /* @__PURE__ */ Symbol.for("react.consumer"), REACT_CONTEXT_TYPE = /* @__PURE__ */ Symbol.for("react.context"), REACT_FORWARD_REF_TYPE = /* @__PURE__ */ Symbol.for("react.forward_ref"), REACT_SUSPENSE_TYPE = /* @__PURE__ */ Symbol.for("react.suspense"), REACT_SUSPENSE_LIST_TYPE = /* @__PURE__ */ Symbol.for("react.suspense_list"), REACT_MEMO_TYPE = /* @__PURE__ */ Symbol.for("react.memo"), REACT_LAZY_TYPE = /* @__PURE__ */ Symbol.for("react.lazy");
       /* @__PURE__ */ Symbol.for("react.scope");
       var REACT_ACTIVITY_TYPE = /* @__PURE__ */ Symbol.for("react.activity");
       /* @__PURE__ */ Symbol.for("react.legacy_hidden");
@@ -22683,7 +20541,7 @@ var require_react_reconciler_development = __commonJS({
       }
       var exports2 = {};
       "use strict";
-      var React57 = require_react(), Scheduler = require_scheduler(), assign = Object.assign, REACT_LEGACY_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.element"), REACT_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.transitional.element"), REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), REACT_FRAGMENT_TYPE = /* @__PURE__ */ Symbol.for("react.fragment"), REACT_STRICT_MODE_TYPE = /* @__PURE__ */ Symbol.for("react.strict_mode"), REACT_PROFILER_TYPE = /* @__PURE__ */ Symbol.for("react.profiler"), REACT_CONSUMER_TYPE = /* @__PURE__ */ Symbol.for("react.consumer"), REACT_CONTEXT_TYPE = /* @__PURE__ */ Symbol.for("react.context"), REACT_FORWARD_REF_TYPE = /* @__PURE__ */ Symbol.for("react.forward_ref"), REACT_SUSPENSE_TYPE = /* @__PURE__ */ Symbol.for("react.suspense"), REACT_SUSPENSE_LIST_TYPE = /* @__PURE__ */ Symbol.for("react.suspense_list"), REACT_MEMO_TYPE = /* @__PURE__ */ Symbol.for("react.memo"), REACT_LAZY_TYPE = /* @__PURE__ */ Symbol.for("react.lazy");
+      var React57 = __require("react"), Scheduler = require_scheduler(), assign = Object.assign, REACT_LEGACY_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.element"), REACT_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.transitional.element"), REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), REACT_FRAGMENT_TYPE = /* @__PURE__ */ Symbol.for("react.fragment"), REACT_STRICT_MODE_TYPE = /* @__PURE__ */ Symbol.for("react.strict_mode"), REACT_PROFILER_TYPE = /* @__PURE__ */ Symbol.for("react.profiler"), REACT_CONSUMER_TYPE = /* @__PURE__ */ Symbol.for("react.consumer"), REACT_CONTEXT_TYPE = /* @__PURE__ */ Symbol.for("react.context"), REACT_FORWARD_REF_TYPE = /* @__PURE__ */ Symbol.for("react.forward_ref"), REACT_SUSPENSE_TYPE = /* @__PURE__ */ Symbol.for("react.suspense"), REACT_SUSPENSE_LIST_TYPE = /* @__PURE__ */ Symbol.for("react.suspense_list"), REACT_MEMO_TYPE = /* @__PURE__ */ Symbol.for("react.memo"), REACT_LAZY_TYPE = /* @__PURE__ */ Symbol.for("react.lazy");
       /* @__PURE__ */ Symbol.for("react.scope");
       var REACT_ACTIVITY_TYPE = /* @__PURE__ */ Symbol.for("react.activity");
       /* @__PURE__ */ Symbol.for("react.legacy_hidden");
@@ -50400,7 +48258,7 @@ var BrowserStoreFSDriver = class {
     if (this.initPromise) return this.initPromise;
     this.initPromise = (async () => {
       try {
-        const { createOpfsPersister } = await import("./persister-browser-2PYRZ5J2.js");
+        const { createOpfsPersister } = await import("./persister-browser-URNEMMIX.js");
         const opfsRoot = await navigator.storage.getDirectory();
         const opfsHandle = await opfsRoot.getFileHandle(`${FS_STORAGE_KEY}.json`, { create: true });
         const opfsPersister = createOpfsPersister(this.store, opfsHandle);
@@ -50414,7 +48272,7 @@ var BrowserStoreFSDriver = class {
       } catch (opfsError) {
         console.warn("OPFS init failed, trying IndexedDB persister:", opfsError);
         try {
-          const { createIndexedDbPersister } = await import("./persister-indexed-db-FQZSNEZK.js");
+          const { createIndexedDbPersister } = await import("./persister-indexed-db-DZC6RMON.js");
           this.persistenceMode = "indexeddb";
           const indexedDbPersister = createIndexedDbPersister(this.store, FS_STORAGE_KEY);
           this.persister = indexedDbPersister;
@@ -50425,7 +48283,7 @@ var BrowserStoreFSDriver = class {
           await indexedDbPersister.startAutoLoad();
         } catch (indexedDbError) {
           console.warn("IndexedDB init failed, falling back to localStorage persister:", indexedDbError);
-          const { createLocalPersister } = await import("./persister-browser-2PYRZ5J2.js");
+          const { createLocalPersister } = await import("./persister-browser-URNEMMIX.js");
           this.persistenceMode = "localStorage";
           const localPersister = createLocalPersister(this.store, FS_STORAGE_KEY);
           this.persister = localPersister;
@@ -52235,53 +50093,53 @@ var parseRmArgs = (args) => parseWithSchema(rmParser, args, RmArgsSchema);
 var parseMvArgs = (args) => parseWithSchema(mvParser, args, MvArgsSchema);
 
 // node_modules/.pnpm/ink-web@0.1.11_@xterm+xterm@6.0.0_ink@6.7.0_@types+react@19.2.14_react@19.2.4__react-re_bce6dc001d83974f3385a3079b1a02e2/node_modules/ink-web/dist/index.js
-var __react__ = __toESM(require_react(), 1);
-var __react_dom__ = __toESM(require_react_dom(), 1);
-var __react_jsx_runtime__ = __toESM(require_jsx_runtime(), 1);
 var __scheduler__ = __toESM(require_scheduler(), 1);
 var __react_reconciler__ = __toESM(require_react_reconciler(), 1);
 var __xterm__ = __toESM(require_xterm(), 1);
 var __xterm_addon_fit__ = __toESM(require_addon_fit(), 1);
-var import_react = __toESM(require_react(), 1);
 var import_constants = __toESM(require_constants(), 1);
 var import_react_reconciler = __toESM(require_react_reconciler(), 1);
 var import_constants2 = __toESM(require_constants(), 1);
-var import_react2 = __toESM(require_react(), 1);
-var import_react3 = __toESM(require_react(), 1);
-var import_react4 = __toESM(require_react(), 1);
-var import_react5 = __toESM(require_react(), 1);
-var import_react6 = __toESM(require_react(), 1);
-var import_react7 = __toESM(require_react(), 1);
-var import_react8 = __toESM(require_react(), 1);
-var import_react9 = __toESM(require_react(), 1);
-var import_react10 = __toESM(require_react(), 1);
-var import_react11 = __toESM(require_react(), 1);
-var import_react12 = __toESM(require_react(), 1);
-var import_react13 = __toESM(require_react(), 1);
-var import_react14 = __toESM(require_react(), 1);
-var import_react15 = __toESM(require_react(), 1);
-var import_react16 = __toESM(require_react(), 1);
-var import_react17 = __toESM(require_react(), 1);
-var import_react18 = __toESM(require_react(), 1);
-var import_react19 = __toESM(require_react(), 1);
-var import_react20 = __toESM(require_react(), 1);
-var import_react21 = __toESM(require_react(), 1);
-var import_react22 = __toESM(require_react(), 1);
-var import_react23 = __toESM(require_react(), 1);
-var import_react24 = __toESM(require_react(), 1);
-var import_react25 = __toESM(require_react(), 1);
-var import_react26 = __toESM(require_react(), 1);
-var import_jsx_runtime = __toESM(require_jsx_runtime(), 1);
-var import_react27 = __toESM(require_react(), 1);
-var import_react28 = __toESM(require_react(), 1);
 var import_addon_fit = __toESM(require_addon_fit(), 1);
 var import_xterm = __toESM(require_xterm(), 1);
-var import_jsx_runtime2 = __toESM(require_jsx_runtime(), 1);
-var import_react29 = __toESM(require_react(), 1);
-var import_jsx_runtime3 = __toESM(require_jsx_runtime(), 1);
-var import_jsx_runtime4 = __toESM(require_jsx_runtime(), 1);
+import * as __react__ from "react";
+import * as __react_dom__ from "react-dom";
+import * as __react_jsx_runtime__ from "react/jsx-runtime";
+import React5 from "react";
 import os from "os";
+import { createContext } from "react";
+import React4, { PureComponent } from "react";
+import { createContext as createContext2 } from "react";
+import { createContext as createContext3 } from "react";
+import { createContext as createContext4 } from "react";
+import { createContext as createContext5 } from "react";
+import { createContext as createContext6 } from "react";
+import React3 from "react";
+import React, { forwardRef, useContext } from "react";
+import { createContext as createContext7 } from "react";
+import { createContext as createContext8 } from "react";
+import React2, { useContext as useContext2 } from "react";
+import React6, { useMemo, useState, useLayoutEffect } from "react";
+import React7, { useContext as useContext3 } from "react";
+import React8 from "react";
+import React9 from "react";
+import { useEffect } from "react";
 import { Buffer as Buffer2 } from "buffer";
+import { useContext as useContext4 } from "react";
+import { useContext as useContext5 } from "react";
+import { useContext as useContext6 } from "react";
+import { useContext as useContext7 } from "react";
+import { useEffect as useEffect2, useContext as useContext8, useMemo as useMemo2 } from "react";
+import { useContext as useContext9 } from "react";
+import { useContext as useContext10 } from "react";
+import React10, { useState as useState2 } from "react";
+import { jsx, jsxs } from "react/jsx-runtime";
+import { useState as useState3, useCallback } from "react";
+import { useEffect as useEffect3, useRef } from "react";
+import { jsx as jsx2 } from "react/jsx-runtime";
+import React12 from "react";
+import { jsx as jsx3, jsxs as jsxs2 } from "react/jsx-runtime";
+import { jsx as jsx4, jsxs as jsxs3 } from "react/jsx-runtime";
 var __EXTERNAL_MODULES__ = {
   "react": __react__,
   "react-dom": __react_dom__,
@@ -52354,7 +50212,7 @@ var __hasOwnProp = Object.prototype.hasOwnProperty;
 var __esm = (fn, res) => function __init() {
   return fn && (res = (0, fn[__getOwnPropNames(fn)[0]])(fn = 0)), res;
 };
-var __commonJS2 = (cb, mod) => function __require() {
+var __commonJS2 = (cb, mod) => function __require2() {
   return mod || (0, cb[__getOwnPropNames(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
 };
 var __export2 = (target, all) => {
@@ -55990,7 +53848,7 @@ var reconciler_default = (0, import_react_reconciler.default)({
   // eslint-disable-next-line @typescript-eslint/naming-convention
   NotPendingTransition: void 0,
   // eslint-disable-next-line @typescript-eslint/naming-convention
-  HostTransitionContext: (0, import_react2.createContext)(null),
+  HostTransitionContext: createContext(null),
   resetFormInstance() {
   },
   requestPostPaintCallback() {
@@ -56436,13 +54294,13 @@ var CC_0 = "0".charCodeAt(0);
 var CC_9 = "9".charCodeAt(0);
 var CC_SEMI = ";".charCodeAt(0);
 var CC_M = "m".charCodeAt(0);
-var AppContext = (0, import_react4.createContext)({
+var AppContext = createContext2({
   exit() {
   }
 });
 AppContext.displayName = "InternalAppContext";
 var process4 = process3;
-var StdinContext = (0, import_react5.createContext)({
+var StdinContext = createContext3({
   stdin: process4.stdin,
   // eslint-disable-next-line @typescript-eslint/naming-convention
   internal_eventEmitter: new EventEmitter(),
@@ -56455,20 +54313,20 @@ var StdinContext = (0, import_react5.createContext)({
 StdinContext.displayName = "InternalStdinContext";
 var StdinContext_default = StdinContext;
 var process5 = process3;
-var StdoutContext = (0, import_react6.createContext)({
+var StdoutContext = createContext4({
   stdout: process5.stdout,
   write() {
   }
 });
 StdoutContext.displayName = "InternalStdoutContext";
 var process6 = process3;
-var StderrContext = (0, import_react7.createContext)({
+var StderrContext = createContext5({
   stderr: process6.stderr,
   write() {
   }
 });
 StderrContext.displayName = "InternalStderrContext";
-var FocusContext = (0, import_react8.createContext)({
+var FocusContext = createContext6({
   activeId: void 0,
   add() {
   },
@@ -56492,17 +54350,17 @@ var FocusContext = (0, import_react8.createContext)({
 FocusContext.displayName = "InternalFocusContext";
 var import_stack_utils = __toESM2(require_stack_utils(), 1);
 var { cwd } = process3;
-var accessibilityContext = (0, import_react11.createContext)({
+var accessibilityContext = createContext7({
   isScreenReaderEnabled: false
 });
-var backgroundContext = (0, import_react12.createContext)(void 0);
-var Box = (0, import_react10.forwardRef)(({ children, backgroundColor, "aria-label": ariaLabel, "aria-hidden": ariaHidden, "aria-role": role, "aria-state": ariaState, ...style }, ref) => {
-  const { isScreenReaderEnabled } = (0, import_react10.useContext)(accessibilityContext);
-  const label = ariaLabel ? import_react10.default.createElement("ink-text", null, ariaLabel) : void 0;
+var backgroundContext = createContext8(void 0);
+var Box = forwardRef(({ children, backgroundColor, "aria-label": ariaLabel, "aria-hidden": ariaHidden, "aria-role": role, "aria-state": ariaState, ...style }, ref) => {
+  const { isScreenReaderEnabled } = useContext(accessibilityContext);
+  const label = ariaLabel ? React.createElement("ink-text", null, ariaLabel) : void 0;
   if (isScreenReaderEnabled && ariaHidden) {
     return null;
   }
-  const boxElement = import_react10.default.createElement("ink-box", { ref, style: {
+  const boxElement = React.createElement("ink-box", { ref, style: {
     flexWrap: "nowrap",
     flexDirection: "row",
     flexGrow: 0,
@@ -56516,15 +54374,15 @@ var Box = (0, import_react10.forwardRef)(({ children, backgroundColor, "aria-lab
     state: ariaState
   } }, isScreenReaderEnabled && label ? label : children);
   if (backgroundColor) {
-    return import_react10.default.createElement(backgroundContext.Provider, { value: backgroundColor }, boxElement);
+    return React.createElement(backgroundContext.Provider, { value: backgroundColor }, boxElement);
   }
   return boxElement;
 });
 Box.displayName = "Box";
 var Box_default = Box;
 function Text({ color, backgroundColor, dimColor = false, bold = false, italic = false, underline = false, strikethrough = false, inverse = false, wrap = "wrap", children, "aria-label": ariaLabel, "aria-hidden": ariaHidden = false }) {
-  const { isScreenReaderEnabled } = (0, import_react13.useContext)(accessibilityContext);
-  const inheritedBackgroundColor = (0, import_react13.useContext)(backgroundContext);
+  const { isScreenReaderEnabled } = useContext2(accessibilityContext);
+  const inheritedBackgroundColor = useContext2(backgroundContext);
   const childrenOrAriaLabel = isScreenReaderEnabled && ariaLabel ? ariaLabel : children;
   if (childrenOrAriaLabel === void 0 || childrenOrAriaLabel === null) {
     return null;
@@ -56560,7 +54418,7 @@ function Text({ color, backgroundColor, dimColor = false, bold = false, italic =
   if (isScreenReaderEnabled && ariaHidden) {
     return null;
   }
-  return import_react13.default.createElement("ink-text", { style: { flexGrow: 0, flexShrink: 1, flexDirection: "row", textWrap: wrap }, internal_transform: transform2 }, isScreenReaderEnabled && ariaLabel ? ariaLabel : children);
+  return React2.createElement("ink-text", { style: { flexGrow: 0, flexShrink: 1, flexDirection: "row", textWrap: wrap }, internal_transform: transform2 }, isScreenReaderEnabled && ariaLabel ? ariaLabel : children);
 }
 var stackUtils = new import_stack_utils.default({
   cwd: cwd(),
@@ -56755,11 +54613,11 @@ var parseKeypress = (s = "") => {
   return key;
 };
 var parse_keypress_default = parseKeypress;
-var useStdin = () => (0, import_react19.useContext)(StdinContext_default);
+var useStdin = () => useContext4(StdinContext_default);
 var use_stdin_default = useStdin;
 var useInput = (inputHandler, options = {}) => {
   const { stdin, setRawMode, internal_exitOnCtrlC, internal_eventEmitter } = use_stdin_default();
-  (0, import_react18.useEffect)(() => {
+  useEffect(() => {
     if (options.isActive === false) {
       return;
     }
@@ -56768,7 +54626,7 @@ var useInput = (inputHandler, options = {}) => {
       setRawMode(false);
     };
   }, [options.isActive, setRawMode]);
-  (0, import_react18.useEffect)(() => {
+  useEffect(() => {
     if (options.isActive === false) {
       return;
     }
@@ -56819,22 +54677,22 @@ var useInput = (inputHandler, options = {}) => {
 var use_input_default = useInput;
 
 // packages/cli-shell/src/commands/_util.tsx
-var import_react30 = __toESM(require_react(), 1);
-var import_jsx_runtime5 = __toESM(require_jsx_runtime(), 1);
+import "react";
+import { jsx as jsx5 } from "react/jsx-runtime";
 var makeOutput = (text2) => ({
-  component: /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(Box_default, { flexDirection: "column", padding: 1, children: /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(Text, { children: text2 }) })
+  component: /* @__PURE__ */ jsx5(Box_default, { flexDirection: "column", padding: 1, children: /* @__PURE__ */ jsx5(Text, { children: text2 }) })
 });
 var makeError = (message2) => ({
-  component: /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(Box_default, { flexDirection: "column", padding: 1, children: /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(Text, { color: "red", children: message2 }) }),
+  component: /* @__PURE__ */ jsx5(Box_default, { flexDirection: "column", padding: 1, children: /* @__PURE__ */ jsx5(Text, { color: "red", children: message2 }) }),
   error: message2
 });
 var makeResult = (text2, data) => ({
-  component: /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(Box_default, { flexDirection: "column", padding: 1, children: /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(Text, { children: text2 }) }),
+  component: /* @__PURE__ */ jsx5(Box_default, { flexDirection: "column", padding: 1, children: /* @__PURE__ */ jsx5(Text, { children: text2 }) }),
   data,
   status: "ok"
 });
 var makeResultError = (message2, data) => ({
-  component: /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(Box_default, { flexDirection: "column", padding: 1, children: /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(Text, { color: "red", children: message2 }) }),
+  component: /* @__PURE__ */ jsx5(Box_default, { flexDirection: "column", padding: 1, children: /* @__PURE__ */ jsx5(Text, { color: "red", children: message2 }) }),
   error: message2,
   data,
   status: "error"
@@ -57057,17 +54915,17 @@ var systemCommandsBrowser = {
 };
 
 // packages/cli-shell/src/components/InteractiveShell.tsx
-var import_react96 = __toESM(require_react(), 1);
+import { useMemo as useMemo24, useState as useState18 } from "react";
 
 // packages/ui/src/primitives/text-input.tsx
-var import_react62 = __toESM(require_react(), 1);
+import "react";
 
 // node_modules/.pnpm/@inkjs+ui@2.0.0_ink@6.7.0_@types+react@19.2.14_react@19.2.4_/node_modules/@inkjs/ui/build/components/badge/badge.js
-var import_react32 = __toESM(require_react(), 1);
+import React14 from "react";
 
 // node_modules/.pnpm/@inkjs+ui@2.0.0_ink@6.7.0_@types+react@19.2.14_react@19.2.4_/node_modules/@inkjs/ui/build/theme.js
-var import_react31 = __toESM(require_react(), 1);
 var import_deepmerge = __toESM(require_cjs(), 1);
+import React13, { createContext as createContext9, useContext as useContext11 } from "react";
 
 // node_modules/.pnpm/is-unicode-supported@2.1.0/node_modules/is-unicode-supported/index.js
 import process7 from "process";
@@ -57650,58 +55508,58 @@ var defaultTheme = {
     PasswordInput: theme_default13
   }
 };
-var ThemeContext = (0, import_react31.createContext)(defaultTheme);
+var ThemeContext = createContext9(defaultTheme);
 var useComponentTheme = (component) => {
-  const theme14 = (0, import_react31.useContext)(ThemeContext);
+  const theme14 = useContext11(ThemeContext);
   return theme14.components[component];
 };
 
 // node_modules/.pnpm/@inkjs+ui@2.0.0_ink@6.7.0_@types+react@19.2.14_react@19.2.4_/node_modules/@inkjs/ui/build/components/confirm-input/confirm-input.js
-var import_react33 = __toESM(require_react(), 1);
+import React15 from "react";
 
 // node_modules/.pnpm/@inkjs+ui@2.0.0_ink@6.7.0_@types+react@19.2.14_react@19.2.4_/node_modules/@inkjs/ui/build/components/unordered-list/unordered-list.js
-var import_react37 = __toESM(require_react(), 1);
+import React17, { useMemo as useMemo3, useContext as useContext13 } from "react";
 
 // node_modules/.pnpm/@inkjs+ui@2.0.0_ink@6.7.0_@types+react@19.2.14_react@19.2.4_/node_modules/@inkjs/ui/build/components/unordered-list/unordered-list-item.js
-var import_react35 = __toESM(require_react(), 1);
+import React16, { useContext as useContext12 } from "react";
 
 // node_modules/.pnpm/@inkjs+ui@2.0.0_ink@6.7.0_@types+react@19.2.14_react@19.2.4_/node_modules/@inkjs/ui/build/components/unordered-list/unordered-list-item-context.js
-var import_react34 = __toESM(require_react(), 1);
+import { createContext as createContext10 } from "react";
 
 // node_modules/.pnpm/@inkjs+ui@2.0.0_ink@6.7.0_@types+react@19.2.14_react@19.2.4_/node_modules/@inkjs/ui/build/components/unordered-list/constants.js
 var defaultMarker = figures_default.line;
 
 // node_modules/.pnpm/@inkjs+ui@2.0.0_ink@6.7.0_@types+react@19.2.14_react@19.2.4_/node_modules/@inkjs/ui/build/components/unordered-list/unordered-list-item-context.js
-var UnorderedListItemContext = (0, import_react34.createContext)({
+var UnorderedListItemContext = createContext10({
   marker: defaultMarker
 });
 
 // node_modules/.pnpm/@inkjs+ui@2.0.0_ink@6.7.0_@types+react@19.2.14_react@19.2.4_/node_modules/@inkjs/ui/build/components/unordered-list/unordered-list-item.js
 function UnorderedListItem({ children }) {
-  const { marker } = (0, import_react35.useContext)(UnorderedListItemContext);
+  const { marker } = useContext12(UnorderedListItemContext);
   const { styles: styles7 } = useComponentTheme("UnorderedList");
-  return import_react35.default.createElement(
+  return React16.createElement(
     Box_default,
     { ...styles7.listItem() },
-    import_react35.default.createElement(Text, { ...styles7.marker() }, marker),
-    import_react35.default.createElement(Box_default, { ...styles7.content() }, children)
+    React16.createElement(Text, { ...styles7.marker() }, marker),
+    React16.createElement(Box_default, { ...styles7.content() }, children)
   );
 }
 
 // node_modules/.pnpm/@inkjs+ui@2.0.0_ink@6.7.0_@types+react@19.2.14_react@19.2.4_/node_modules/@inkjs/ui/build/components/unordered-list/unordered-list-context.js
-var import_react36 = __toESM(require_react(), 1);
-var UnorderedListContext = (0, import_react36.createContext)({
+import { createContext as createContext11 } from "react";
+var UnorderedListContext = createContext11({
   depth: 0
 });
 
 // node_modules/.pnpm/@inkjs+ui@2.0.0_ink@6.7.0_@types+react@19.2.14_react@19.2.4_/node_modules/@inkjs/ui/build/components/unordered-list/unordered-list.js
 function UnorderedList({ children }) {
-  const { depth } = (0, import_react37.useContext)(UnorderedListContext);
+  const { depth } = useContext13(UnorderedListContext);
   const { styles: styles7, config: config2 } = useComponentTheme("UnorderedList");
-  const listContext = (0, import_react37.useMemo)(() => ({
+  const listContext = useMemo3(() => ({
     depth: depth + 1
   }), [depth]);
-  const listItemContext = (0, import_react37.useMemo)(() => {
+  const listItemContext = useMemo3(() => {
     const { marker } = config2();
     if (typeof marker === "string") {
       return { marker };
@@ -57715,52 +55573,52 @@ function UnorderedList({ children }) {
       marker: defaultMarker
     };
   }, [config2, depth]);
-  return import_react37.default.createElement(
+  return React17.createElement(
     UnorderedListContext.Provider,
     { value: listContext },
-    import_react37.default.createElement(
+    React17.createElement(
       UnorderedListItemContext.Provider,
       { value: listItemContext },
-      import_react37.default.createElement(Box_default, { ...styles7.list() }, children)
+      React17.createElement(Box_default, { ...styles7.list() }, children)
     )
   );
 }
 UnorderedList.Item = UnorderedListItem;
 
 // node_modules/.pnpm/@inkjs+ui@2.0.0_ink@6.7.0_@types+react@19.2.14_react@19.2.4_/node_modules/@inkjs/ui/build/components/multi-select/multi-select.js
-var import_react40 = __toESM(require_react(), 1);
+import React19 from "react";
 
 // node_modules/.pnpm/@inkjs+ui@2.0.0_ink@6.7.0_@types+react@19.2.14_react@19.2.4_/node_modules/@inkjs/ui/build/components/multi-select/multi-select-option.js
-var import_react38 = __toESM(require_react(), 1);
+import React18 from "react";
 
 // node_modules/.pnpm/@inkjs+ui@2.0.0_ink@6.7.0_@types+react@19.2.14_react@19.2.4_/node_modules/@inkjs/ui/build/components/multi-select/use-multi-select-state.js
-var import_react39 = __toESM(require_react(), 1);
 import { isDeepStrictEqual } from "util";
+import { useReducer, useCallback as useCallback2, useMemo as useMemo4, useState as useState4, useEffect as useEffect4 } from "react";
 
 // node_modules/.pnpm/@inkjs+ui@2.0.0_ink@6.7.0_@types+react@19.2.14_react@19.2.4_/node_modules/@inkjs/ui/build/components/progress-bar/progress-bar.js
-var import_react41 = __toESM(require_react(), 1);
+import React20, { useState as useState5 } from "react";
 
 // node_modules/.pnpm/@inkjs+ui@2.0.0_ink@6.7.0_@types+react@19.2.14_react@19.2.4_/node_modules/@inkjs/ui/build/components/select/select.js
-var import_react44 = __toESM(require_react(), 1);
+import React22 from "react";
 
 // node_modules/.pnpm/@inkjs+ui@2.0.0_ink@6.7.0_@types+react@19.2.14_react@19.2.4_/node_modules/@inkjs/ui/build/components/select/select-option.js
-var import_react42 = __toESM(require_react(), 1);
+import React21 from "react";
 
 // node_modules/.pnpm/@inkjs+ui@2.0.0_ink@6.7.0_@types+react@19.2.14_react@19.2.4_/node_modules/@inkjs/ui/build/components/select/use-select-state.js
-var import_react43 = __toESM(require_react(), 1);
 import { isDeepStrictEqual as isDeepStrictEqual2 } from "util";
+import { useReducer as useReducer2, useCallback as useCallback3, useMemo as useMemo5, useState as useState6, useEffect as useEffect5 } from "react";
 
 // node_modules/.pnpm/@inkjs+ui@2.0.0_ink@6.7.0_@types+react@19.2.14_react@19.2.4_/node_modules/@inkjs/ui/build/components/spinner/spinner.js
-var import_react46 = __toESM(require_react(), 1);
+import React23 from "react";
 
 // node_modules/.pnpm/@inkjs+ui@2.0.0_ink@6.7.0_@types+react@19.2.14_react@19.2.4_/node_modules/@inkjs/ui/build/components/spinner/use-spinner.js
-var import_react45 = __toESM(require_react(), 1);
+import { useEffect as useEffect6, useState as useState7 } from "react";
 
 // node_modules/.pnpm/@inkjs+ui@2.0.0_ink@6.7.0_@types+react@19.2.14_react@19.2.4_/node_modules/@inkjs/ui/build/components/text-input/text-input.js
-var import_react49 = __toESM(require_react(), 1);
+import React24 from "react";
 
 // node_modules/.pnpm/@inkjs+ui@2.0.0_ink@6.7.0_@types+react@19.2.14_react@19.2.4_/node_modules/@inkjs/ui/build/components/text-input/use-text-input-state.js
-var import_react47 = __toESM(require_react(), 1);
+import { useReducer as useReducer3, useCallback as useCallback4, useEffect as useEffect7, useMemo as useMemo6 } from "react";
 var reducer = (state, action) => {
   switch (action.type) {
     case "move-cursor-left": {
@@ -57795,39 +55653,39 @@ var reducer = (state, action) => {
   }
 };
 var useTextInputState = ({ defaultValue = "", suggestions, onChange, onSubmit }) => {
-  const [state, dispatch] = (0, import_react47.useReducer)(reducer, {
+  const [state, dispatch] = useReducer3(reducer, {
     previousValue: defaultValue,
     value: defaultValue,
     cursorOffset: defaultValue.length
   });
-  const suggestion = (0, import_react47.useMemo)(() => {
+  const suggestion = useMemo6(() => {
     if (state.value.length === 0) {
       return;
     }
     return suggestions?.find((suggestion2) => suggestion2.startsWith(state.value))?.replace(state.value, "");
   }, [state.value, suggestions]);
-  const moveCursorLeft = (0, import_react47.useCallback)(() => {
+  const moveCursorLeft = useCallback4(() => {
     dispatch({
       type: "move-cursor-left"
     });
   }, []);
-  const moveCursorRight = (0, import_react47.useCallback)(() => {
+  const moveCursorRight = useCallback4(() => {
     dispatch({
       type: "move-cursor-right"
     });
   }, []);
-  const insert = (0, import_react47.useCallback)((text2) => {
+  const insert = useCallback4((text2) => {
     dispatch({
       type: "insert",
       text: text2
     });
   }, []);
-  const deleteCharacter = (0, import_react47.useCallback)(() => {
+  const deleteCharacter = useCallback4(() => {
     dispatch({
       type: "delete"
     });
   }, []);
-  const submit = (0, import_react47.useCallback)(() => {
+  const submit = useCallback4(() => {
     if (suggestion) {
       insert(suggestion);
       onSubmit?.(state.value + suggestion);
@@ -57835,7 +55693,7 @@ var useTextInputState = ({ defaultValue = "", suggestions, onChange, onSubmit })
     }
     onSubmit?.(state.value);
   }, [state.value, suggestion, insert, onSubmit]);
-  (0, import_react47.useEffect)(() => {
+  useEffect7(() => {
     if (state.value !== state.previousValue) {
       onChange?.(state.value);
     }
@@ -57852,7 +55710,7 @@ var useTextInputState = ({ defaultValue = "", suggestions, onChange, onSubmit })
 };
 
 // node_modules/.pnpm/@inkjs+ui@2.0.0_ink@6.7.0_@types+react@19.2.14_react@19.2.4_/node_modules/@inkjs/ui/build/components/text-input/use-text-input.js
-var import_react48 = __toESM(require_react(), 1);
+import { useMemo as useMemo7 } from "react";
 
 // node_modules/.pnpm/chalk@5.6.2/node_modules/chalk/source/vendor/ansi-styles/index.js
 var ANSI_BACKGROUND_OFFSET3 = 10;
@@ -58352,13 +56210,13 @@ var source_default2 = chalk2;
 // node_modules/.pnpm/@inkjs+ui@2.0.0_ink@6.7.0_@types+react@19.2.14_react@19.2.4_/node_modules/@inkjs/ui/build/components/text-input/use-text-input.js
 var cursor = source_default2.inverse(" ");
 var useTextInput = ({ isDisabled = false, state, placeholder = "" }) => {
-  const renderedPlaceholder = (0, import_react48.useMemo)(() => {
+  const renderedPlaceholder = useMemo7(() => {
     if (isDisabled) {
       return placeholder ? source_default2.dim(placeholder) : "";
     }
     return placeholder && placeholder.length > 0 ? source_default2.inverse(placeholder[0]) + source_default2.dim(placeholder.slice(1)) : cursor;
   }, [isDisabled, placeholder]);
-  const renderedValue = (0, import_react48.useMemo)(() => {
+  const renderedValue = useMemo7(() => {
     if (isDisabled) {
       return state.value;
     }
@@ -58418,63 +56276,63 @@ function TextInput({ isDisabled = false, defaultValue, placeholder = "", suggest
     state
   });
   const { styles: styles7 } = useComponentTheme("TextInput");
-  return import_react49.default.createElement(Text, { ...styles7.value() }, inputValue);
+  return React24.createElement(Text, { ...styles7.value() }, inputValue);
 }
 
 // node_modules/.pnpm/@inkjs+ui@2.0.0_ink@6.7.0_@types+react@19.2.14_react@19.2.4_/node_modules/@inkjs/ui/build/components/ordered-list/ordered-list.js
-var import_react53 = __toESM(require_react(), 1);
+import React26, { useContext as useContext15, isValidElement } from "react";
 
 // node_modules/.pnpm/@inkjs+ui@2.0.0_ink@6.7.0_@types+react@19.2.14_react@19.2.4_/node_modules/@inkjs/ui/build/components/ordered-list/ordered-list-item.js
-var import_react51 = __toESM(require_react(), 1);
+import React25, { useContext as useContext14 } from "react";
 
 // node_modules/.pnpm/@inkjs+ui@2.0.0_ink@6.7.0_@types+react@19.2.14_react@19.2.4_/node_modules/@inkjs/ui/build/components/ordered-list/ordered-list-item-context.js
-var import_react50 = __toESM(require_react(), 1);
-var OrderedListItemContext = (0, import_react50.createContext)({
+import { createContext as createContext12 } from "react";
+var OrderedListItemContext = createContext12({
   marker: figures_default.line
 });
 
 // node_modules/.pnpm/@inkjs+ui@2.0.0_ink@6.7.0_@types+react@19.2.14_react@19.2.4_/node_modules/@inkjs/ui/build/components/ordered-list/ordered-list-item.js
 function OrderedListItem({ children }) {
-  const { marker } = (0, import_react51.useContext)(OrderedListItemContext);
+  const { marker } = useContext14(OrderedListItemContext);
   const { styles: styles7 } = useComponentTheme("OrderedList");
-  return import_react51.default.createElement(
+  return React25.createElement(
     Box_default,
     { ...styles7.listItem() },
-    import_react51.default.createElement(Text, { ...styles7.marker() }, marker),
-    import_react51.default.createElement(Box_default, { ...styles7.content() }, children)
+    React25.createElement(Text, { ...styles7.marker() }, marker),
+    React25.createElement(Box_default, { ...styles7.content() }, children)
   );
 }
 
 // node_modules/.pnpm/@inkjs+ui@2.0.0_ink@6.7.0_@types+react@19.2.14_react@19.2.4_/node_modules/@inkjs/ui/build/components/ordered-list/ordered-list-context.js
-var import_react52 = __toESM(require_react(), 1);
-var OrderedListContext = (0, import_react52.createContext)({
+import { createContext as createContext13 } from "react";
+var OrderedListContext = createContext13({
   marker: ""
 });
 
 // node_modules/.pnpm/@inkjs+ui@2.0.0_ink@6.7.0_@types+react@19.2.14_react@19.2.4_/node_modules/@inkjs/ui/build/components/ordered-list/ordered-list.js
 function OrderedList({ children }) {
-  const { marker: parentMarker } = (0, import_react53.useContext)(OrderedListContext);
+  const { marker: parentMarker } = useContext15(OrderedListContext);
   const { styles: styles7 } = useComponentTheme("OrderedList");
   let numberOfItems = 0;
-  for (const child of import_react53.default.Children.toArray(children)) {
-    if (!(0, import_react53.isValidElement)(child) || child.type !== OrderedListItem) {
+  for (const child of React26.Children.toArray(children)) {
+    if (!isValidElement(child) || child.type !== OrderedListItem) {
       continue;
     }
     numberOfItems++;
   }
   const maxMarkerWidth = String(numberOfItems).length;
-  return import_react53.default.createElement(Box_default, { ...styles7.list() }, import_react53.default.Children.map(children, (child, index) => {
-    if (!(0, import_react53.isValidElement)(child) || child.type !== OrderedListItem) {
+  return React26.createElement(Box_default, { ...styles7.list() }, React26.Children.map(children, (child, index) => {
+    if (!isValidElement(child) || child.type !== OrderedListItem) {
       return child;
     }
     const paddedMarker = `${String(index + 1).padStart(maxMarkerWidth)}.`;
     const marker = `${parentMarker}${paddedMarker}`;
     return (
       // eslint-disable-next-line react/jsx-no-constructed-context-values
-      import_react53.default.createElement(
+      React26.createElement(
         OrderedListContext.Provider,
         { value: { marker } },
-        import_react53.default.createElement(OrderedListItemContext.Provider, { value: { marker } }, child)
+        React26.createElement(OrderedListItemContext.Provider, { value: { marker } }, child)
       )
     );
   }));
@@ -58482,33 +56340,33 @@ function OrderedList({ children }) {
 OrderedList.Item = OrderedListItem;
 
 // node_modules/.pnpm/@inkjs+ui@2.0.0_ink@6.7.0_@types+react@19.2.14_react@19.2.4_/node_modules/@inkjs/ui/build/components/password-input/password-input.js
-var import_react56 = __toESM(require_react(), 1);
+import React27 from "react";
 
 // node_modules/.pnpm/@inkjs+ui@2.0.0_ink@6.7.0_@types+react@19.2.14_react@19.2.4_/node_modules/@inkjs/ui/build/components/password-input/use-password-input-state.js
-var import_react54 = __toESM(require_react(), 1);
+import { useReducer as useReducer4, useCallback as useCallback5, useEffect as useEffect8 } from "react";
 
 // node_modules/.pnpm/@inkjs+ui@2.0.0_ink@6.7.0_@types+react@19.2.14_react@19.2.4_/node_modules/@inkjs/ui/build/components/password-input/use-password-input.js
-var import_react55 = __toESM(require_react(), 1);
+import { useMemo as useMemo8 } from "react";
 var cursor2 = source_default2.inverse(" ");
 
 // node_modules/.pnpm/@inkjs+ui@2.0.0_ink@6.7.0_@types+react@19.2.14_react@19.2.4_/node_modules/@inkjs/ui/build/components/status-message/status-message.js
-var import_react57 = __toESM(require_react(), 1);
+import React28 from "react";
 
 // node_modules/.pnpm/@inkjs+ui@2.0.0_ink@6.7.0_@types+react@19.2.14_react@19.2.4_/node_modules/@inkjs/ui/build/components/alert/alert.js
-var import_react58 = __toESM(require_react(), 1);
+import React29 from "react";
 
 // node_modules/.pnpm/@inkjs+ui@2.0.0_ink@6.7.0_@types+react@19.2.14_react@19.2.4_/node_modules/@inkjs/ui/build/components/email-input/email-input.js
-var import_react61 = __toESM(require_react(), 1);
+import React30 from "react";
 
 // node_modules/.pnpm/@inkjs+ui@2.0.0_ink@6.7.0_@types+react@19.2.14_react@19.2.4_/node_modules/@inkjs/ui/build/components/email-input/use-email-input-state.js
-var import_react59 = __toESM(require_react(), 1);
+import { useReducer as useReducer5, useCallback as useCallback6, useEffect as useEffect9, useMemo as useMemo9 } from "react";
 
 // node_modules/.pnpm/@inkjs+ui@2.0.0_ink@6.7.0_@types+react@19.2.14_react@19.2.4_/node_modules/@inkjs/ui/build/components/email-input/use-email-input.js
-var import_react60 = __toESM(require_react(), 1);
+import { useMemo as useMemo10 } from "react";
 var cursor3 = source_default2.inverse(" ");
 
 // packages/ui/src/primitives/text-input.tsx
-var import_jsx_runtime6 = __toESM(require_jsx_runtime(), 1);
+import { jsx as jsx6 } from "react/jsx-runtime";
 var TextInput2 = ({
   value: value2,
   defaultValue,
@@ -58526,51 +56384,51 @@ var TextInput2 = ({
     ...typeof (value2 ?? defaultValue) === "string" ? { defaultValue: value2 ?? defaultValue } : {},
     ...Array.isArray(suggestions) ? { suggestions } : {}
   };
-  return /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(TextInput, { ...inputProps });
+  return /* @__PURE__ */ jsx6(TextInput, { ...inputProps });
 };
 
 // packages/ui/src/primitives/spinner.tsx
-var import_react63 = __toESM(require_react(), 1);
-var import_jsx_runtime7 = __toESM(require_jsx_runtime(), 1);
+import "react";
+import { jsx as jsx7 } from "react/jsx-runtime";
 
 // packages/ui/src/primitives/select.tsx
-var import_react66 = __toESM(require_react(), 1);
+import "react";
 
 // node_modules/.pnpm/ink-select-input@6.2.0_ink@6.7.0_@types+react@19.2.14_react@19.2.4__react@19.2.4/node_modules/ink-select-input/build/Indicator.js
-var import_react64 = __toESM(require_react(), 1);
+import React33 from "react";
 
 // node_modules/.pnpm/ink-select-input@6.2.0_ink@6.7.0_@types+react@19.2.14_react@19.2.4__react@19.2.4/node_modules/ink-select-input/build/Item.js
-var React34 = __toESM(require_react(), 1);
+import * as React34 from "react";
 
 // node_modules/.pnpm/ink-select-input@6.2.0_ink@6.7.0_@types+react@19.2.14_react@19.2.4__react@19.2.4/node_modules/ink-select-input/build/SelectInput.js
-var import_react65 = __toESM(require_react(), 1);
 import { isDeepStrictEqual as isDeepStrictEqual3 } from "util";
+import React35, { useState as useState8, useEffect as useEffect10, useRef as useRef2, useCallback as useCallback7 } from "react";
 
 // packages/ui/src/primitives/select.tsx
-var import_jsx_runtime8 = __toESM(require_jsx_runtime(), 1);
+import { jsx as jsx8 } from "react/jsx-runtime";
 
 // packages/ui/src/primitives/tree-view.tsx
-var import_react67 = __toESM(require_react(), 1);
-var import_jsx_runtime9 = __toESM(require_jsx_runtime(), 1);
+import "react";
+import { jsx as jsx9, jsxs as jsxs4 } from "react/jsx-runtime";
 
 // packages/ui/src/primitives/status-bar.tsx
-var import_react68 = __toESM(require_react(), 1);
-var import_jsx_runtime10 = __toESM(require_jsx_runtime(), 1);
+import "react";
+import { jsx as jsx10 } from "react/jsx-runtime";
 
 // packages/ui/src/primitives/scroll-area.tsx
-var import_react69 = __toESM(require_react(), 1);
-var import_jsx_runtime11 = __toESM(require_jsx_runtime(), 1);
+import "react";
+import { jsx as jsx11 } from "react/jsx-runtime";
 
 // packages/ui/src/shell/shell-context.tsx
-var import_react70 = __toESM(require_react(), 1);
-var ShellContext = (0, import_react70.createContext)(null);
+import { createContext as createContext14, useContext as useContext16 } from "react";
+var ShellContext = createContext14(null);
 
 // packages/ui/src/shell/browser-shell-provider.tsx
-var import_react71 = __toESM(require_react(), 1);
-var import_jsx_runtime12 = __toESM(require_jsx_runtime(), 1);
+import { useMemo as useMemo11, useState as useState9 } from "react";
+import { jsx as jsx12 } from "react/jsx-runtime";
 var BrowserShellProvider = ({ children }) => {
-  const [isCommandRunning, setIsCommandRunning] = (0, import_react71.useState)(false);
-  const value2 = (0, import_react71.useMemo)(
+  const [isCommandRunning, setIsCommandRunning] = useState9(false);
+  const value2 = useMemo11(
     () => ({
       isCommandRunning,
       startCommand: () => setIsCommandRunning(true),
@@ -58578,15 +56436,15 @@ var BrowserShellProvider = ({ children }) => {
     }),
     [isCommandRunning]
   );
-  return /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(ShellContext.Provider, { value: value2, children });
+  return /* @__PURE__ */ jsx12(ShellContext.Provider, { value: value2, children });
 };
 
 // packages/ui/src/shell/terminal-shell-provider.tsx
-var import_react72 = __toESM(require_react(), 1);
-var import_jsx_runtime13 = __toESM(require_jsx_runtime(), 1);
+import { useMemo as useMemo12, useState as useState10 } from "react";
+import { jsx as jsx13 } from "react/jsx-runtime";
 var TerminalShellProvider = ({ children }) => {
-  const [isCommandRunning, setIsCommandRunning] = (0, import_react72.useState)(false);
-  const value2 = (0, import_react72.useMemo)(
+  const [isCommandRunning, setIsCommandRunning] = useState10(false);
+  const value2 = useMemo12(
     () => ({
       isCommandRunning,
       startCommand: () => setIsCommandRunning(true),
@@ -58594,64 +56452,64 @@ var TerminalShellProvider = ({ children }) => {
     }),
     [isCommandRunning]
   );
-  return /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(ShellContext.Provider, { value: value2, children });
+  return /* @__PURE__ */ jsx13(ShellContext.Provider, { value: value2, children });
 };
 
 // packages/ui/src/shell/interactive-shell.tsx
-var import_react73 = __toESM(require_react(), 1);
-var import_jsx_runtime14 = __toESM(require_jsx_runtime(), 1);
+import "react";
+import { jsx as jsx14, jsxs as jsxs5 } from "react/jsx-runtime";
 
 // packages/ui/src/social/persona-card.tsx
-var import_react74 = __toESM(require_react(), 1);
-var import_jsx_runtime15 = __toESM(require_jsx_runtime(), 1);
+import "react";
+import { jsx as jsx15, jsxs as jsxs6 } from "react/jsx-runtime";
 
 // packages/ui/src/social/persona-list.tsx
-var import_react75 = __toESM(require_react(), 1);
-var import_jsx_runtime16 = __toESM(require_jsx_runtime(), 1);
+import "react";
+import { jsx as jsx16 } from "react/jsx-runtime";
 
 // packages/ui/src/social/contact-card.tsx
-var import_react76 = __toESM(require_react(), 1);
-var import_jsx_runtime17 = __toESM(require_jsx_runtime(), 1);
+import "react";
+import { jsx as jsx17, jsxs as jsxs7 } from "react/jsx-runtime";
 
 // packages/ui/src/social/contact-list.tsx
-var import_react77 = __toESM(require_react(), 1);
-var import_jsx_runtime18 = __toESM(require_jsx_runtime(), 1);
+import { useMemo as useMemo13, useState as useState11 } from "react";
+import { jsx as jsx18, jsxs as jsxs8 } from "react/jsx-runtime";
 
 // packages/ui/src/social/group-card.tsx
-var import_react78 = __toESM(require_react(), 1);
-var import_jsx_runtime19 = __toESM(require_jsx_runtime(), 1);
+import "react";
+import { jsx as jsx19, jsxs as jsxs9 } from "react/jsx-runtime";
 
 // packages/ui/src/social/group-list.tsx
-var import_react79 = __toESM(require_react(), 1);
-var import_jsx_runtime20 = __toESM(require_jsx_runtime(), 1);
+import "react";
+import { jsx as jsx20 } from "react/jsx-runtime";
 
 // packages/ui/src/social/membership-list.tsx
-var import_react80 = __toESM(require_react(), 1);
-var import_jsx_runtime21 = __toESM(require_jsx_runtime(), 1);
+import "react";
+import { jsx as jsx21, jsxs as jsxs10 } from "react/jsx-runtime";
 
 // packages/ui/src/social/social-entity-badge.tsx
-var import_react81 = __toESM(require_react(), 1);
-var import_jsx_runtime22 = __toESM(require_jsx_runtime(), 1);
+import "react";
+import { jsx as jsx22, jsxs as jsxs11 } from "react/jsx-runtime";
 
 // packages/ui/src/file-handlers/image-file-preview.tsx
-var import_react82 = __toESM(require_react(), 1);
-var import_jsx_runtime23 = __toESM(require_jsx_runtime(), 1);
+import { useEffect as useEffect11, useMemo as useMemo14, useState as useState12 } from "react";
+import { jsx as jsx23, jsxs as jsxs12 } from "react/jsx-runtime";
 
 // packages/ui/src/file-handlers/markdown-edit.tsx
-var import_react83 = __toESM(require_react(), 1);
-var import_jsx_runtime24 = __toESM(require_jsx_runtime(), 1);
+import { useEffect as useEffect12, useMemo as useMemo15, useState as useState13 } from "react";
+import { jsx as jsx24, jsxs as jsxs13 } from "react/jsx-runtime";
 
 // packages/ui/src/file-handlers/markdown-view.tsx
-var import_react84 = __toESM(require_react(), 1);
-var import_jsx_runtime25 = __toESM(require_jsx_runtime(), 1);
+import { useMemo as useMemo16 } from "react";
+import { jsx as jsx25 } from "react/jsx-runtime";
 
 // packages/ui/src/file-handlers/markdown-view-edit.tsx
-var import_react85 = __toESM(require_react(), 1);
-var import_jsx_runtime26 = __toESM(require_jsx_runtime(), 1);
+import { useEffect as useEffect13, useMemo as useMemo17, useState as useState14 } from "react";
+import { jsx as jsx26, jsxs as jsxs14 } from "react/jsx-runtime";
 
 // packages/ui/src/file-handlers/text-file-view-edit.tsx
-var import_react86 = __toESM(require_react(), 1);
-var import_jsx_runtime27 = __toESM(require_jsx_runtime(), 1);
+import { useEffect as useEffect14, useMemo as useMemo18, useState as useState15 } from "react";
+import { jsx as jsx27, jsxs as jsxs15 } from "react/jsx-runtime";
 
 // node_modules/.pnpm/tinybase@7.3.4_@sqlite.org+sqlite-wasm@3.51.2-build6_effect@3.19.18_react-dom@19.2.4_re_6b17624b1e1b989d6af746770c44149e/node_modules/tinybase/schematizers/schematizer-zod/index.js
 var getTypeOf2 = (thing) => typeof thing;
@@ -58813,37 +56671,37 @@ var createDevalboStore = () => {
 };
 
 // packages/state/src/hooks/use-store.ts
-var import_react87 = __toESM(require_react(), 1);
-var StoreContext = (0, import_react87.createContext)(null);
+import { createContext as createContext15, useContext as useContext17 } from "react";
+var StoreContext = createContext15(null);
 
 // packages/state/src/hooks/use-table.ts
-var import_react88 = __toESM(require_react(), 1);
+import { useEffect as useEffect15, useState as useState16 } from "react";
 
 // packages/state/src/hooks/use-row.ts
-var import_react89 = __toESM(require_react(), 1);
+import { useEffect as useEffect16, useState as useState17 } from "react";
 
 // packages/state/src/hooks/use-personas.ts
-var import_react90 = __toESM(require_react(), 1);
+import { useMemo as useMemo19 } from "react";
 
 // packages/state/src/hooks/use-contacts.ts
-var import_react91 = __toESM(require_react(), 1);
+import { useMemo as useMemo20 } from "react";
 
 // packages/state/src/hooks/use-groups.ts
-var import_react92 = __toESM(require_react(), 1);
+import { useMemo as useMemo21 } from "react";
 
 // packages/state/src/hooks/use-memberships.ts
-var import_react93 = __toESM(require_react(), 1);
+import { useMemo as useMemo22 } from "react";
 
 // packages/state/src/hooks/use-activities.ts
-var import_react94 = __toESM(require_react(), 1);
+import { useMemo as useMemo23 } from "react";
 
 // packages/state/src/hooks/use-app-config.tsx
-var import_react95 = __toESM(require_react(), 1);
-var import_jsx_runtime28 = __toESM(require_jsx_runtime(), 1);
-var AppConfigContext = (0, import_react95.createContext)(null);
-var AppConfigProvider = ({ config: config2, children }) => /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(AppConfigContext.Provider, { value: config2, children });
+import { createContext as createContext16, useContext as useContext18 } from "react";
+import { jsx as jsx28 } from "react/jsx-runtime";
+var AppConfigContext = createContext16(null);
+var AppConfigProvider = ({ config: config2, children }) => /* @__PURE__ */ jsx28(AppConfigContext.Provider, { value: config2, children });
 var useAppConfig = () => {
-  const ctx = (0, import_react95.useContext)(AppConfigContext);
+  const ctx = useContext18(AppConfigContext);
   if (!ctx) throw new Error("useAppConfig must be used inside AppConfigProvider");
   return ctx;
 };
@@ -58905,7 +56763,7 @@ var executeCommandRaw = async (raw, ctx) => {
 };
 
 // packages/cli-shell/src/components/InteractiveShell.tsx
-var import_jsx_runtime29 = __toESM(require_jsx_runtime(), 1);
+import { jsx as jsx29, jsxs as jsxs16 } from "react/jsx-runtime";
 function ShellContent({
   commands,
   createProgram,
@@ -58918,12 +56776,12 @@ function ShellContent({
   session,
   welcomeMessage
 }) {
-  const [connectivity] = (0, import_react96.useState)(() => new BrowserConnectivityService());
-  const [input, setInput] = (0, import_react96.useState)("");
-  const [inputKey, setInputKey] = (0, import_react96.useState)(0);
-  const [history, setHistory] = (0, import_react96.useState)([
+  const [connectivity] = useState18(() => new BrowserConnectivityService());
+  const [input, setInput] = useState18("");
+  const [inputKey, setInputKey] = useState18(0);
+  const [history, setHistory] = useState18([
     {
-      component: typeof welcomeMessage === "string" ? /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(Text, { color: "cyan", children: welcomeMessage }) : welcomeMessage
+      component: typeof welcomeMessage === "string" ? /* @__PURE__ */ jsx29(Text, { color: "cyan", children: welcomeMessage }) : welcomeMessage
     }
   ]);
   const executeCommand2 = async (raw) => {
@@ -58953,14 +56811,14 @@ function ShellContent({
     setInput("");
     setInputKey((prev) => prev + 1);
   };
-  return /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)(Box_default, { flexDirection: "column", padding: 1, children: [
-    history.map((item, idx) => /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)(Box_default, { flexDirection: "column", marginBottom: 1, children: [
-      item.command ? /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(Text, { dimColor: true, children: item.command }) : null,
-      item.component && /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(Box_default, { marginLeft: 2, children: item.component })
+  return /* @__PURE__ */ jsxs16(Box_default, { flexDirection: "column", padding: 1, children: [
+    history.map((item, idx) => /* @__PURE__ */ jsxs16(Box_default, { flexDirection: "column", marginBottom: 1, children: [
+      item.command ? /* @__PURE__ */ jsx29(Text, { dimColor: true, children: item.command }) : null,
+      item.component && /* @__PURE__ */ jsx29(Box_default, { marginLeft: 2, children: item.component })
     ] }, idx)),
-    /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)(Box_default, { children: [
-      /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(Text, { color: "green", children: "$ " }),
-      /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(
+    /* @__PURE__ */ jsxs16(Box_default, { children: [
+      /* @__PURE__ */ jsx29(Text, { color: "green", children: "$ " }),
+      /* @__PURE__ */ jsx29(
         TextInput2,
         {
           defaultValue: input,
@@ -58985,8 +56843,8 @@ var InteractiveShell = ({
   session,
   welcomeMessage
 }) => {
-  const shellStore = (0, import_react96.useMemo)(() => store ?? createDevalboStore(), [store]);
-  const fallbackCwd = (0, import_react96.useMemo)(() => {
+  const shellStore = useMemo24(() => store ?? createDevalboStore(), [store]);
+  const fallbackCwd = useMemo24(() => {
     if (detectPlatform().platform !== "nodejs" /* NodeJS */) return "/";
     const nodeProcess = globalThis.process;
     return nodeProcess?.cwd?.() ?? "/";
@@ -58994,7 +56852,7 @@ var InteractiveShell = ({
   const resolvedCwd = cwd2 ?? fallbackCwd;
   const resolvedSetCwd = setCwd2 ?? (() => void 0);
   if (runtime === "terminal") {
-    return /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(TerminalShellProvider, { children: /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(
+    return /* @__PURE__ */ jsx29(TerminalShellProvider, { children: /* @__PURE__ */ jsx29(
       ShellContent,
       {
         commands,
@@ -59010,7 +56868,7 @@ var InteractiveShell = ({
       }
     ) });
   }
-  return /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(BrowserShellProvider, { children: /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(
+  return /* @__PURE__ */ jsx29(BrowserShellProvider, { children: /* @__PURE__ */ jsx29(
     ShellContent,
     {
       commands,
@@ -59184,72 +57042,6 @@ export {
   useAppConfig
 };
 /*! Bundled license information:
-
-react/cjs/react.production.js:
-  (**
-   * @license React
-   * react.production.js
-   *
-   * Copyright (c) Meta Platforms, Inc. and affiliates.
-   *
-   * This source code is licensed under the MIT license found in the
-   * LICENSE file in the root directory of this source tree.
-   *)
-
-react/cjs/react.development.js:
-  (**
-   * @license React
-   * react.development.js
-   *
-   * Copyright (c) Meta Platforms, Inc. and affiliates.
-   *
-   * This source code is licensed under the MIT license found in the
-   * LICENSE file in the root directory of this source tree.
-   *)
-
-react-dom/cjs/react-dom.production.js:
-  (**
-   * @license React
-   * react-dom.production.js
-   *
-   * Copyright (c) Meta Platforms, Inc. and affiliates.
-   *
-   * This source code is licensed under the MIT license found in the
-   * LICENSE file in the root directory of this source tree.
-   *)
-
-react-dom/cjs/react-dom.development.js:
-  (**
-   * @license React
-   * react-dom.development.js
-   *
-   * Copyright (c) Meta Platforms, Inc. and affiliates.
-   *
-   * This source code is licensed under the MIT license found in the
-   * LICENSE file in the root directory of this source tree.
-   *)
-
-react/cjs/react-jsx-runtime.production.js:
-  (**
-   * @license React
-   * react-jsx-runtime.production.js
-   *
-   * Copyright (c) Meta Platforms, Inc. and affiliates.
-   *
-   * This source code is licensed under the MIT license found in the
-   * LICENSE file in the root directory of this source tree.
-   *)
-
-react/cjs/react-jsx-runtime.development.js:
-  (**
-   * @license React
-   * react-jsx-runtime.development.js
-   *
-   * Copyright (c) Meta Platforms, Inc. and affiliates.
-   *
-   * This source code is licensed under the MIT license found in the
-   * LICENSE file in the root directory of this source tree.
-   *)
 
 scheduler/cjs/scheduler.production.js:
   (**
