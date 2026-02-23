@@ -1,8 +1,7 @@
-import { createRequire } from 'node:module'; const require = createRequire(import.meta.url);
 import {
   unsafeAsFilePath
-} from "./chunk-IQRLQ6B6.js";
-import "./chunk-WPQ5MXLX.js";
+} from "./chunk-S4GCCXXR.js";
+import "./chunk-4VNS5WPM.js";
 
 // packages/filesystem/src/drivers/native.ts
 import { promises as fs } from "fs";

@@ -1,5 +1,4 @@
-import { createRequire } from 'node:module'; const require = createRequire(import.meta.url);
-import "./chunk-WPQ5MXLX.js";
+import "./chunk-4VNS5WPM.js";
 
 // node_modules/.pnpm/@tauri-apps+api@2.10.1/node_modules/@tauri-apps/api/external/tslib/tslib.es6.js
 function __classPrivateFieldGet(receiver, state, kind, f) {

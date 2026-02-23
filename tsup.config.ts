@@ -10,9 +10,6 @@ export default defineConfig({
   outDir: 'dist',
   clean: true,
   tsconfig: 'tsconfig.npm.json',
-  banner: {
-    js: "import { createRequire } from 'node:module'; const require = createRequire(import.meta.url);"
-  },
   external: ['react-devtools-core', 'vite-plugin-node-polyfills'],
   noExternal: [
     '@devalbo/cli-shell',

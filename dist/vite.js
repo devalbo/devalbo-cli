@@ -1,5 +1,4 @@
-import { createRequire } from 'node:module'; const require = createRequire(import.meta.url);
-import "./chunk-WPQ5MXLX.js";
+import "./chunk-4VNS5WPM.js";
 
 // src/vite-plugin.ts
 import { nodePolyfills } from "vite-plugin-node-polyfills";
