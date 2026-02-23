@@ -1,8 +1,8 @@
 node_modules
 .DS_Store
 **/dist
-!dist/
-!dist/**
+!/dist/
+!/dist/**
 coverage
 .turbo
 tests/results
