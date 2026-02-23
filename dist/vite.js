@@ -16,6 +16,9 @@ function nodePolyfills(opts) {
         if (id === "node:process" || id === "process") {
           return "\0devalbo:node-process-shim";
         }
+        if (id === "vite-plugin-node-polyfills/shims/process" || id.includes("vite-plugin-node-polyfills/shims/process")) {
+          return "\0devalbo:node-process-shim";
+        }
         if (id === "node:child_process" || id === "child_process") {
           return "\0devalbo:node-child-process-shim";
         }

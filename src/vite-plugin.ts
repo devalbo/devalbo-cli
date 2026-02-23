@@ -53,6 +53,15 @@ export function nodePolyfills(opts?: NodePolyfillsOpts): any[] {
         if (id === 'node:process' || id === 'process') {
           return '\0devalbo:node-process-shim';
         }
+        // Some Vite dependency optimization paths rewrite node:process to this
+        // internal shim id directly; intercept it too so named exports like
+        // `env` are always present.
+        if (
+          id === 'vite-plugin-node-polyfills/shims/process' ||
+          id.includes('vite-plugin-node-polyfills/shims/process')
+        ) {
+          return '\0devalbo:node-process-shim';
+        }
         if (id === 'node:child_process' || id === 'child_process') {
           return '\0devalbo:node-child-process-shim';
         }
