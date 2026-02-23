@@ -1,5 +1,5 @@
-import type { ByteCount, PodETag, PodUrl, RelativePath } from '@devalbo/shared';
-import { unsafeAsByteCount, unsafeAsPodETag, unsafeAsRelativePath } from '@devalbo/shared';
+import type { ByteCount, PodETag, PodUrl, RelativePath } from '@devalbo-cli/shared';
+import { unsafeAsByteCount, unsafeAsPodETag, unsafeAsRelativePath } from '@devalbo-cli/shared';
 
 type FetchFn = typeof globalThis.fetch;
 type JsonLdObject = Record<string, unknown>;

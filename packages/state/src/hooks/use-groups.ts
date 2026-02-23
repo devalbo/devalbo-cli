@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import type { GroupId, GroupRow } from '@devalbo/shared';
+import type { GroupId, GroupRow } from '@devalbo-cli/shared';
 import { listGroups } from '../accessors/groups';
 import { GROUPS_TABLE } from '../schemas/social';
 import { useTable } from './use-table';

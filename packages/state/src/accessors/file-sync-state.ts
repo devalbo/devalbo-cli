@@ -1,6 +1,6 @@
 import type { Row, Store } from 'tinybase';
-import type { AbsolutePath, ContentHash, PodETag, SyncRootId } from '@devalbo/shared';
-import { unsafeAsContentHash } from '@devalbo/shared';
+import type { AbsolutePath, ContentHash, PodETag, SyncRootId } from '@devalbo-cli/shared';
+import { unsafeAsContentHash } from '@devalbo-cli/shared';
 
 export const FILE_SYNC_STATE_TABLE = 'file_sync_state' as const;
 

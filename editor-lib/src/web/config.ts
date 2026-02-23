@@ -1,5 +1,5 @@
-import type { AppConfig } from '@devalbo/shared';
-import { unsafeAsByteCount, unsafeAsMilliseconds } from '@devalbo/shared';
+import type { AppConfig } from '@devalbo-cli/shared';
+import { unsafeAsByteCount, unsafeAsMilliseconds } from '@devalbo-cli/shared';
 
 export const defaultAppConfig: AppConfig = {
   appId: 'naveditor',

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
-import { unsafeAsFilePath } from '@devalbo/shared';
-import { getDriver } from '@devalbo/cli-shell';
+import { unsafeAsFilePath } from '@devalbo-cli/shared';
+import { getDriver } from '@devalbo-cli/cli-shell';
 
 export interface UseFileEditorReturn {
   content: string;

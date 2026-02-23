@@ -1,1 +1,1 @@
-export * from '@devalbo/shared';
+export * from '@devalbo-cli/shared';

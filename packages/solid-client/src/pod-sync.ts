@@ -8,7 +8,7 @@ import {
   setDefaultPersona,
   setGroup,
   setPersona
-} from '@devalbo/state';
+} from '@devalbo-cli/state';
 import type { SolidSession } from './session';
 import type { Store } from 'tinybase';
 

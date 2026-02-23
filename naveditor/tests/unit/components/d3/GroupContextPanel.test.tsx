@@ -1,8 +1,8 @@
 import React from 'react';
 import { act, create, type ReactTestRenderer } from 'react-test-renderer';
 import { describe, expect, it } from 'vitest';
-import { StoreContext, addMember, createDevalboStore, getMembershipRowId, listMembers, logActivity, setContact, setGroup } from '@devalbo/state';
-import { ActivityIdToolbox, unsafeAsContactId, unsafeAsGroupId, unsafeAsPersonaId } from '@devalbo/shared';
+import { StoreContext, addMember, createDevalboStore, getMembershipRowId, listMembers, logActivity, setContact, setGroup } from '@devalbo-cli/state';
+import { ActivityIdToolbox, unsafeAsContactId, unsafeAsGroupId, unsafeAsPersonaId } from '@devalbo-cli/shared';
 import { GroupContextPanel } from '@/components/social/d3/GroupContextPanel';
 
 describe('GroupContextPanel', () => {

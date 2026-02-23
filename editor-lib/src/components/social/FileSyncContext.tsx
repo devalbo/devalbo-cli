@@ -1,6 +1,6 @@
 import { createContext, useContext } from 'react';
-import type { SyncRootId } from '@devalbo/shared';
-import type { SolidLdpFileSynchronizer } from '@devalbo/solid-client';
+import type { SyncRootId } from '@devalbo-cli/shared';
+import type { SolidLdpFileSynchronizer } from '@devalbo-cli/solid-client';
 
 export type FileSyncMap = Map<SyncRootId, SolidLdpFileSynchronizer>;
 

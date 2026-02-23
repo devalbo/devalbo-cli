@@ -2,14 +2,16 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "baseUrl": ".",
+    "rootDir": "src",
+    "outDir": "dist",
     "paths": {
       "@/*": ["src/*"],
-      "@devalbo/commands": ["../commands/src/index.ts"],
-      "@devalbo/filesystem": ["../filesystem/src/index.ts"],
-      "@devalbo/filesystem/node": ["../filesystem/src/node.ts"],
-      "@devalbo/shared": ["../shared/src/index.ts"],
-      "@devalbo/state": ["../state/src/index.ts"],
-      "@devalbo/ui": ["../ui/src/index.ts"]
+      "@devalbo-cli/commands": ["../commands/dist/index.js"],
+      "@devalbo-cli/filesystem": ["../filesystem/dist/index.js"],
+      "@devalbo-cli/filesystem/node": ["../filesystem/dist/node.js"],
+      "@devalbo-cli/shared": ["../shared/dist/index.js"],
+      "@devalbo-cli/state": ["../state/dist/index.js"],
+      "@devalbo-cli/ui": ["../ui/dist/index.js"]
     }
   },
   "include": ["src"]

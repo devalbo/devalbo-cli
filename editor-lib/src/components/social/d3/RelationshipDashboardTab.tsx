@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { setGroup, useContacts, useGroups, useMemberships } from '@devalbo/state';
-import { GroupIdToolbox, unsafeAsContactId, unsafeAsGroupId, type ContactId, type GroupId } from '@devalbo/shared';
-import { useStore } from '@devalbo/state';
+import { setGroup, useContacts, useGroups, useMemberships } from '@devalbo-cli/state';
+import { GroupIdToolbox, unsafeAsContactId, unsafeAsGroupId, type ContactId, type GroupId } from '@devalbo-cli/shared';
+import { useStore } from '@devalbo-cli/state';
 import { PersonaSwitcher } from '../PersonaSwitcher';
 import { useActivePersona } from '../ActivePersonaContext';
 import { ContactContextPanel } from './ContactContextPanel';

@@ -3,8 +3,8 @@ import { Box, Text } from 'ink';
 import { useFileEditor } from '@/hooks/use-file-editor';
 import { EditorContent } from './EditorContent';
 import { EditorStatusBar } from './EditorStatusBar';
-import { Spinner } from '@devalbo/cli-shell/components/ui/spinner';
-import { useKeyboard } from '@devalbo/ui';
+import { Spinner } from '@devalbo-cli/cli-shell/components/ui/spinner';
+import { useKeyboard } from '@devalbo-cli/ui';
 
 export const Editor: React.FC<{ filePath: string }> = ({ filePath }) => {
   const { content, isDirty, isLoading, isBinary, fileExists, error, save, revert, createFile } = useFileEditor(filePath);

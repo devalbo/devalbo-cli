@@ -1,1 +1,1 @@
-export { BrowserShellProvider } from '@devalbo/ui';
+export { BrowserShellProvider } from '@devalbo-cli/ui';

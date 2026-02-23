@@ -8,8 +8,8 @@ import {
   listGroups as storeListGroups,
   setContact,
   setGroup
-} from '@devalbo/state';
-import type { ContactId, GroupId } from '@devalbo/shared';
+} from '@devalbo-cli/state';
+import type { ContactId, GroupId } from '@devalbo-cli/shared';
 import type { SolidSession } from './session';
 import { SolidLdpPersister } from './ldp-persister';
 

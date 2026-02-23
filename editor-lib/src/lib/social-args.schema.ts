@@ -12,7 +12,7 @@ import {
   type GroupId,
   type MembershipId,
   type PersonaId
-} from '@devalbo/shared';
+} from '@devalbo-cli/shared';
 
 const PersonaIdSchema = z.string()
   .refine((value) => parsePersonaId(value).success, 'Invalid persona id')

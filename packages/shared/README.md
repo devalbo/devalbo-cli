@@ -1,4 +1,4 @@
-# @devalbo/shared
+# @devalbo-cli/shared
 
 Shared primitives across devalbo packages.
 
@@ -12,7 +12,7 @@ Shared primitives across devalbo packages.
 ## Example
 
 ```ts
-import { detectPlatform, unsafeAsFilePath } from '@devalbo/shared';
+import { detectPlatform, unsafeAsFilePath } from '@devalbo-cli/shared';
 
 const env = detectPlatform();
 const file = unsafeAsFilePath('/tmp/demo.txt');

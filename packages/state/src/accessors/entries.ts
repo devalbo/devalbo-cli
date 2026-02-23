@@ -1,5 +1,5 @@
 import type { Row, Store } from 'tinybase';
-import { FileTreeRowSchema, type FileTreeRow } from '@devalbo/shared';
+import { FileTreeRowSchema, type FileTreeRow } from '@devalbo-cli/shared';
 import { FILE_TREE_TABLE } from '../schemas/file-tree';
 
 export const getEntry = (store: Store, id: string): FileTreeRow | null => {

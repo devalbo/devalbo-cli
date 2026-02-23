@@ -1,7 +1,7 @@
 import React from 'react';
 import { describe, expect, it } from 'vitest';
 import { render } from 'ink-testing-library';
-import { unsafeAsFilePath } from '@devalbo/shared';
+import { unsafeAsFilePath } from '@devalbo-cli/shared';
 import { FileTreeItem } from '@/components/navigator/FileTreeItem';
 
 describe('FileTreeItem', () => {

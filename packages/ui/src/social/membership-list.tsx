@@ -1,5 +1,5 @@
 import React from 'react';
-import type { ContactId, ContactRow, MembershipId, MembershipRow } from '@devalbo/shared';
+import type { ContactId, ContactRow, MembershipId, MembershipRow } from '@devalbo-cli/shared';
 
 interface MembershipListProps {
   memberships: Array<{ id: MembershipId; row: MembershipRow }>;

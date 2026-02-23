@@ -14,13 +14,15 @@ usage() {
   cat <<'EOF'
 Usage: scripts/smoke-create-app.sh [options]
 
-Creates a fresh app directory using the CREATE_AN_APP.md CLI quickstart steps,
-installs dependencies, and runs verification checks for CLI + browser.
+Creates a fresh app directory using the CREATE_AN_APP.md quickstart (same install
+for terminal, browser, and Tauri). Installs dependencies and runs verification
+checks for CLI + browser build. Tauri can be added per CREATE_AN_APP and run from
+the same install.
 
 Options:
   --dir <path>           Target directory (default: /tmp/devalbo-create-app-smoke)
   --app-dir <path>       Alias for --dir
-  --devalbo-spec <spec>  npm dependency spec for devalbo-cli
+  --devalbo-spec <spec>  npm dependency spec for @devalbo-cli/cli
                          (default: git+https://github.com/devalbo/devalbo-cli.git)
   --force                Remove target directory if it already exists
   --skip-install         Do not run npm install
@@ -100,9 +102,9 @@ if [[ -e "$TARGET_DIR" ]]; then
   fi
 fi
 
-mkdir -p "$TARGET_DIR/src/commands"
+mkdir -p "$TARGET_DIR/src/commands" "$TARGET_DIR/src/lib"
 
-log "devalbo-cli dependency spec: $DEVALBO_SPEC"
+log "@devalbo-cli/cli dependency spec: $DEVALBO_SPEC"
 
 cat > "$TARGET_DIR/package.json" <<EOF
 {
@@ -117,7 +119,7 @@ cat > "$TARGET_DIR/package.json" <<EOF
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "devalbo-cli": "$DEVALBO_SPEC",
+    "@devalbo-cli/cli": "$DEVALBO_SPEC",
     "commander": "^14.0.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
@@ -152,13 +154,47 @@ cat > "$TARGET_DIR/tsconfig.json" <<'EOF'
 }
 EOF
 
+# Temporary workaround until PLAN_16 (multi-package): single-bundle devalbo-cli inlines
+# the Node filesystem driver, so the browser build needs this stub. Remove once we
+# publish @devalbo-cli/* and the app resolves @devalbo-cli/filesystem "browser" export.
+cat > "$TARGET_DIR/src/lib/node-fs-stub.js" <<'STUBEOF'
+/**
+ * Stub for Node fs in browser builds. devalbo-cli bundles a native driver chunk
+ * that imports "fs"; this stub lets the build succeed. The native driver is not
+ * used at runtime in the browser (createFilesystemDriver uses the browser driver).
+ * Remove this file and the fs alias in vite.config when PLAN_16 multi-package is done.
+ */
+const unsupported = () => {
+  throw new Error('Node fs is not available in the browser');
+};
+export const promises = {
+  readFile: unsupported,
+  writeFile: unsupported,
+  readdir: unsupported,
+  stat: unsupported,
+  mkdir: unsupported,
+  rm: unsupported,
+};
+export default { promises };
+STUBEOF
+
 cat > "$TARGET_DIR/vite.config.ts" <<'EOF'
 import { defineConfig } from 'vite';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import react from '@vitejs/plugin-react';
-import { nodePolyfills } from 'devalbo-cli/vite';
+import { nodePolyfills } from '@devalbo-cli/cli/vite';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig({
   plugins: [react(), nodePolyfills()],
+  resolve: {
+    alias: {
+      fs: path.resolve(__dirname, 'src/lib/node-fs-stub.js'),
+      'node:fs': path.resolve(__dirname, 'src/lib/node-fs-stub.js'),
+    },
+  },
   build: {
     rollupOptions: {
       external: ['react-devtools-core']
@@ -183,8 +219,8 @@ cat > "$TARGET_DIR/index.html" <<'EOF'
 EOF
 
 cat > "$TARGET_DIR/src/commands/index.ts" <<'EOF'
-import type { AsyncCommandHandler, CommandHandler } from 'devalbo-cli';
-import { builtinCommands, makeOutput } from 'devalbo-cli';
+import type { AsyncCommandHandler, CommandHandler } from '@devalbo-cli/cli';
+import { builtinCommands, makeOutput } from '@devalbo-cli/cli';
 
 const hello: AsyncCommandHandler = async (args) => {
   const name = args[0] ?? 'world';
@@ -204,7 +240,7 @@ EOF
 
 cat > "$TARGET_DIR/src/program.ts" <<'EOF'
 import { Command } from 'commander';
-import { registerBuiltinCommands } from 'devalbo-cli';
+import { registerBuiltinCommands } from '@devalbo-cli/cli';
 
 export const createProgram = (): Command => {
   const program = new Command('my-app')
@@ -223,7 +259,7 @@ export const createProgram = (): Command => {
 EOF
 
 cat > "$TARGET_DIR/src/cli.ts" <<'EOF'
-import { startInteractiveCli, createCliAppConfig } from 'devalbo-cli';
+import { startInteractiveCli, createCliAppConfig } from '@devalbo-cli/cli';
 import { commands } from './commands/index';
 import { createProgram } from './program';
 
@@ -240,7 +276,7 @@ await startInteractiveCli({
 EOF
 
 cat > "$TARGET_DIR/src/config.ts" <<'EOF'
-import { createCliAppConfig } from 'devalbo-cli';
+import { createCliAppConfig } from '@devalbo-cli/cli';
 
 export const appConfig = createCliAppConfig({
   appId: 'my-app',
@@ -263,7 +299,7 @@ import {
   createFilesystemDriver,
   unbindCliRuntimeSource,
   useAppConfig
-} from 'devalbo-cli';
+} from '@devalbo-cli/cli';
 import { commands } from './commands/index';
 import { createProgram } from './program';
 import { appConfig, welcomeMessage } from './config';

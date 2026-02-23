@@ -1,4 +1,4 @@
-import type { ActivityId, ActivityRow } from '@devalbo/shared';
+import type { ActivityId, ActivityRow } from '@devalbo-cli/shared';
 
 interface ActivityLogProps {
   activities: Array<{ id: ActivityId; row: ActivityRow }>;

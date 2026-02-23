@@ -1,5 +1,5 @@
 import path from 'path';
-import { unsafeAsFilePath, type DirectoryPath, type FileEntry, type FilePath } from '@devalbo/shared';
+import { unsafeAsFilePath, type DirectoryPath, type FileEntry, type FilePath } from '@devalbo-cli/shared';
 import type { IFilesystemDriver } from '../interfaces';
 
 type TauriFsEntry = {

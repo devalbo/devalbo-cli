@@ -1,6 +1,6 @@
 import path from 'path';
-import type { FileEntry } from '@devalbo/shared';
-import { unsafeAsDirectoryPath, unsafeAsFilePath, detectPlatform, RuntimePlatform } from '@devalbo/shared';
+import type { FileEntry } from '@devalbo-cli/shared';
+import { unsafeAsDirectoryPath, unsafeAsFilePath, detectPlatform, RuntimePlatform } from '@devalbo-cli/shared';
 import { getDriver } from './file-operations';
 import {
   bftNodeToBytes,

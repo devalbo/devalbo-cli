@@ -1,4 +1,4 @@
-# @devalbo/state
+# @devalbo-cli/state
 
 TinyBase store factory, schemas, persister wrappers, and React hooks.
 
@@ -12,7 +12,7 @@ TinyBase store factory, schemas, persister wrappers, and React hooks.
 ## Example
 
 ```ts
-import { createDevalboStore } from '@devalbo/state';
+import { createDevalboStore } from '@devalbo-cli/state';
 
 const store = createDevalboStore();
 store.setCell('entries', '1', 'name', 'README.md');

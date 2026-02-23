@@ -42,7 +42,7 @@ export {
 
 export { startInteractiveCli, type CliEntryOptions } from './cli-entry';
 
-export { createCliAppConfig } from '@devalbo/shared';
+export { createCliAppConfig } from '@devalbo-cli/shared';
 
 export {
   buildTree,

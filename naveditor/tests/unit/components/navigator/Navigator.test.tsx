@@ -1,8 +1,8 @@
 import React from 'react';
 import { describe, expect, it, vi } from 'vitest';
 import { render } from 'ink-testing-library';
-import { unsafeAsFilePath } from '@devalbo/shared';
-import { createDevalboStore, FILE_TREE_TABLE } from '@devalbo/state';
+import { unsafeAsFilePath } from '@devalbo-cli/shared';
+import { createDevalboStore, FILE_TREE_TABLE } from '@devalbo-cli/state';
 import { Navigator } from '@/components/navigator/Navigator';
 
 const { mockUseFileTreeStore } = vi.hoisted(() => ({
@@ -13,7 +13,7 @@ vi.mock('@/hooks/use-file-tree-store', () => ({
   useFileTreeStore: mockUseFileTreeStore
 }));
 
-vi.mock('@devalbo/ui', () => ({
+vi.mock('@devalbo-cli/ui', () => ({
   useKeyboard: vi.fn()
 }));
 

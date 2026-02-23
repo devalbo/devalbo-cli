@@ -5,7 +5,7 @@ import {
   type ContactRow,
   type ContactRowInput,
   type PersonaId
-} from '@devalbo/shared';
+} from '@devalbo-cli/shared';
 import { CONTACTS_TABLE, MEMBERSHIPS_TABLE, PERSONAS_TABLE } from '../schemas/social';
 import { safeParseWithWarning } from './_validation';
 

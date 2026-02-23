@@ -2,8 +2,8 @@ import os from 'node:os';
 import path from 'node:path';
 import { randomUUID } from 'node:crypto';
 import { beforeEach, describe, expect, it } from 'vitest';
-import { createDevalboStore, listContacts, listGroups, listMembers, listPersonas } from '@devalbo/state';
-import { unsafeAsGroupId } from '@devalbo/shared';
+import { createDevalboStore, listContacts, listGroups, listMembers, listPersonas } from '@devalbo-cli/state';
+import { unsafeAsGroupId } from '@devalbo-cli/shared';
 import { commands } from '@/commands';
 
 const must = <T>(value: T | undefined | null): T => {

@@ -5,8 +5,8 @@ import {
   listContacts,
   searchContacts,
   setContact
-} from '@devalbo/state';
-import { ContactIdToolbox, type ContactRowInput, unsafeAsContactId } from '@devalbo/shared';
+} from '@devalbo-cli/state';
+import { ContactIdToolbox, type ContactRowInput, unsafeAsContactId } from '@devalbo-cli/shared';
 import {
   parseContactAddArgs,
   parseContactEditArgs,
@@ -19,7 +19,7 @@ import {
 import { createElement } from 'react';
 import { ContactDetailOutput } from '@/components/social/output/ContactDetailOutput';
 import { ContactListOutput } from '@/components/social/output/ContactListOutput';
-import { makeResult, makeResultError, type StoreCommandHandler } from '@devalbo/cli-shell';
+import { makeResult, makeResultError, type StoreCommandHandler } from '@devalbo-cli/cli-shell';
 
 const nowIso = () => new Date().toISOString();
 

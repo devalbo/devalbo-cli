@@ -5,13 +5,13 @@ import {
   type SolidSession,
   solidLogin,
   solidLogout
-} from '@devalbo/solid-client';
+} from '@devalbo-cli/solid-client';
 import {
   getContact,
   getDefaultPersona,
   personaToJsonLd
-} from '@devalbo/state';
-import type { ContactId } from '@devalbo/shared';
+} from '@devalbo-cli/state';
+import type { ContactId } from '@devalbo-cli/shared';
 import type { Store } from 'tinybase';
 import {
   parseSolidFetchProfileArgs,
@@ -20,8 +20,8 @@ import {
 } from '@/lib/command-args.parser';
 import { pullPodData, pushPodData } from '@/lib/pod-sync';
 import { SolidProfileOutput } from '@/components/social/output/SolidProfileOutput';
-import type { AsyncCommandHandler, ExtendedCommandOptions } from '@devalbo/cli-shell';
-import { makeOutput, makeResult, makeResultError } from '@devalbo/cli-shell';
+import type { AsyncCommandHandler, ExtendedCommandOptions } from '@devalbo-cli/cli-shell';
+import { makeOutput, makeResult, makeResultError } from '@devalbo-cli/cli-shell';
 
 const hasStore = (options?: ExtendedCommandOptions): options is ExtendedCommandOptions & { store: Store } =>
   typeof options === 'object' && options != null && 'store' in options;

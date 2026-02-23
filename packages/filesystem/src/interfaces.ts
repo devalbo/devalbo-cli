@@ -1,4 +1,4 @@
-import type { DirectoryPath, FilePath, FileEntry, WatchEvent } from '@devalbo/shared';
+import type { DirectoryPath, FilePath, FileEntry, WatchEvent } from '@devalbo-cli/shared';
 
 export interface IFilesystemDriver {
   readFile(path: FilePath): Promise<Uint8Array>;

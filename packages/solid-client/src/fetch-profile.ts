@@ -1,5 +1,5 @@
-import { jsonLdToPersonaRow } from '@devalbo/state';
-import type { PersonaId, PersonaRowInput } from '@devalbo/shared';
+import { jsonLdToPersonaRow } from '@devalbo-cli/state';
+import type { PersonaId, PersonaRowInput } from '@devalbo-cli/shared';
 
 type JsonLdObject = Record<string, unknown>;
 

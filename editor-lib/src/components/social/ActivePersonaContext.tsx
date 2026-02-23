@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
-import type { PersonaId } from '@devalbo/shared';
-import { usePersonas } from '@devalbo/state';
+import type { PersonaId } from '@devalbo-cli/shared';
+import { usePersonas } from '@devalbo-cli/state';
 
 export interface ActivePersonaContextValue {
   activePersonaId: PersonaId | null;

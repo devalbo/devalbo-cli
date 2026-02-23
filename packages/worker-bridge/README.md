@@ -1,4 +1,4 @@
-# @devalbo/worker-bridge
+# @devalbo-cli/worker-bridge
 
 Worker communication primitives for request/response messaging and shared memory coordination.
 

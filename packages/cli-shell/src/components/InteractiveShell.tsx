@@ -1,6 +1,6 @@
 import React, { useMemo, useState, type ReactNode } from 'react';
 import { Box, Text } from 'ink';
-import { TextInput } from '@devalbo/ui';
+import { TextInput } from '@devalbo-cli/ui';
 import { BrowserShellProvider } from './BrowserShellProvider';
 import { TerminalShellProvider } from './TerminalShellProvider';
 import {
@@ -9,9 +9,9 @@ import {
   detectPlatform,
   RuntimePlatform,
   type IConnectivityService
-} from '@devalbo/shared';
-import { createDevalboStore, type DevalboStore } from '@devalbo/state';
-import type { IFilesystemDriver } from '@devalbo/filesystem';
+} from '@devalbo-cli/shared';
+import { createDevalboStore, type DevalboStore } from '@devalbo-cli/state';
+import type { IFilesystemDriver } from '@devalbo-cli/filesystem';
 import type { CommandHandler } from '../commands/_util';
 import { executeCommandRaw, parseCommandLine } from '../lib/command-runtime';
 

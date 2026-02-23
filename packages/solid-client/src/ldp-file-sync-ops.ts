@@ -4,7 +4,7 @@ import {
   getFileSyncState,
   listFileSyncStatesForRoot,
   setFileSyncState
-} from '@devalbo/state';
+} from '@devalbo-cli/state';
 import type {
   AbsolutePath,
   ContentHash,
@@ -13,15 +13,15 @@ import type {
   RelativePath,
   SyncRoot,
   SyncRootId
-} from '@devalbo/shared';
+} from '@devalbo-cli/shared';
 import {
   unsafeAsAbsolutePath,
   unsafeAsContentHash,
   unsafeAsDirectoryPath,
   unsafeAsFilePath,
   unsafeAsRelativePath
-} from '@devalbo/shared';
-import type { IFilesystemDriver } from '@devalbo/filesystem';
+} from '@devalbo-cli/shared';
+import type { IFilesystemDriver } from '@devalbo-cli/filesystem';
 import { SolidLdpFilePersister } from './ldp-file-persister';
 
 export type FileSyncSummary = {

@@ -4,7 +4,7 @@ import 'ink-web/css';
 import '@xterm/xterm/css/xterm.css';
 import '@/index.css';
 import { App } from './App';
-import { cli } from '@devalbo/cli-shell';
+import { cli } from '@devalbo-cli/cli-shell';
 
 declare global {
   interface Window {

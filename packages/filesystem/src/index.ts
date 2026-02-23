@@ -1,4 +1,4 @@
-import { detectPlatform, RuntimePlatform } from '@devalbo/shared';
+import { detectPlatform, RuntimePlatform } from '@devalbo-cli/shared';
 import type { IFilesystemDriver } from './interfaces';
 
 export * from './interfaces';
@@ -24,7 +24,7 @@ export const createFilesystemDriver = async (): Promise<IFilesystemDriver> => {
   driverPromise = (async () => {
     const env = detectPlatform();
     if (env.platform === RuntimePlatform.NodeJS) {
-      const { NativeFSDriver } = await import(/* @vite-ignore */ '@devalbo/filesystem/node');
+      const { NativeFSDriver } = await import(/* @vite-ignore */ '@devalbo-cli/filesystem/node');
       return new NativeFSDriver();
     }
     if (env.platform === RuntimePlatform.Tauri) {

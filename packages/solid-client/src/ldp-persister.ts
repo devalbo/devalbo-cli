@@ -1,4 +1,4 @@
-import { contactToJsonLd, jsonLdToContactRow, jsonLdToGroupRow, jsonLdToPersonaRow, personaToJsonLd } from '@devalbo/state';
+import { contactToJsonLd, jsonLdToContactRow, jsonLdToGroupRow, jsonLdToPersonaRow, personaToJsonLd } from '@devalbo-cli/state';
 import type {
   ContactId,
   ContactRow,
@@ -8,7 +8,7 @@ import type {
   PersonaId,
   PersonaRow,
   PersonaRowInput
-} from '@devalbo/shared';
+} from '@devalbo-cli/shared';
 
 type FetchFn = typeof globalThis.fetch;
 type JsonLdObject = Record<string, unknown>;

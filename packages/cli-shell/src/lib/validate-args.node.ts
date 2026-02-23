@@ -1,5 +1,5 @@
 import { Effect } from 'effect';
-import { MissingArgument } from '@devalbo/shared';
+import { MissingArgument } from '@devalbo-cli/shared';
 import { statSync } from 'node:fs';
 import path from 'node:path';
 import type { Stats } from 'node:fs';

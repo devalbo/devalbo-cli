@@ -5,11 +5,11 @@ import {
   type FilesystemBackendInfo,
   type IFilesystemDriver,
   type IWatcherService
-} from '@devalbo/filesystem';
+} from '@devalbo-cli/filesystem';
 
 let driverPromise: Promise<IFilesystemDriver> | undefined;
 
-export { FS_STORAGE_KEY } from '@devalbo/filesystem';
+export { FS_STORAGE_KEY } from '@devalbo-cli/filesystem';
 
 export const getDriver = async (): Promise<IFilesystemDriver> => {
   if (!driverPromise) {

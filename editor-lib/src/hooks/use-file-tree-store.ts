@@ -1,7 +1,7 @@
 import { useEffect, useMemo } from 'react';
-import { createDevalboStore, FILE_TREE_TABLE } from '@devalbo/state';
+import { createDevalboStore, FILE_TREE_TABLE } from '@devalbo-cli/state';
 import { useFileTree } from './use-file-tree';
-import type { DevalboStore } from '@devalbo/state';
+import type { DevalboStore } from '@devalbo-cli/state';
 import type { UseFileTreeReturn } from './use-file-tree';
 
 export interface UseFileTreeStoreResult {

@@ -3,9 +3,9 @@ import { Box, Text } from 'ink';
 import { useFileTreeStore } from '@/hooks/use-file-tree-store';
 import { FileTree } from './FileTree';
 import { NavigatorStatusBar } from './NavigatorStatusBar';
-import { FILE_TREE_TABLE } from '@devalbo/state';
-import { Spinner } from '@devalbo/cli-shell/components/ui/spinner';
-import { unsafeAsFilePath, type FileEntry } from '@devalbo/shared';
+import { FILE_TREE_TABLE } from '@devalbo-cli/state';
+import { Spinner } from '@devalbo-cli/cli-shell/components/ui/spinner';
+import { unsafeAsFilePath, type FileEntry } from '@devalbo-cli/shared';
 
 export const Navigator: React.FC<{ rootPath: string }> = ({ rootPath }) => {
   const { store, tree } = useFileTreeStore(rootPath);

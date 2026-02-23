@@ -8,7 +8,7 @@ import {
   type GroupRow,
   type GroupRowInput,
   type MembershipRowInput
-} from '@devalbo/shared';
+} from '@devalbo-cli/shared';
 import type { Store } from 'tinybase';
 import { listMembers } from '../accessors/memberships';
 import { membershipToJsonLd, extractRoleFromMembershipJsonLd } from './membership-jsonld';

@@ -3,9 +3,9 @@ import { useState } from 'react';
 import React from 'react';
 import type { Command } from 'commander';
 import type { CommandHandler } from './commands/_util';
-import type { AppConfig } from '@devalbo/shared';
-import { createDevalboStore } from '@devalbo/state';
-import { createFilesystemDriver } from '@devalbo/filesystem';
+import type { AppConfig } from '@devalbo-cli/shared';
+import { createDevalboStore } from '@devalbo-cli/state';
+import { createFilesystemDriver } from '@devalbo-cli/filesystem';
 import { InteractiveShell } from './components/InteractiveShell';
 import type { ReactNode } from 'react';
 

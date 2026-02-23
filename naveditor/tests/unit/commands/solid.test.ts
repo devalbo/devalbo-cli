@@ -1,8 +1,8 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { commands } from '@/commands';
-import type { ProfileFetchResult } from '@devalbo/solid-client';
-import { createDevalboStore, getDefaultPersona, listGroups, setContact, setPersona } from '@devalbo/state';
-import type { PersonaId } from '@devalbo/shared';
+import type { ProfileFetchResult } from '@devalbo-cli/solid-client';
+import { createDevalboStore, getDefaultPersona, listGroups, setContact, setPersona } from '@devalbo-cli/state';
+import type { PersonaId } from '@devalbo-cli/shared';
 
 const {
   fetchWebIdProfileMock,
@@ -27,7 +27,7 @@ const {
   })
 }));
 
-vi.mock('@devalbo/solid-client', () => ({
+vi.mock('@devalbo-cli/solid-client', () => ({
   fetchWebIdProfile: fetchWebIdProfileMock,
   solidLogin: solidLoginMock,
   solidLogout: solidLogoutMock,

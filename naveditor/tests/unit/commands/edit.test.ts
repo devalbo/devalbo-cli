@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { commands } from '@/commands';
-import { createDevalboStore } from '@devalbo/state';
+import { createDevalboStore } from '@devalbo-cli/state';
 
 const FIXTURES = path.join(fileURLToPath(new URL('.', import.meta.url)), '../../fixtures');
 

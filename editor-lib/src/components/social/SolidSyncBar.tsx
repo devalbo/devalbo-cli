@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { getDefaultPersona, type DevalboStore } from '@devalbo/state';
-import { podPull, podPush, solidLogin, useSolidSession } from '@devalbo/solid-client';
+import { getDefaultPersona, type DevalboStore } from '@devalbo-cli/state';
+import { podPull, podPush, solidLogin, useSolidSession } from '@devalbo-cli/solid-client';
 
 type SyncAction = 'connect' | 'push' | 'pull' | null;
 type ClearState = 'idle' | 'confirm';

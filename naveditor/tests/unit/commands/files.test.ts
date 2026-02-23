@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import { describe, expect, it } from 'vitest';
-import { createDevalboStore } from '@devalbo/state';
+import { createDevalboStore } from '@devalbo-cli/state';
 import { commands } from '@/commands';
 
 const extractText = (node: ReactNode): string => {

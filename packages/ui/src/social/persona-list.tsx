@@ -1,5 +1,5 @@
 import React from 'react';
-import type { PersonaId, PersonaRow } from '@devalbo/shared';
+import type { PersonaId, PersonaRow } from '@devalbo-cli/shared';
 import { PersonaCard } from './persona-card';
 
 interface PersonaListProps {

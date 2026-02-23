@@ -1,23 +1,23 @@
 # devalbo-core-v2
 
-Monorepo for the foundational `@devalbo/*` packages and the `naveditor` PoC.
+Monorepo for the foundational `@devalbo-cli/*` packages and the `naveditor` PoC.
 
 ## Workspace Packages
 
-- `@devalbo/shared`: shared types, environment detection, validation errors
-- `@devalbo/filesystem`: filesystem drivers and watcher services
-- `@devalbo/state`: TinyBase-backed state and persister wrappers
-- `@devalbo/ui`: isomorphic UI primitives and shell providers
-- `@devalbo/commands`: command registry, parsing, validation, console bridge
-- `@devalbo/worker-bridge`: worker messaging and shared-buffer helpers
+- `@devalbo-cli/shared`: shared types, environment detection, validation errors
+- `@devalbo-cli/filesystem`: filesystem drivers and watcher services
+- `@devalbo-cli/state`: TinyBase-backed state and persister wrappers
+- `@devalbo-cli/ui`: isomorphic UI primitives and shell providers
+- `@devalbo-cli/commands`: command registry, parsing, validation, console bridge
+- `@devalbo-cli/worker-bridge`: worker messaging and shared-buffer helpers
 - `naveditor`: terminal/browser navigator-editor app built on these packages
 
 ## Quick Start
 
 ```bash
 pnpm install
-pnpm -r --filter "@devalbo/*" build
-pnpm -r --filter "@devalbo/*" type-check
+pnpm -r --filter "@devalbo-cli/*" build
+pnpm -r --filter "@devalbo-cli/*" type-check
 pnpm test:packages
 ```
 

@@ -1,5 +1,5 @@
 import { Command } from 'commander';
-import { registerBuiltinCommands } from '@devalbo/cli-shell';
+import { registerBuiltinCommands } from '@devalbo-cli/cli-shell';
 
 export function createProgram() {
   const program = new Command();

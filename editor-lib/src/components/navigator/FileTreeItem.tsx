@@ -1,6 +1,6 @@
 import React from 'react';
 import { Text } from 'ink';
-import type { FileEntry } from '@devalbo/shared';
+import type { FileEntry } from '@devalbo-cli/shared';
 
 interface Props {
   entry: FileEntry;

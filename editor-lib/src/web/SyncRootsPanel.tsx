@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { useSolidSession } from '@devalbo/solid-client';
+import { useSolidSession } from '@devalbo-cli/solid-client';
 import {
   deleteFileSyncState,
   deleteSyncRoot,
@@ -10,15 +10,15 @@ import {
   SYNC_ROOTS_TABLE,
   useAppConfig,
   useStore
-} from '@devalbo/state';
+} from '@devalbo-cli/state';
 import {
   assertAbsolutePath,
   assertPodUrl,
   assertSyncRootId,
   assertWebId,
   BrowserConnectivityService
-} from '@devalbo/shared';
-import { findRootConflicts } from '@devalbo/solid-client';
+} from '@devalbo-cli/shared';
+import { findRootConflicts } from '@devalbo-cli/solid-client';
 import { useFileSyncMap } from '@/components/social/FileSyncContext';
 
 type Resolution = 'keep-local' | 'keep-pod' | 'keep-both';

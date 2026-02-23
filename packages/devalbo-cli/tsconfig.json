@@ -3,11 +3,11 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@devalbo/cli-shell": ["../cli-shell/src/index.ts"],
-      "@devalbo/cli-shell/*": ["../cli-shell/src/*"],
-      "@devalbo/filesystem": ["../filesystem/src/index.ts"],
-      "@devalbo/shared": ["../shared/src/index.ts"],
-      "@devalbo/state": ["../state/src/index.ts"]
+      "@devalbo-cli/cli-shell": ["../cli-shell/src/index.ts"],
+      "@devalbo-cli/cli-shell/*": ["../cli-shell/src/*"],
+      "@devalbo-cli/filesystem": ["../filesystem/src/index.ts"],
+      "@devalbo-cli/shared": ["../shared/src/index.ts"],
+      "@devalbo-cli/state": ["../state/src/index.ts"]
     },
     "types": ["node"]
   },

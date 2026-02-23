@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
-import type { FileEntry } from '@devalbo/shared';
-import { unsafeAsDirectoryPath, unsafeAsFilePath } from '@devalbo/shared';
-import { getDriver, getWatcher } from '@devalbo/cli-shell';
+import type { FileEntry } from '@devalbo-cli/shared';
+import { unsafeAsDirectoryPath, unsafeAsFilePath } from '@devalbo-cli/shared';
+import { getDriver, getWatcher } from '@devalbo-cli/cli-shell';
 
 export interface UseFileTreeOptions {
   rootPath: string;

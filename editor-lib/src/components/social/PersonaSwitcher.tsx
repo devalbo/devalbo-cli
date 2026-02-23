@@ -1,5 +1,5 @@
-import { usePersonas } from '@devalbo/state';
-import { unsafeAsPersonaId } from '@devalbo/shared';
+import { usePersonas } from '@devalbo-cli/state';
+import { unsafeAsPersonaId } from '@devalbo-cli/shared';
 import { useActivePersona } from './ActivePersonaContext';
 
 interface PersonaSwitcherProps {

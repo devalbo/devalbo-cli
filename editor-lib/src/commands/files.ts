@@ -7,7 +7,7 @@ import {
   listFileSyncStatesForRoot,
   listSyncRoots,
   setSyncRoot
-} from '@devalbo/state';
+} from '@devalbo-cli/state';
 import {
   AlwaysOnlineConnectivityService,
   assertAbsolutePath,
@@ -15,7 +15,7 @@ import {
   assertSyncRootId,
   assertWebId,
   type SyncRoot
-} from '@devalbo/shared';
+} from '@devalbo-cli/shared';
 import {
   SolidLdpFilePersister,
   type SolidSession,
@@ -24,8 +24,8 @@ import {
   pullFilesForRoot,
   pushFilesForRoot,
   resolveFileConflict
-} from '@devalbo/solid-client';
-import { makeOutput, makeResultError, type AsyncCommandHandler, type ExtendedCommandOptions } from '@devalbo/cli-shell';
+} from '@devalbo-cli/solid-client';
+import { makeOutput, makeResultError, type AsyncCommandHandler, type ExtendedCommandOptions } from '@devalbo-cli/cli-shell';
 
 const hasStore = (options?: ExtendedCommandOptions): options is ExtendedCommandOptions & { store: Store } =>
   typeof options === 'object' && options != null && 'store' in options;

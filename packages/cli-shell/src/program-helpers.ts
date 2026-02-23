@@ -1,5 +1,5 @@
 import type { Command } from 'commander';
-import type { AppConfig } from '@devalbo/shared';
+import type { AppConfig } from '@devalbo-cli/shared';
 
 /**
  * Register all built-in cli-shell commands on a commander program.

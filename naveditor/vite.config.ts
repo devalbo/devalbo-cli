@@ -21,14 +21,14 @@ export default defineConfig({
         'ink',
         'react',
         'react/jsx-runtime',
-        '@devalbo/commands',
-        '@devalbo/cli-shell',
-        '@devalbo/filesystem',
-        '@devalbo/filesystem/node',
-        '@devalbo/shared',
-        '@devalbo/solid-client',
-        '@devalbo/state',
-        '@devalbo/ui'
+        '@devalbo-cli/commands',
+        '@devalbo-cli/cli-shell',
+        '@devalbo-cli/filesystem',
+        '@devalbo-cli/filesystem/node',
+        '@devalbo-cli/shared',
+        '@devalbo-cli/solid-client',
+        '@devalbo-cli/state',
+        '@devalbo-cli/ui'
       ]
     }
   },

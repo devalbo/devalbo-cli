@@ -1,5 +1,5 @@
 import { Box, Text } from 'ink';
-import type { GroupId, MembershipId, MembershipRow } from '@devalbo/shared';
+import type { GroupId, MembershipId, MembershipRow } from '@devalbo-cli/shared';
 
 interface MembershipListOutputProps {
   members: Array<{ id: MembershipId; row: MembershipRow }>;

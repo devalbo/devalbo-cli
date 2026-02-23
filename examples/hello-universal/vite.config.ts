@@ -13,11 +13,11 @@ export default defineConfig({
     alias: [
       { find: 'devalbo-cli', replacement: path.resolve(__dirname, '../../packages/devalbo-cli/src/index.ts') },
       { find: /^@devalbo\/cli-shell\/(.*)$/, replacement: path.resolve(__dirname, '../../packages/cli-shell/src/$1') },
-      { find: '@devalbo/cli-shell', replacement: path.resolve(__dirname, '../../packages/cli-shell/src/index.ts') },
-      { find: '@devalbo/commands', replacement: path.resolve(__dirname, '../../packages/commands/src/index.ts') },
-      { find: '@devalbo/shared', replacement: path.resolve(__dirname, '../../packages/shared/src/index.ts') },
-      { find: '@devalbo/state', replacement: path.resolve(__dirname, '../../packages/state/src/index.ts') },
-      { find: '@devalbo/ui', replacement: path.resolve(__dirname, '../../packages/ui/src/index.ts') },
+      { find: '@devalbo-cli/cli-shell', replacement: path.resolve(__dirname, '../../packages/cli-shell/src/index.ts') },
+      { find: '@devalbo-cli/commands', replacement: path.resolve(__dirname, '../../packages/commands/src/index.ts') },
+      { find: '@devalbo-cli/shared', replacement: path.resolve(__dirname, '../../packages/shared/src/index.ts') },
+      { find: '@devalbo-cli/state', replacement: path.resolve(__dirname, '../../packages/state/src/index.ts') },
+      { find: '@devalbo-cli/ui', replacement: path.resolve(__dirname, '../../packages/ui/src/index.ts') },
       { find: 'ink', replacement: 'ink-web' }
     ]
   }

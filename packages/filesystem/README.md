@@ -1,4 +1,4 @@
-# @devalbo/filesystem
+# @devalbo-cli/filesystem
 
 Filesystem drivers and watcher abstractions.
 
@@ -12,8 +12,8 @@ Filesystem drivers and watcher abstractions.
 ## Example
 
 ```ts
-import { InMemoryDriver } from '@devalbo/filesystem';
-import { unsafeAsFilePath } from '@devalbo/shared';
+import { InMemoryDriver } from '@devalbo-cli/filesystem';
+import { unsafeAsFilePath } from '@devalbo-cli/shared';
 
 const fs = new InMemoryDriver();
 await fs.writeFile(unsafeAsFilePath('/tmp/a.txt'), new TextEncoder().encode('hello'));

@@ -5,7 +5,7 @@ import type {
   GroupRow,
   PersonaId,
   PersonaRow
-} from '@devalbo/shared';
+} from '@devalbo-cli/shared';
 import { getContact } from '../accessors/contacts';
 import { getGroup } from '../accessors/groups';
 import { getPersona } from '../accessors/personas';

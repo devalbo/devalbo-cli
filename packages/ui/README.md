@@ -1,4 +1,4 @@
-# @devalbo/ui
+# @devalbo-cli/ui
 
 Isomorphic UI primitives and shell providers for terminal/browser command UIs.
 

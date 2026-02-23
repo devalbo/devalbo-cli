@@ -2,9 +2,9 @@ import { render } from 'ink';
 import { useState } from 'react';
 import { createProgram } from './program';
 import { commands, type CommandName } from './commands';
-import { TerminalShellProvider, InteractiveShell } from '@devalbo/cli-shell';
-import { createDevalboStore } from '@devalbo/state';
-import { createFilesystemDriver, type IFilesystemDriver } from '@devalbo/filesystem';
+import { TerminalShellProvider, InteractiveShell } from '@devalbo-cli/cli-shell';
+import { createDevalboStore } from '@devalbo-cli/state';
+import { createFilesystemDriver, type IFilesystemDriver } from '@devalbo-cli/filesystem';
 import { defaultAppConfig } from './web/config';
 
 const TERMINAL_WELCOME_MESSAGE = 'Try: pwd, ls, export ., import snapshot.bft restore, backend';

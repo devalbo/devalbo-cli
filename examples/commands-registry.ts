@@ -1,4 +1,4 @@
-import { CommandRegistry, createConsoleBridge } from '@devalbo/commands';
+import { CommandRegistry, createConsoleBridge } from '@devalbo-cli/commands';
 
 const registry = new CommandRegistry();
 registry.register({

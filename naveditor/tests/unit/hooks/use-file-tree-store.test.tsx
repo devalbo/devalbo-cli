@@ -1,8 +1,8 @@
 import React from 'react';
 import { describe, expect, it, beforeEach, vi } from 'vitest';
 import { act, create } from 'react-test-renderer';
-import { unsafeAsFilePath } from '@devalbo/shared';
-import { FILE_TREE_TABLE } from '@devalbo/state';
+import { unsafeAsFilePath } from '@devalbo-cli/shared';
+import { FILE_TREE_TABLE } from '@devalbo-cli/state';
 import type { UseFileTreeReturn } from '@/hooks/use-file-tree';
 
 const { mockUseFileTree } = vi.hoisted(() => ({

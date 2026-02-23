@@ -1,8 +1,8 @@
 import React from 'react';
 import { act, create, type ReactTestRenderer } from 'react-test-renderer';
 import { beforeEach, describe, expect, it } from 'vitest';
-import { StoreContext, createDevalboStore, deletePersona, setContact, setGroup, setPersona } from '@devalbo/state';
-import { unsafeAsContactId, unsafeAsGroupId, unsafeAsPersonaId } from '@devalbo/shared';
+import { StoreContext, createDevalboStore, deletePersona, setContact, setGroup, setPersona } from '@devalbo-cli/state';
+import { unsafeAsContactId, unsafeAsGroupId, unsafeAsPersonaId } from '@devalbo-cli/shared';
 import { SocialPanel } from '@/components/social/SocialPanel';
 
 const PERSONA_ID = unsafeAsPersonaId('persona_test_social_panel');

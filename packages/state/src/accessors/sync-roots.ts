@@ -1,5 +1,5 @@
 import type { Row, Store } from 'tinybase';
-import { SyncRootSchema, type SyncRoot, type SyncRootId } from '@devalbo/shared';
+import { SyncRootSchema, type SyncRoot, type SyncRootId } from '@devalbo-cli/shared';
 
 export const SYNC_ROOTS_TABLE = 'sync_roots' as const;
 

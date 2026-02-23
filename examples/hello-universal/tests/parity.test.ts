@@ -5,7 +5,7 @@ import {
   createDevalboStore,
   createCliAppConfig,
   unbindCliRuntimeSource
-} from 'devalbo-cli';
+} from '@devalbo-cli/cli';
 import { commands } from '../src/commands';
 import { createProgram } from '../src/program';
 

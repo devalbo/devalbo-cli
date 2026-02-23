@@ -1,5 +1,5 @@
 import { Command } from 'commander';
-import { registerBuiltinCommands } from 'devalbo-cli';
+import { registerBuiltinCommands } from '@devalbo-cli/cli';
 
 export const createProgram = (): Command => {
   const program = new Command('hello-universal')

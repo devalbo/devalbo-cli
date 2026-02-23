@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { InkTerminalBox } from 'ink-web';
-import { registerDefaultMimeTypeHandlers } from '@devalbo/ui';
+import { registerDefaultMimeTypeHandlers } from '@devalbo-cli/ui';
 import {
   AppConfigProvider,
   createDevalboStore,
@@ -9,22 +9,22 @@ import {
   useAppConfig,
   StoreContext,
   type DevalboStore
-} from '@devalbo/state';
+} from '@devalbo-cli/state';
 import {
   SolidLdpFileSynchronizer,
   SolidLdpSynchronizer,
   SolidSessionProvider,
   useSolidSession
-} from '@devalbo/solid-client';
-import { createFilesystemDriver, createWatcherService, type IFilesystemDriver, type IWatcherService } from '@devalbo/filesystem';
+} from '@devalbo-cli/solid-client';
+import { createFilesystemDriver, createWatcherService, type IFilesystemDriver, type IWatcherService } from '@devalbo-cli/filesystem';
 import {
   BrowserConnectivityService,
   detectPlatform,
   RuntimePlatform,
   type SyncRoot
-} from '@devalbo/shared';
+} from '@devalbo-cli/shared';
 import { createLocalPersister } from 'tinybase/persisters/persister-browser';
-import { InteractiveShell, bindCliRuntimeSource, unbindCliRuntimeSource } from '@devalbo/cli-shell';
+import { InteractiveShell, bindCliRuntimeSource, unbindCliRuntimeSource } from '@devalbo-cli/cli-shell';
 import { commands } from '@/commands';
 import { ActivePersonaProvider } from '@/components/social/ActivePersonaContext';
 import { FileSyncContext, type FileSyncMap } from '@/components/social/FileSyncContext';

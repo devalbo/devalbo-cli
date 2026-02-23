@@ -1,7 +1,7 @@
 import { watch } from 'node:fs';
 import path from 'node:path';
-import type { DirectoryPath, FilePath, WatchEvent } from '@devalbo/shared';
-import { unsafeAsFilePath, WatchEventType } from '@devalbo/shared';
+import type { DirectoryPath, FilePath, WatchEvent } from '@devalbo-cli/shared';
+import { unsafeAsFilePath, WatchEventType } from '@devalbo-cli/shared';
 import type { IWatcherService } from '../interfaces';
 
 export class NodeWatcherService implements IWatcherService {

@@ -3,9 +3,9 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { mkdtemp, mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
-import { RuntimePlatform } from '@devalbo/shared';
-import * as shared from '@devalbo/shared';
-import { createDevalboStore } from '@devalbo/state';
+import { RuntimePlatform } from '@devalbo-cli/shared';
+import * as shared from '@devalbo-cli/shared';
+import { createDevalboStore } from '@devalbo-cli/state';
 import { commands } from '@/commands';
 
 function extractText(node: ReactNode): string {

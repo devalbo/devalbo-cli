@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { ContactIdToolbox, GroupIdToolbox, PersonaIdToolbox } from '@devalbo/shared';
+import { ContactIdToolbox, GroupIdToolbox, PersonaIdToolbox } from '@devalbo-cli/shared';
 import {
   parseContactLinkArgs,
   parseGroupAddMemberArgs,

@@ -1,5 +1,5 @@
 {
-  "name": "@devalbo/editor-lib",
+  "name": "@devalbo-cli/editor-lib",
   "private": true,
   "version": "0.1.0",
   "type": "module",
@@ -7,13 +7,13 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@devalbo/cli-shell": "workspace:*",
-    "@devalbo/commands": "workspace:*",
-    "@devalbo/filesystem": "workspace:*",
-    "@devalbo/shared": "workspace:*",
-    "@devalbo/solid-client": "workspace:*",
-    "@devalbo/state": "workspace:*",
-    "@devalbo/ui": "workspace:*",
+    "@devalbo-cli/cli-shell": "workspace:*",
+    "@devalbo-cli/commands": "workspace:*",
+    "@devalbo-cli/filesystem": "workspace:*",
+    "@devalbo-cli/shared": "workspace:*",
+    "@devalbo-cli/solid-client": "workspace:*",
+    "@devalbo-cli/state": "workspace:*",
+    "@devalbo-cli/ui": "workspace:*",
     "@optique/core": "^0.10.3",
     "@sqlite.org/sqlite-wasm": "catalog:",
     "@xterm/xterm": "catalog:",

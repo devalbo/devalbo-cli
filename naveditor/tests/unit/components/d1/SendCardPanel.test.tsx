@@ -1,9 +1,9 @@
 import React from 'react';
 import { act, create, type ReactTestRenderer } from 'react-test-renderer';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { StoreContext, createDevalboStore, setContact, setPersona } from '@devalbo/state';
-import { unsafeAsContactId, unsafeAsPersonaId } from '@devalbo/shared';
-import type { ProfileFetchResult, SolidSession } from '@devalbo/solid-client';
+import { StoreContext, createDevalboStore, setContact, setPersona } from '@devalbo-cli/state';
+import { unsafeAsContactId, unsafeAsPersonaId } from '@devalbo-cli/shared';
+import type { ProfileFetchResult, SolidSession } from '@devalbo-cli/solid-client';
 import { SendCardPanel } from '@/components/social/d1/SendCardPanel';
 
 const { fetchWebIdProfileMock, deliverCardMock } = vi.hoisted(() => ({
@@ -11,7 +11,7 @@ const { fetchWebIdProfileMock, deliverCardMock } = vi.hoisted(() => ({
   deliverCardMock: vi.fn<() => Promise<{ ok: true } | { ok: false; error: string }>>()
 }));
 
-vi.mock('@devalbo/solid-client', () => ({
+vi.mock('@devalbo-cli/solid-client', () => ({
   fetchWebIdProfile: fetchWebIdProfileMock,
   deliverCard: deliverCardMock
 }));

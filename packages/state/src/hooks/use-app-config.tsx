@@ -1,5 +1,5 @@
 import { createContext, useContext, type ReactNode } from 'react';
-import type { AppConfig } from '@devalbo/shared';
+import type { AppConfig } from '@devalbo-cli/shared';
 
 export const AppConfigContext = createContext<AppConfig | null>(null);
 

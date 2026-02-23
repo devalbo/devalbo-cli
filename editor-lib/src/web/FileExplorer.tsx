@@ -4,13 +4,13 @@ import {
   detectPlatform,
   RuntimePlatform,
   unsafeAsDirectoryPath
-} from '@devalbo/shared';
-import { listFileSyncStatesForRoot, listSyncRoots, useStore } from '@devalbo/state';
+} from '@devalbo-cli/shared';
+import { listFileSyncStatesForRoot, listSyncRoots, useStore } from '@devalbo-cli/state';
 import {
   listMimeTypeHandlers,
   resolveMimeTypeHandler,
   type FileContent
-} from '@devalbo/ui';
+} from '@devalbo-cli/ui';
 import {
   buildTree,
   type FsTreeNode,
@@ -25,8 +25,8 @@ import {
   splitFsPath,
   writeBytesFile,
   writeTextFile
-} from '@devalbo/cli-shell';
-import { findSyncRoot } from '@devalbo/solid-client';
+} from '@devalbo-cli/cli-shell';
+import { findSyncRoot } from '@devalbo-cli/solid-client';
 import { useFileSyncMap } from '@/components/social/FileSyncContext';
 import { SyncRootsPanel } from './SyncRootsPanel';
 import { inferMimeTypeFromPath, mimePrefersText } from '@/lib/mime';

@@ -1,15 +1,15 @@
 import React from 'react';
 import { describe, expect, it, beforeEach, vi } from 'vitest';
 import { act, create } from 'react-test-renderer';
-import { unsafeAsFilePath } from '@devalbo/shared';
+import { unsafeAsFilePath } from '@devalbo-cli/shared';
 import type { UseFileTreeReturn } from '@/hooks/use-file-tree';
 
 const mockReaddir = vi.fn();
 const mockWatch = vi.fn();
 const mockUnwatch = vi.fn();
 
-vi.mock('@devalbo/cli-shell', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('@devalbo/cli-shell')>();
+vi.mock('@devalbo-cli/cli-shell', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@devalbo-cli/cli-shell')>();
   return {
     ...actual,
   getDriver: vi.fn(async () => ({ readdir: mockReaddir })),

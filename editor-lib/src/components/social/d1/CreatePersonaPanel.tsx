@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { getDefaultPersona, setPersona, useStore } from '@devalbo/state';
-import { PersonaIdToolbox, unsafeAsPersonaId, type PersonaId } from '@devalbo/shared';
+import { getDefaultPersona, setPersona, useStore } from '@devalbo-cli/state';
+import { PersonaIdToolbox, unsafeAsPersonaId, type PersonaId } from '@devalbo-cli/shared';
 
 interface CreatePersonaPanelProps {
   onCreated: (id: PersonaId) => void;

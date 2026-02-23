@@ -1,6 +1,6 @@
 import { Effect } from 'effect';
-import type { CommandResult } from '@devalbo/shared';
-import { MissingArgument } from '@devalbo/shared';
+import type { CommandResult } from '@devalbo-cli/shared';
+import { MissingArgument } from '@devalbo-cli/shared';
 import type { ReactNode } from 'react';
 
 export const withValidation = <A>(

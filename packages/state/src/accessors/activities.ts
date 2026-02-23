@@ -4,7 +4,7 @@ import {
   type ActivityId,
   type ActivityRow,
   type ActivityRowInput
-} from '@devalbo/shared';
+} from '@devalbo-cli/shared';
 import { ACTIVITIES_TABLE } from '../schemas/social';
 import { safeParseWithWarning } from './_validation';
 

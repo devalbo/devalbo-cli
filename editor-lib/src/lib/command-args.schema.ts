@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { pathArgSchema } from '@devalbo/shared';
+import { pathArgSchema } from '@devalbo-cli/shared';
 
 export const PathTokenSchema = pathArgSchema;
 

@@ -255,7 +255,7 @@ Brands are for correctness at typed boundaries, not for changing on-disk/in-memo
 
 ## Methodology
 Use this rollout method for each new branded domain:
-1. Define the brand type and canonical schema in `@devalbo/shared`.
+1. Define the brand type and canonical schema in `@devalbo-cli/shared`.
 2. Add constructor surfaces by trust level:
 - `unsafeAsX` for trusted internal invariants only
 - `parseX` / `assertX` for untrusted input
@@ -392,7 +392,7 @@ const n: number = Pounds.extractNumber(weight);          // 1.5
 
 **Scope:** This covers ~160 units across 16 measurement domains — length, mass, volume, area, temperature, time, speed, pressure, force, energy, power, electrical, frequency, torque, flow rate, density, luminosity, angle, and data/information — in both metric (SI) and US customary systems.
 
-**Relationship to core branded types:** Metric values reuse the same `createBrandedPrefixKeyStringToolboxWithSeparator` base factory from `@devalbo/branded-types`, introducing a `NumericValueKey` methodology where the key portion is a decimal number rather than a UUID or index. The core branding package should be implemented first; the units package is a follow-on that builds on top of it.
+**Relationship to core branded types:** Metric values reuse the same `createBrandedPrefixKeyStringToolboxWithSeparator` base factory from `@devalbo-cli/branded-types`, introducing a `NumericValueKey` methodology where the key portion is a decimal number rather than a UUID or index. The core branding package should be implemented first; the units package is a follow-on that builds on top of it.
 
 **Design considerations:**
 - **Separator ambiguity** — Compound units like `m_s` (meters/second) and `kg_m3` (kg/m³) use `_` in the unit name, which overlaps with the value separator. Resolution: use `__` as the value separator for compound units, or `/` for "per" (e.g., `m/s_9.8`).
@@ -400,7 +400,7 @@ const n: number = Pounds.extractNumber(weight);          // 1.5
 - **SI prefix stacking** — Rather than enumerating every combination (milliwatt, kilowatt, megawatt...), a systematic approach could define base units + SI prefix multipliers.
 - **String vs number at rest** — String encoding (`"lbs_1.5"`) is best for boundary/storage/transmission where self-description matters. For computation-heavy paths, use branded numbers internally and convert at boundaries.
 
-See `UNITS_BRAND_IMPL.md` for the full implementation plan as a separate `@devalbo/branded-units` package.
+See `UNITS_BRAND_IMPL.md` for the full implementation plan as a separate `@devalbo-cli/branded-units` package.
 
 ## Non-Goals
 - No runtime brand tagging.

@@ -4,7 +4,7 @@ import {
   MarkdownViewEdit,
   registerDefaultMimeTypeHandlers,
   registerMimeTypeHandler
-} from '@devalbo/ui';
+} from '@devalbo-cli/ui';
 
 export const registerDesktopMimeTypeHandlers = (): void => {
   // Start from shared defaults so desktop stays aligned with web/common behavior.

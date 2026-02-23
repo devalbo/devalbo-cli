@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import type { ContactId, ContactRow, GroupId, GroupRow, MembershipId, MembershipRow } from '@devalbo/shared';
+import type { ContactId, ContactRow, GroupId, GroupRow, MembershipId, MembershipRow } from '@devalbo-cli/shared';
 
 interface ContactGroupTreeProps {
   groups: Array<{ id: GroupId; row: GroupRow }>;

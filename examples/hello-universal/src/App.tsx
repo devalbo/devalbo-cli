@@ -9,7 +9,7 @@ import {
   createFilesystemDriver,
   unbindCliRuntimeSource,
   useAppConfig
-} from 'devalbo-cli';
+} from '@devalbo-cli/cli';
 import { appConfig, welcomeMessage } from './config';
 import { commands } from './commands';
 import { createProgram } from './program';

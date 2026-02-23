@@ -1,5 +1,5 @@
 import type { Row, Store } from 'tinybase';
-import { PersonaRowSchema, type PersonaId, type PersonaRow, type PersonaRowInput } from '@devalbo/shared';
+import { PersonaRowSchema, type PersonaId, type PersonaRow, type PersonaRowInput } from '@devalbo-cli/shared';
 import { DEFAULT_PERSONA_ID_VALUE, PERSONAS_TABLE } from '../schemas/social';
 import { safeParseWithWarning } from './_validation';
 

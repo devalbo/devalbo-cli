@@ -1,10 +1,10 @@
 import React from 'react';
 import { describe, expect, it, vi } from 'vitest';
 import { render } from 'ink-testing-library';
-import { unsafeAsFilePath } from '@devalbo/shared';
+import { unsafeAsFilePath } from '@devalbo-cli/shared';
 import { FileTree } from '@/components/navigator/FileTree';
 
-vi.mock('@devalbo/ui', () => ({
+vi.mock('@devalbo-cli/ui', () => ({
   useKeyboard: vi.fn()
 }));
 

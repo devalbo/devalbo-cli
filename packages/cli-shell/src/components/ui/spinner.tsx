@@ -1,1 +1,1 @@
-export { Spinner } from '@devalbo/ui';
+export { Spinner } from '@devalbo-cli/ui';

@@ -1,12 +1,12 @@
 import { describe, expect, it, vi } from 'vitest';
-import { createDevalboStore } from '@devalbo/state';
+import { createDevalboStore } from '@devalbo-cli/state';
 import {
   executeCommand,
   executeCommandRaw,
   filesystemCommands,
   parseCommandLine,
   type CommandRuntimeContext
-} from '@devalbo/cli-shell';
+} from '@devalbo-cli/cli-shell';
 
 const extractText = (node: unknown): string => {
   if (node == null) return '';

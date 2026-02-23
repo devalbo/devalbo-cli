@@ -1,7 +1,7 @@
-import { parseCommand } from '@devalbo/commands';
-import type { AppConfig, CommandResult, IConnectivityService } from '@devalbo/shared';
-import type { DevalboStore } from '@devalbo/state';
-import type { IFilesystemDriver } from '@devalbo/filesystem';
+import { parseCommand } from '@devalbo-cli/commands';
+import type { AppConfig, CommandResult, IConnectivityService } from '@devalbo-cli/shared';
+import type { DevalboStore } from '@devalbo-cli/state';
+import type { IFilesystemDriver } from '@devalbo-cli/filesystem';
 import { makeError, makeOutput, type CommandHandler, type ExtendedCommandOptions } from '../commands/_util';
 
 export type CommandRuntimeContext = {

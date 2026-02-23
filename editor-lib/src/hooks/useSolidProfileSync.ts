@@ -2,13 +2,13 @@ import { useEffect } from 'react';
 import {
   fetchWebIdProfile,
   useSolidSession
-} from '@devalbo/solid-client';
+} from '@devalbo-cli/solid-client';
 import {
   getDefaultPersona,
   setPersona,
   type DevalboStore
-} from '@devalbo/state';
-import type { PersonaRow, PersonaRowInput } from '@devalbo/shared';
+} from '@devalbo-cli/state';
+import type { PersonaRow, PersonaRowInput } from '@devalbo-cli/shared';
 
 const SOLID_PROFILE_FIELDS = ['inbox', 'storage', 'publicTypeIndex', 'oidcIssuer', 'profileDoc'] as const;
 

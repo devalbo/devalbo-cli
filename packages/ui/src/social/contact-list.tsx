@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import type { ContactId, ContactRow } from '@devalbo/shared';
+import type { ContactId, ContactRow } from '@devalbo-cli/shared';
 import { ContactCard } from './contact-card';
 
 interface ContactListProps {

@@ -3,7 +3,7 @@ import {
   unsafeAsContactId,
   unsafeAsGroupId,
   unsafeAsPersonaId
-} from '@devalbo/shared';
+} from '@devalbo-cli/shared';
 import { createDevalboStore } from '../src/store';
 import {
   addMember,

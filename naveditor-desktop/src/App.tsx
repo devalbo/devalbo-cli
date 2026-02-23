@@ -8,22 +8,22 @@ import {
   StoreContext,
   useAppConfig,
   type DevalboStore
-} from '@devalbo/state';
-import { createFilesystemDriver, createWatcherService, type IFilesystemDriver, type IWatcherService } from '@devalbo/filesystem';
+} from '@devalbo-cli/state';
+import { createFilesystemDriver, createWatcherService, type IFilesystemDriver, type IWatcherService } from '@devalbo-cli/filesystem';
 import {
   BrowserConnectivityService,
   detectPlatform,
   RuntimePlatform,
   type SyncRoot
-} from '@devalbo/shared';
+} from '@devalbo-cli/shared';
 import {
   SolidLdpFileSynchronizer,
   SolidLdpSynchronizer,
   SolidSessionProvider,
   useSolidSession
-} from '@devalbo/solid-client';
+} from '@devalbo-cli/solid-client';
 import { createLocalPersister } from 'tinybase/persisters/persister-browser';
-import { InteractiveShell, bindCliRuntimeSource, unbindCliRuntimeSource } from '@devalbo/cli-shell';
+import { InteractiveShell, bindCliRuntimeSource, unbindCliRuntimeSource } from '@devalbo-cli/cli-shell';
 import { commands } from '@/commands';
 import { ActivePersonaProvider } from '@/components/social/ActivePersonaContext';
 import { FileSyncContext, type FileSyncMap } from '@/components/social/FileSyncContext';

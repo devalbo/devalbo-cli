@@ -1,3 +1,3 @@
-import { withValidation } from '@devalbo/commands';
+import { withValidation } from '@devalbo-cli/commands';
 
 export { withValidation };

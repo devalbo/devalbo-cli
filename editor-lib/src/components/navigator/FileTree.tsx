@@ -1,9 +1,9 @@
 import React from 'react';
 import { Box, Text } from 'ink';
 import { FileTreeItem } from './FileTreeItem';
-import type { FileEntry } from '@devalbo/shared';
-import { useKeyboard } from '@devalbo/ui';
-import { Spinner } from '@devalbo/cli-shell/components/ui/spinner';
+import type { FileEntry } from '@devalbo-cli/shared';
+import { useKeyboard } from '@devalbo-cli/ui';
+import { Spinner } from '@devalbo-cli/cli-shell/components/ui/spinner';
 
 export const FileTree: React.FC<{
   entries: FileEntry[];

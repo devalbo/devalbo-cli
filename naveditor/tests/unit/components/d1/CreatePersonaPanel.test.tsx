@@ -1,8 +1,8 @@
 import React from 'react';
 import { act, create, type ReactTestRenderer } from 'react-test-renderer';
 import { beforeEach, describe, expect, it } from 'vitest';
-import { StoreContext, createDevalboStore, listPersonas, setPersona } from '@devalbo/state';
-import { unsafeAsPersonaId } from '@devalbo/shared';
+import { StoreContext, createDevalboStore, listPersonas, setPersona } from '@devalbo-cli/state';
+import { unsafeAsPersonaId } from '@devalbo-cli/shared';
 import { CreatePersonaPanel } from '@/components/social/d1/CreatePersonaPanel';
 
 describe('CreatePersonaPanel', () => {

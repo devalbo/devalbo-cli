@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest';
-import { createDevalboStore } from '@devalbo/state';
+import { createDevalboStore } from '@devalbo-cli/state';
 import { isValidElement, type ReactElement } from 'react';
 import { commands } from '@/commands';
 import { PersonaDetailOutput } from '@/components/social/output/PersonaDetailOutput';

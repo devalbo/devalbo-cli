@@ -13,9 +13,9 @@ import {
   setContact,
   setGroup,
   setPersona
-} from '@devalbo/state';
-import type { ExtendedCommandOptionsWithStore } from '@devalbo/cli-shell';
-import { detectPlatform, RuntimePlatform } from '@devalbo/shared';
+} from '@devalbo-cli/state';
+import type { ExtendedCommandOptionsWithStore } from '@devalbo-cli/cli-shell';
+import { detectPlatform, RuntimePlatform } from '@devalbo-cli/shared';
 import {
   exportDirectoryAsBft,
   getDefaultCwd,
@@ -23,10 +23,10 @@ import {
   importBftTextToLocation,
   importBftToLocation,
   writeTextFile
-} from '@devalbo/cli-shell';
+} from '@devalbo-cli/cli-shell';
 import { parseExportArgs, parseImportArgs, parseSolidExportArgs, parseSolidImportArgs } from '@/lib/command-args.parser';
-import type { AsyncCommandHandler } from '@devalbo/cli-shell';
-import { makeError, makeOutput, makeResult, makeResultError } from '@devalbo/cli-shell';
+import type { AsyncCommandHandler } from '@devalbo-cli/cli-shell';
+import { makeError, makeOutput, makeResult, makeResultError } from '@devalbo-cli/cli-shell';
 
 const defaultImportLocationFromFileName = (fileName: string): string => {
   const base = fileName.replace(/\.[^/.]+$/, '').trim();

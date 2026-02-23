@@ -1,8 +1,8 @@
 import { Box, Text } from 'ink';
 import React from 'react';
-import type { AppConfig, CommandOptions, CommandResult, IConnectivityService } from '@devalbo/shared';
+import type { AppConfig, CommandOptions, CommandResult, IConnectivityService } from '@devalbo-cli/shared';
 import type { Store } from 'tinybase';
-import type { IFilesystemDriver } from '@devalbo/filesystem';
+import type { IFilesystemDriver } from '@devalbo-cli/filesystem';
 
 type CommandOptionsBase = CommandOptions & {
   cwd?: string;
@@ -72,7 +72,7 @@ export const makeResultError = (message: string, data?: unknown): CommandResult 
  *
  * @example
  * ```ts
- * import { mergeCommands, builtinCommands } from '@devalbo/cli-shell';
+ * import { mergeCommands, builtinCommands } from '@devalbo-cli/cli-shell';
  *
  * export const commands = mergeCommands(builtinCommands, myAppCommands);
  * ```

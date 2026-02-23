@@ -1,4 +1,4 @@
-import { ORG, type MembershipRow } from '@devalbo/shared';
+import { ORG, type MembershipRow } from '@devalbo-cli/shared';
 
 type JsonLdObject = Record<string, unknown>;
 

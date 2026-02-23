@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import type { PersonaId, PersonaRow } from '@devalbo/shared';
+import type { PersonaId, PersonaRow } from '@devalbo-cli/shared';
 import { listPersonas } from '../accessors/personas';
 import { PERSONAS_TABLE } from '../schemas/social';
 import { useTable } from './use-table';

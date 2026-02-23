@@ -4,8 +4,8 @@ import {
   CONTACTS_TABLE,
   setContact,
   setPersona
-} from '@devalbo/state';
-import type { PersonaId } from '@devalbo/shared';
+} from '@devalbo-cli/state';
+import type { PersonaId } from '@devalbo-cli/shared';
 import { SolidLdpSynchronizer } from '../src/ldp-synchronizer';
 
 const { persisterMocks } = vi.hoisted(() => ({

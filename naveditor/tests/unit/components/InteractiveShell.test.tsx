@@ -2,9 +2,9 @@ import React from 'react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { Text } from 'ink';
 import { act, create, type ReactTestRenderer } from 'react-test-renderer';
-import { createDevalboStore } from '@devalbo/state';
-import { InteractiveShell } from '@devalbo/cli-shell';
-import * as commandRuntime from '@devalbo/cli-shell/lib/command-runtime';
+import { createDevalboStore } from '@devalbo-cli/state';
+import { InteractiveShell } from '@devalbo-cli/cli-shell';
+import * as commandRuntime from '@devalbo-cli/cli-shell/lib/command-runtime';
 
 const findSubmit = (renderer: ReactTestRenderer): ((raw: string) => Promise<void>) => {
   const input = renderer.root.find((node) => typeof node.props?.onSubmit === 'function');

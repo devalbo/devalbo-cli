@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import type { ContactId, GroupId, MembershipId, MembershipRow } from '@devalbo/shared';
+import type { ContactId, GroupId, MembershipId, MembershipRow } from '@devalbo-cli/shared';
 import { listMemberships } from '../accessors/memberships';
 import { MEMBERSHIPS_TABLE } from '../schemas/social';
 import { useTable } from './use-table';

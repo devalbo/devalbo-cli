@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
-import { logActivity, personaToJsonLd, usePersona, useStore } from '@devalbo/state';
-import { ActivityIdToolbox, unsafeAsActivityId, unsafeAsPersonaId, type ActivityId, type PersonaId } from '@devalbo/shared';
+import { logActivity, personaToJsonLd, usePersona, useStore } from '@devalbo-cli/state';
+import { ActivityIdToolbox, unsafeAsActivityId, unsafeAsPersonaId, type ActivityId, type PersonaId } from '@devalbo-cli/shared';
 
 interface QuickActionsPanelProps {
   subjectType: 'contact' | 'group';

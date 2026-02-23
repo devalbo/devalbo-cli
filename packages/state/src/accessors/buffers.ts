@@ -1,5 +1,5 @@
 import type { Row, Store } from 'tinybase';
-import { EditorBufferRowSchema, type EditorBufferRow } from '@devalbo/shared';
+import { EditorBufferRowSchema, type EditorBufferRow } from '@devalbo-cli/shared';
 import { EDITOR_BUFFER_TABLE } from '../schemas/editor-buffer';
 
 export const getBuffer = (store: Store, id: string): EditorBufferRow | null => {

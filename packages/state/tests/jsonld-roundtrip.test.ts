@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { unsafeAsContactId, unsafeAsGroupId, unsafeAsPersonaId } from '@devalbo/shared';
+import { unsafeAsContactId, unsafeAsGroupId, unsafeAsPersonaId } from '@devalbo-cli/shared';
 import { createDevalboStore } from '../src/store';
 import {
   addMember,

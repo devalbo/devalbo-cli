@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { jsonLdToContactRow, setContact, useStore } from '@devalbo/state';
-import { ContactIdToolbox, unsafeAsContactId, type ContactId } from '@devalbo/shared';
-import { fetchWebIdProfile } from '@devalbo/solid-client';
+import { jsonLdToContactRow, setContact, useStore } from '@devalbo-cli/state';
+import { ContactIdToolbox, unsafeAsContactId, type ContactId } from '@devalbo-cli/shared';
+import { fetchWebIdProfile } from '@devalbo-cli/solid-client';
 
 interface ImportCardPanelProps {
   onImported?: (contactId: ContactId) => void;

@@ -1,4 +1,4 @@
-import type { CommandHandler } from '@devalbo/shared';
+import type { CommandHandler } from '@devalbo-cli/shared';
 import { resolveCommand } from './parser';
 import { CommandRegistry } from './registry';
 

@@ -1,1 +1,1 @@
-export { TextInput } from '@devalbo/ui';
+export { TextInput } from '@devalbo-cli/ui';

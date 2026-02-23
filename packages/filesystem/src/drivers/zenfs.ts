@@ -1,4 +1,4 @@
-import type { DirectoryPath, FileEntry, FilePath } from '@devalbo/shared';
+import type { DirectoryPath, FileEntry, FilePath } from '@devalbo-cli/shared';
 import type { IFilesystemDriver } from '../interfaces';
 
 export class ZenFSDriver implements IFilesystemDriver {

@@ -1,8 +1,8 @@
 import React from 'react';
 import { act, create } from 'react-test-renderer';
 import { describe, expect, it } from 'vitest';
-import type { ContactId, GroupId, PersonaId } from '@devalbo/shared';
-import { unsafeAsContactId, unsafeAsGroupId, unsafeAsPersonaId } from '@devalbo/shared';
+import type { ContactId, GroupId, PersonaId } from '@devalbo-cli/shared';
+import { unsafeAsContactId, unsafeAsGroupId, unsafeAsPersonaId } from '@devalbo-cli/shared';
 import {
   addMember,
   createDevalboStore,

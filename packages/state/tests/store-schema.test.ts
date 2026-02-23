@@ -6,7 +6,7 @@ import {
   GroupRowStoreSchema,
   MembershipRowStoreSchema,
   PersonaRowStoreSchema
-} from '@devalbo/shared';
+} from '@devalbo-cli/shared';
 import {
   ACTIVITIES_TABLE,
   CONTACTS_TABLE,

@@ -1,6 +1,6 @@
 import path from 'node:path';
-import type { DirectoryPath, FileEntry, FilePath } from '@devalbo/shared';
-import { unsafeAsFilePath } from '@devalbo/shared';
+import type { DirectoryPath, FileEntry, FilePath } from '@devalbo-cli/shared';
+import { unsafeAsFilePath } from '@devalbo-cli/shared';
 import type { IFilesystemDriver } from '../interfaces';
 
 interface MemoryNode {

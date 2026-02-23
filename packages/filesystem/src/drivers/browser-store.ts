@@ -6,7 +6,7 @@ import {
   type FileEntry,
   type FilePath,
   type WatchEvent
-} from '@devalbo/shared';
+} from '@devalbo-cli/shared';
 import { createStore, type Store } from 'tinybase';
 import type { IFilesystemDriver } from '../interfaces';
 

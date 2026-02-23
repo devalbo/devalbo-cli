@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { commands } from '@/commands';
-import { createDevalboStore } from '@devalbo/state';
+import { createDevalboStore } from '@devalbo-cli/state';
 
 describe('commands', () => {
   const store = createDevalboStore();

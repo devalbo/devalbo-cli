@@ -7,15 +7,15 @@ import {
   useMemberships,
   usePersona,
   usePersonas
-} from '@devalbo/state';
+} from '@devalbo-cli/state';
 import {
   unsafeAsContactId,
   unsafeAsGroupId,
   unsafeAsPersonaId,
   type ContactId,
   type ContactRow
-} from '@devalbo/shared';
-import { ContactCard, ContactList, GroupCard, GroupList, MembershipList, PersonaCard, PersonaList } from '@devalbo/ui';
+} from '@devalbo-cli/shared';
+import { ContactCard, ContactList, GroupCard, GroupList, MembershipList, PersonaCard, PersonaList } from '@devalbo-cli/ui';
 
 type EntityType = 'personas' | 'contacts' | 'groups';
 

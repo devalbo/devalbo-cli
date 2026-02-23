@@ -1,8 +1,8 @@
 import React from 'react';
 import { Box, Text } from 'ink';
 import { Editor } from '@/components/editor/Editor';
-import { withValidation } from '@devalbo/cli-shell/commands/with-validation';
-import { validateEditArgs } from '@devalbo/cli-shell/lib/validate-args';
+import { withValidation } from '@devalbo-cli/cli-shell/commands/with-validation';
+import { validateEditArgs } from '@devalbo-cli/cli-shell/lib/validate-args';
 
 export const editCommand = (args: string[]) =>
   withValidation(

@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import type { ActivityId, ActivityRow } from '@devalbo/shared';
+import type { ActivityId, ActivityRow } from '@devalbo-cli/shared';
 import { listActivities } from '../accessors/activities';
 import { ACTIVITIES_TABLE } from '../schemas/social';
 import { useStore } from './use-store';

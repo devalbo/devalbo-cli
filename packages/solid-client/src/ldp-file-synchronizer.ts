@@ -1,7 +1,7 @@
 import type { Store } from 'tinybase';
-import type { IFilesystemDriver, IWatcherService } from '@devalbo/filesystem';
-import type { AbsolutePath, AppConfig, IConnectivityService, SyncRoot, WatchEvent } from '@devalbo/shared';
-import { WatchEventType } from '@devalbo/shared';
+import type { IFilesystemDriver, IWatcherService } from '@devalbo-cli/filesystem';
+import type { AbsolutePath, AppConfig, IConnectivityService, SyncRoot, WatchEvent } from '@devalbo-cli/shared';
+import { WatchEventType } from '@devalbo-cli/shared';
 import { pushFilesForRoot, pullFilesForRoot, resolveFileConflict, type FileSyncSummary } from './ldp-file-sync-ops';
 
 export class SolidLdpFileSynchronizer {

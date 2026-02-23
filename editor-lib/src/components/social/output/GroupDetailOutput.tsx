@@ -1,5 +1,5 @@
 import { Box, Text } from 'ink';
-import type { GroupId, GroupRow, GroupRowInput } from '@devalbo/shared';
+import type { GroupId, GroupRow, GroupRowInput } from '@devalbo-cli/shared';
 
 interface GroupDetailOutputProps {
   id: GroupId;

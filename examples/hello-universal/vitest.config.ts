@@ -9,12 +9,12 @@ export default defineConfig({
   resolve: {
     alias: {
       'devalbo-cli': path.resolve(__dirname, './tests/devalbo-cli-test-shim.ts'),
-      '@devalbo/cli-shell': path.resolve(__dirname, '../../packages/cli-shell/src/index.ts'),
-      '@devalbo/commands': path.resolve(__dirname, '../../packages/commands/src/index.ts'),
-      '@devalbo/filesystem': path.resolve(__dirname, '../../packages/filesystem/src/index.ts'),
-      '@devalbo/shared': path.resolve(__dirname, '../../packages/shared/src/index.ts'),
-      '@devalbo/state': path.resolve(__dirname, '../../packages/state/src/index.ts'),
-      '@devalbo/ui': path.resolve(__dirname, '../../packages/ui/src/index.ts'),
+      '@devalbo-cli/cli-shell': path.resolve(__dirname, '../../packages/cli-shell/src/index.ts'),
+      '@devalbo-cli/commands': path.resolve(__dirname, '../../packages/commands/src/index.ts'),
+      '@devalbo-cli/filesystem': path.resolve(__dirname, '../../packages/filesystem/src/index.ts'),
+      '@devalbo-cli/shared': path.resolve(__dirname, '../../packages/shared/src/index.ts'),
+      '@devalbo-cli/state': path.resolve(__dirname, '../../packages/state/src/index.ts'),
+      '@devalbo-cli/ui': path.resolve(__dirname, '../../packages/ui/src/index.ts'),
       ink: 'ink-web'
     }
   },

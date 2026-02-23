@@ -1,1 +1,1 @@
-export { TerminalShellProvider } from '@devalbo/ui';
+export { TerminalShellProvider } from '@devalbo-cli/ui';

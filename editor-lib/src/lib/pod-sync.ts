@@ -1,4 +1,4 @@
-import { SolidLdpPersister, type SolidSession } from '@devalbo/solid-client';
+import { SolidLdpPersister, type SolidSession } from '@devalbo-cli/solid-client';
 import {
   getDefaultPersona,
   groupToJsonLd,
@@ -8,7 +8,7 @@ import {
   setDefaultPersona,
   setGroup,
   setPersona
-} from '@devalbo/state';
+} from '@devalbo-cli/state';
 import type { Store } from 'tinybase';
 
 export type PodSyncSummary = {

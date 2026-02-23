@@ -1,4 +1,4 @@
-import type { DirectoryPath, FilePath, WatchEvent } from '@devalbo/shared';
+import type { DirectoryPath, FilePath, WatchEvent } from '@devalbo-cli/shared';
 import type { IWatcherService } from '../interfaces';
 import { subscribeBrowserFsEvents } from '../drivers/browser-store';
 

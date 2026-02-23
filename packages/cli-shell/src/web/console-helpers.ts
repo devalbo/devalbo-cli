@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import type { CommandResult } from '@devalbo/shared';
+import type { CommandResult } from '@devalbo-cli/shared';
 import {
   executeCommand,
   executeCommandRaw,

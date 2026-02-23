@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
-import { personaToJsonLd, setPersona, usePersona, useStore } from '@devalbo/state';
-import { unsafeAsPersonaId, type PersonaId } from '@devalbo/shared';
+import { personaToJsonLd, setPersona, usePersona, useStore } from '@devalbo-cli/state';
+import { unsafeAsPersonaId, type PersonaId } from '@devalbo-cli/shared';
 
 interface ShareCardPanelProps {
   personaId: PersonaId | null;

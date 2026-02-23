@@ -1,5 +1,5 @@
 import React from 'react';
-import type { GroupId, GroupRow } from '@devalbo/shared';
+import type { GroupId, GroupRow } from '@devalbo-cli/shared';
 import { GroupCard } from './group-card';
 
 interface GroupListProps {

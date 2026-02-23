@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
-import { contactToJsonLd, useContact } from '@devalbo/state';
-import { unsafeAsContactId, type ContactId } from '@devalbo/shared';
+import { contactToJsonLd, useContact } from '@devalbo-cli/state';
+import { unsafeAsContactId, type ContactId } from '@devalbo-cli/shared';
 
 interface ContactForwardPanelProps {
   contactId: ContactId;

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, Text } from 'ink';
-import type { FileEntry } from '@devalbo/shared';
+import type { FileEntry } from '@devalbo-cli/shared';
 
 interface TreeViewProps {
   entries: FileEntry[];

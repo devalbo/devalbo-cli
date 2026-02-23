@@ -5,8 +5,8 @@ import {
   listPersonas,
   setDefaultPersona,
   setPersona
-} from '@devalbo/state';
-import { PersonaIdToolbox, type PersonaRowInput, unsafeAsPersonaId } from '@devalbo/shared';
+} from '@devalbo-cli/state';
+import { PersonaIdToolbox, type PersonaRowInput, unsafeAsPersonaId } from '@devalbo-cli/shared';
 import {
   parsePersonaCreateArgs,
   parsePersonaEditArgs,
@@ -16,7 +16,7 @@ import {
 import { createElement } from 'react';
 import { PersonaDetailOutput } from '@/components/social/output/PersonaDetailOutput';
 import { PersonaListOutput } from '@/components/social/output/PersonaListOutput';
-import { makeResult, makeResultError, type StoreCommandHandler } from '@devalbo/cli-shell';
+import { makeResult, makeResultError, type StoreCommandHandler } from '@devalbo-cli/cli-shell';
 
 const nowIso = () => new Date().toISOString();
 

@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
-import { ContactCard } from '@devalbo/ui';
-import { addMember, removeMember, useActivities, useContact, useGroups, useMemberships, useStore } from '@devalbo/state';
-import type { ContactId, GroupId, PersonaId } from '@devalbo/shared';
+import { ContactCard } from '@devalbo-cli/ui';
+import { addMember, removeMember, useActivities, useContact, useGroups, useMemberships, useStore } from '@devalbo-cli/state';
+import type { ContactId, GroupId, PersonaId } from '@devalbo-cli/shared';
 import { ActivityLog } from '../d2/ActivityLog';
 import { QuickActionsPanel } from '../d2/QuickActionsPanel';
 

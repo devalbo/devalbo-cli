@@ -11,7 +11,7 @@ vi.mock('@/hooks/use-file-editor', () => ({
   useFileEditor: mockUseFileEditor
 }));
 
-vi.mock('@devalbo/ui', () => ({
+vi.mock('@devalbo-cli/ui', () => ({
   useKeyboard: vi.fn()
 }));
 

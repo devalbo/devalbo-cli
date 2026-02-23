@@ -1,8 +1,8 @@
 import React from 'react';
 import { act, create, type ReactTestRenderer } from 'react-test-renderer';
 import { beforeEach, describe, expect, it } from 'vitest';
-import { StoreContext, createDevalboStore, setPersona } from '@devalbo/state';
-import { unsafeAsPersonaId } from '@devalbo/shared';
+import { StoreContext, createDevalboStore, setPersona } from '@devalbo-cli/state';
+import { unsafeAsPersonaId } from '@devalbo-cli/shared';
 import { ShareCardPanel } from '@/components/social/d1/ShareCardPanel';
 
 const PERSONA_ID = unsafeAsPersonaId('persona_d1_share_test');

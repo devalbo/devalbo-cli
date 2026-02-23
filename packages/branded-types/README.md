@@ -1,4 +1,4 @@
-# @devalbo/branded-types
+# @devalbo-cli/branded-types
 
 Domain-agnostic branded type infrastructure for devalbo packages.
 

@@ -1,5 +1,5 @@
-import type { AbsolutePath, PodUrl, RelativePath, SyncRoot } from '@devalbo/shared';
-import { unsafeAsPodUrl, unsafeAsRelativePath } from '@devalbo/shared';
+import type { AbsolutePath, PodUrl, RelativePath, SyncRoot } from '@devalbo-cli/shared';
+import { unsafeAsPodUrl, unsafeAsRelativePath } from '@devalbo-cli/shared';
 
 export const findSyncRoot = (localPath: AbsolutePath, roots: SyncRoot[]): SyncRoot | null => {
   // AbsolutePath is enforced to start with '/', so no normalization needed.

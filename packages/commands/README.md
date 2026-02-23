@@ -1,4 +1,4 @@
-# @devalbo/commands
+# @devalbo-cli/commands
 
 Command registration, parsing, and console-bridge helpers.
 
@@ -12,7 +12,7 @@ Command registration, parsing, and console-bridge helpers.
 ## Example
 
 ```ts
-import { CommandRegistry, createConsoleBridge } from '@devalbo/commands';
+import { CommandRegistry, createConsoleBridge } from '@devalbo-cli/commands';
 
 const registry = new CommandRegistry();
 registry.register({

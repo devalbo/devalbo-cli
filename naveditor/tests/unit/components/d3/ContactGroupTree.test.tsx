@@ -1,7 +1,7 @@
 import React from 'react';
 import { act, create, type ReactTestRenderer } from 'react-test-renderer';
 import { describe, expect, it } from 'vitest';
-import { unsafeAsContactId, unsafeAsGroupId, unsafeAsMembershipId } from '@devalbo/shared';
+import { unsafeAsContactId, unsafeAsGroupId, unsafeAsMembershipId } from '@devalbo-cli/shared';
 import { ContactGroupTree } from '@/components/social/d3/ContactGroupTree';
 
 describe('ContactGroupTree', () => {

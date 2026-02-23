@@ -1,5 +1,5 @@
-import type { AsyncCommandHandler, CommandHandler } from 'devalbo-cli';
-import { builtinCommands, makeOutput } from 'devalbo-cli';
+import type { AsyncCommandHandler, CommandHandler } from '@devalbo-cli/cli';
+import { builtinCommands, makeOutput } from '@devalbo-cli/cli';
 
 const hello: AsyncCommandHandler = async (args) => {
   const name = args[0] ?? 'world';

@@ -1,5 +1,5 @@
-import { unsafeAsFilePath } from '@devalbo/shared';
-import { InMemoryDriver } from '@devalbo/filesystem';
+import { unsafeAsFilePath } from '@devalbo-cli/shared';
+import { InMemoryDriver } from '@devalbo-cli/filesystem';
 
 const driver = new InMemoryDriver();
 await driver.writeFile(unsafeAsFilePath('/tmp/demo.txt'), new TextEncoder().encode('demo'));

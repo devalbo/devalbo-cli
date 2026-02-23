@@ -1,4 +1,4 @@
-import type { DirectoryPath, FileEntry, FilePath, WatchEvent } from '@devalbo/shared';
+import type { DirectoryPath, FileEntry, FilePath, WatchEvent } from '@devalbo-cli/shared';
 import type { IFilesystemDriver, IWatcherService } from './interfaces';
 
 export class NativeFSDriver implements IFilesystemDriver {

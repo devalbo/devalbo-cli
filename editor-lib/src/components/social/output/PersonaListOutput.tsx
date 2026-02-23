@@ -1,5 +1,5 @@
 import { Box, Text } from 'ink';
-import type { PersonaId, PersonaRow } from '@devalbo/shared';
+import type { PersonaId, PersonaRow } from '@devalbo-cli/shared';
 
 interface PersonaListOutputProps {
   personas: Array<{ id: PersonaId; row: PersonaRow }>;

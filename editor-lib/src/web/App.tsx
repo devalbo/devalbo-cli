@@ -1,22 +1,22 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { InkTerminalBox } from 'ink-web';
-import { registerDefaultMimeTypeHandlers } from '@devalbo/ui';
+import { registerDefaultMimeTypeHandlers } from '@devalbo-cli/ui';
 import {
   AppConfigProvider,
   createDevalboStore,
   useAppConfig,
   StoreContext,
   type DevalboStore
-} from '@devalbo/state';
-import { createFilesystemDriver, type IFilesystemDriver } from '@devalbo/filesystem';
+} from '@devalbo-cli/state';
+import { createFilesystemDriver, type IFilesystemDriver } from '@devalbo-cli/filesystem';
 import {
   BrowserConnectivityService,
   detectPlatform,
   RuntimePlatform
-} from '@devalbo/shared';
-import { SolidSessionProvider, useSolidSession } from '@devalbo/solid-client';
+} from '@devalbo-cli/shared';
+import { SolidSessionProvider, useSolidSession } from '@devalbo-cli/solid-client';
 import { createLocalPersister } from 'tinybase/persisters/persister-browser';
-import { InteractiveShell, bindCliRuntimeSource, unbindCliRuntimeSource } from '@devalbo/cli-shell';
+import { InteractiveShell, bindCliRuntimeSource, unbindCliRuntimeSource } from '@devalbo-cli/cli-shell';
 import { commands } from '@/commands';
 import { useSolidProfileSync } from '@/hooks/useSolidProfileSync';
 import { createProgram } from '@/program';

@@ -6,8 +6,8 @@ import {
   listMembers,
   removeMember,
   setGroup
-} from '@devalbo/state';
-import { GroupIdToolbox, type GroupRowInput, unsafeAsGroupId } from '@devalbo/shared';
+} from '@devalbo-cli/state';
+import { GroupIdToolbox, type GroupRowInput, unsafeAsGroupId } from '@devalbo-cli/shared';
 import {
   parseGroupAddMemberArgs,
   parseGroupCreateArgs,
@@ -22,7 +22,7 @@ import { createElement } from 'react';
 import { GroupDetailOutput } from '@/components/social/output/GroupDetailOutput';
 import { GroupListOutput } from '@/components/social/output/GroupListOutput';
 import { MembershipListOutput } from '@/components/social/output/MembershipListOutput';
-import { makeResult, makeResultError, type StoreCommandHandler } from '@devalbo/cli-shell';
+import { makeResult, makeResultError, type StoreCommandHandler } from '@devalbo-cli/cli-shell';
 
 const nowIso = () => new Date().toISOString();
 

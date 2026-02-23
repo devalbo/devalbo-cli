@@ -1,13 +1,13 @@
 import { beforeEach, describe, expect, it } from 'vitest';
-import { createDevalboStore } from '@devalbo/state';
+import { createDevalboStore } from '@devalbo-cli/state';
 import {
   bindCliRuntimeSource,
   cli,
   filesystemCommands,
   systemCommands,
   unbindCliRuntimeSource
-} from '@devalbo/cli-shell';
-import type { CommandRuntimeContext } from '@devalbo/cli-shell';
+} from '@devalbo-cli/cli-shell';
+import type { CommandRuntimeContext } from '@devalbo-cli/cli-shell';
 
 const makeContext = (cwd: string): CommandRuntimeContext => ({
   commands: { ...filesystemCommands, ...systemCommands },

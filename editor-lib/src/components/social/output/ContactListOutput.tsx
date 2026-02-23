@@ -1,5 +1,5 @@
 import { Box, Text } from 'ink';
-import type { ContactId, ContactRow } from '@devalbo/shared';
+import type { ContactId, ContactRow } from '@devalbo-cli/shared';
 
 interface ContactListOutputProps {
   contacts: Array<{ id: ContactId; row: ContactRow }>;

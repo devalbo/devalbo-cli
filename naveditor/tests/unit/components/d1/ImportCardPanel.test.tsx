@@ -1,15 +1,15 @@
 import React from 'react';
 import { act, create, type ReactTestRenderer } from 'react-test-renderer';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { StoreContext, createDevalboStore, listContacts } from '@devalbo/state';
+import { StoreContext, createDevalboStore, listContacts } from '@devalbo-cli/state';
 import { ImportCardPanel } from '@/components/social/d1/ImportCardPanel';
-import type { ProfileFetchResult } from '@devalbo/solid-client';
+import type { ProfileFetchResult } from '@devalbo-cli/solid-client';
 
 const { fetchWebIdProfileMock } = vi.hoisted(() => ({
   fetchWebIdProfileMock: vi.fn<(webId: string) => Promise<ProfileFetchResult>>()
 }));
 
-vi.mock('@devalbo/solid-client', () => ({
+vi.mock('@devalbo-cli/solid-client', () => ({
   fetchWebIdProfile: fetchWebIdProfileMock
 }));
 

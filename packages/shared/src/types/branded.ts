@@ -5,7 +5,7 @@ import {
   IdTypePrefixBrandSchema,
   type Branded,
   type BrandedNumber
-} from '@devalbo/branded-types';
+} from '@devalbo-cli/branded-types';
 
 export type { Branded };
 

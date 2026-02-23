@@ -1,5 +1,5 @@
 import type { Row, Store } from 'tinybase';
-import { GroupRowSchema, type GroupId, type GroupRow, type GroupRowInput } from '@devalbo/shared';
+import { GroupRowSchema, type GroupId, type GroupRow, type GroupRowInput } from '@devalbo-cli/shared';
 import { GROUPS_TABLE, MEMBERSHIPS_TABLE } from '../schemas/social';
 import { safeParseWithWarning } from './_validation';
 

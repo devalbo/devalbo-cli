@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
-import { ContactList } from '@devalbo/ui';
-import { useContacts, usePersonas } from '@devalbo/state';
-import { useSolidSession } from '@devalbo/solid-client';
-import { detectPlatform, RuntimePlatform, unsafeAsContactId, type ContactId } from '@devalbo/shared';
+import { ContactList } from '@devalbo-cli/ui';
+import { useContacts, usePersonas } from '@devalbo-cli/state';
+import { useSolidSession } from '@devalbo-cli/solid-client';
+import { detectPlatform, RuntimePlatform, unsafeAsContactId, type ContactId } from '@devalbo-cli/shared';
 import { PersonaSwitcher } from '../PersonaSwitcher';
 import { useActivePersona } from '../ActivePersonaContext';
 import { ContactForwardPanel } from './ContactForwardPanel';

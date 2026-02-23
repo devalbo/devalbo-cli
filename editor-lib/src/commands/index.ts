@@ -1,5 +1,5 @@
-import type { CommandHandler, ExtendedCommandOptions } from '@devalbo/cli-shell';
-import { filesystemCommands, systemCommands, appCommands } from '@devalbo/cli-shell';
+import type { CommandHandler, ExtendedCommandOptions } from '@devalbo-cli/cli-shell';
+import { filesystemCommands, systemCommands, appCommands } from '@devalbo-cli/cli-shell';
 import { ioCommands } from './io';
 import { solidCommands } from './solid';
 import { personaCommand } from './persona';

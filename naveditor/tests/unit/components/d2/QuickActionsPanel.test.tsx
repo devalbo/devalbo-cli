@@ -1,8 +1,8 @@
 import React from 'react';
 import { act, create, type ReactTestRenderer } from 'react-test-renderer';
 import { beforeEach, describe, expect, it } from 'vitest';
-import { StoreContext, createDevalboStore, listActivities, setPersona } from '@devalbo/state';
-import { unsafeAsPersonaId } from '@devalbo/shared';
+import { StoreContext, createDevalboStore, listActivities, setPersona } from '@devalbo-cli/state';
+import { unsafeAsPersonaId } from '@devalbo-cli/shared';
 import { QuickActionsPanel } from '@/components/social/d2/QuickActionsPanel';
 
 const PERSONA_ID = unsafeAsPersonaId('persona_d2_quick_actions');

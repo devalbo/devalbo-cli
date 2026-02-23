@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { TextDecoder, TextEncoder } from 'node:util';
-import { unsafeAsDirectoryPath, unsafeAsFilePath } from '@devalbo/shared';
+import { unsafeAsDirectoryPath, unsafeAsFilePath } from '@devalbo-cli/shared';
 import { InMemoryDriver } from '../src/drivers/memory';
 
 describe('InMemoryDriver', () => {

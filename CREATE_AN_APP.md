@@ -1,10 +1,10 @@
-# Creating a devalbo-cli App
+# Creating a @devalbo-cli/cli App
 
-This guide walks through building an app on top of devalbo-cli. The framework provides:
+This guide walks through building an app on top of @devalbo-cli/cli. The framework provides:
 
 - A **command system** shared across all UI surfaces (terminal, browser shell, browser dev console)
-- A **reactive store** (TinyBase via `@devalbo/state`) for application data
-- A **filesystem abstraction** (`@devalbo/filesystem`) that works in Node.js, browser, and Tauri
+- A **reactive store** (TinyBase via `@devalbo-cli/state`) for application data
+- A **filesystem abstraction** (`@devalbo-cli/filesystem`) that works in Node.js, browser, and Tauri
 - **Ink-based UI rendering** for command output (works in all surfaces)
 
 You can opt into any combination of UI surfaces: CLI only, browser app, Tauri desktop app.
@@ -30,15 +30,15 @@ Every app follows the same shape. naveditor is the reference implementation:
 
 | Package | What it provides | Direct use? |
 |---------|-----------------|-------------|
-| `devalbo-cli` | Shell framework, built-in commands, entry points | Yes — primary dependency |
-| `@devalbo/shared` | Core types (`AppConfig`, `CommandResult`, branded types) | Advanced internal use only |
-| `@devalbo/state` | TinyBase store, schemas, persisters | Re-exported via `devalbo-cli` |
-| `@devalbo/filesystem` | Filesystem driver abstraction | Re-exported via `devalbo-cli` |
-| `@devalbo/commands` | Command parser and validation | Used internally by `devalbo-cli` |
-| `@devalbo/ui` | Ink primitives (TextInput, Spinner, etc.) | Advanced custom UI use only |
-| `@devalbo/solid-client` | Solid pod auth and sync | Optional advanced integration |
+| `@devalbo-cli/cli` | Shell framework, built-in commands, entry points | Yes — primary dependency |
+| `@devalbo-cli/shared` | Core types (`AppConfig`, `CommandResult`, branded types) | Advanced internal use only |
+| `@devalbo-cli/state` | TinyBase store, schemas, persisters | Re-exported via `@devalbo-cli/cli` |
+| `@devalbo-cli/filesystem` | Filesystem driver abstraction | Re-exported via `@devalbo-cli/cli` |
+| `@devalbo-cli/commands` | Command parser and validation | Used internally by `@devalbo-cli/cli` |
+| `@devalbo-cli/ui` | Ink primitives (TextInput, Spinner, etc.) | Advanced custom UI use only |
+| `@devalbo-cli/solid-client` | Solid pod auth and sync | Optional advanced integration |
 
-For the quickstart, you only need one import source: `devalbo-cli`.
+For the quickstart, you only need one import source: `@devalbo-cli/cli`.
 
 ---
 
@@ -71,7 +71,7 @@ my-app/
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "devalbo-cli": "git+https://github.com/devalbo/devalbo-cli.git",
+    "@devalbo-cli/cli": "git+https://github.com/devalbo/devalbo-cli.git",
     "commander": "^14.0.0",
     "react": "^19.1.1"
   },
@@ -84,18 +84,18 @@ my-app/
 }
 ```
 
-Note: `@devalbo/shared` is NOT a direct dependency — `createCliAppConfig` is re-exported from `devalbo-cli`.
+Note: `@devalbo-cli/shared` is NOT a direct dependency — `createCliAppConfig` is re-exported from `@devalbo-cli/cli`.
 
 Install commands (npm):
 
 ```sh
-npm install git+https://github.com/devalbo/devalbo-cli.git commander react
+npm install @devalbo-cli/cli@git+https://github.com/devalbo/devalbo-cli.git commander react
 npm install --save-dev typescript tsx @types/node @types/react
 ```
 
 Notes:
 - The `package.json` above is standalone-ready and does not require this monorepo.
-- `devalbo-cli` is currently installed from GitHub via npm git spec (not npm registry).
+- `@devalbo-cli/cli` is currently installed from GitHub via npm git spec (not npm registry).
 - Git installs require committed `dist/` artifacts in the repository.
 - Pinning package versions is recommended for reproducible builds.
 
@@ -103,8 +103,8 @@ Notes:
 
 **`src/commands/index.ts`**
 ```ts
-import type { CommandHandler, AsyncCommandHandler } from 'devalbo-cli';
-import { builtinCommands, makeOutput } from 'devalbo-cli';
+import type { CommandHandler, AsyncCommandHandler } from '@devalbo-cli/cli';
+import { builtinCommands, makeOutput } from '@devalbo-cli/cli';
 
 const hello: AsyncCommandHandler = async (args) => {
   const name = args[0] ?? 'world';
@@ -131,7 +131,7 @@ export const commands: Record<string, CommandHandler> = {
 **`src/program.ts`**
 ```ts
 import { Command } from 'commander';
-import { registerBuiltinCommands } from 'devalbo-cli';
+import { registerBuiltinCommands } from '@devalbo-cli/cli';
 
 export const createProgram = (): Command => {
   const program = new Command('my-app')
@@ -157,7 +157,7 @@ export const createProgram = (): Command => {
 
 **`src/cli.ts`**
 ```ts
-import { startInteractiveCli, createCliAppConfig } from 'devalbo-cli';
+import { startInteractiveCli, createCliAppConfig } from '@devalbo-cli/cli';
 import { commands } from './commands/index';
 import { createProgram } from './program';
 
@@ -221,7 +221,7 @@ type AsyncCommandHandler = (args: string[], options?: ExtendedCommandOptions) =>
 All imported from `devalbo-cli`:
 
 ```ts
-import { makeOutput, makeError, makeResult, makeResultError } from 'devalbo-cli';
+import { makeOutput, makeError, makeResult, makeResultError } from '@devalbo-cli/cli';
 
 makeOutput('Hello world')                    // simple text
 makeError('Something went wrong')            // red text, sets result.error
@@ -254,8 +254,8 @@ type StoreCommandHandler = (args: string[], options: ExtendedCommandOptionsWithS
 The difference: `options` is required and always includes `store` (non-optional). Use `StoreCommandHandler` when your command reads/writes TinyBase rows and shouldn't run without a store.
 
 ```ts
-import type { StoreCommandHandler } from 'devalbo-cli';
-import { makeOutput, makeError } from 'devalbo-cli';
+import type { StoreCommandHandler } from '@devalbo-cli/cli';
+import { makeOutput, makeError } from '@devalbo-cli/cli';
 
 const myStoreCommand: StoreCommandHandler = async (args, options) => {
   // options.store is guaranteed — no need to null-check
@@ -273,7 +273,7 @@ Two patterns for composing commands:
 **Pattern 1: `builtinCommands` aggregate** (recommended for most apps)
 
 ```ts
-import { builtinCommands } from 'devalbo-cli';
+import { builtinCommands } from '@devalbo-cli/cli';
 
 export const commands: Record<string, CommandHandler> = {
   ...builtinCommands,
@@ -285,7 +285,7 @@ export const commands: Record<string, CommandHandler> = {
 **Pattern 2: Individual groups** (for apps with many command groups)
 
 ```ts
-import { filesystemCommands, systemCommands, appCommands } from 'devalbo-cli';
+import { filesystemCommands, systemCommands, appCommands } from '@devalbo-cli/cli';
 
 export const commands: Record<CommandName, CommandHandler> = {
   ...filesystemCommands,
@@ -308,7 +308,7 @@ The `createProgram()` function defines a commander program used by the `help` co
 
 ```ts
 import { Command } from 'commander';
-import { registerBuiltinCommands } from 'devalbo-cli';
+import { registerBuiltinCommands } from '@devalbo-cli/cli';
 
 export function createProgram() {
   const program = new Command();
@@ -333,7 +333,7 @@ Manual registration is allowed when you need fine-grained control over built-in 
 ### CLI-only apps: `createCliAppConfig`
 
 ```ts
-import { createCliAppConfig } from 'devalbo-cli';
+import { createCliAppConfig } from '@devalbo-cli/cli';
 
 const config = createCliAppConfig({
   appId: 'my-app',
@@ -357,7 +357,7 @@ Start with `createCliAppConfig` and keep the app simple. For advanced Solid sync
 welcomeMessage: 'Welcome to My App. Type "help" for available commands.'
 
 // Or use the utility for a standard format
-import { defaultWelcomeMessage } from 'devalbo-cli';
+import { defaultWelcomeMessage } from '@devalbo-cli/cli';
 welcomeMessage: defaultWelcomeMessage(config)
 // → 'Welcome to My App. Type "help" for available commands.'
 ```
@@ -371,7 +371,7 @@ welcomeMessage: defaultWelcomeMessage(config)
 The store is a TinyBase `Store`. Create it once, stably, at the top of your App.
 
 ```ts
-import { createDevalboStore } from 'devalbo-cli';
+import { createDevalboStore } from '@devalbo-cli/cli';
 
 // Always use useState lazy initializer — never useMemo
 const [store] = useState(() => createDevalboStore());
@@ -423,7 +423,7 @@ The driver initializes asynchronously and is platform-specific (`createFilesyste
 Always treat the driver as nullable until initialized:
 
 ```ts
-import { createFilesystemDriver } from 'devalbo-cli';
+import { createFilesystemDriver } from '@devalbo-cli/cli';
 
 type DriverInstance = Awaited<ReturnType<typeof createFilesystemDriver>>;
 const [driver, setDriver] = useState<DriverInstance | null>(null);
@@ -446,7 +446,7 @@ Pass `driver` to `InteractiveShell` and into the CLI runtime context. The CLI is
 `startInteractiveCli` is the primary entry point for CLI-only apps. It handles store creation, filesystem driver init, and `InteractiveShell` rendering via Ink to stdout.
 
 ```ts
-import { startInteractiveCli, createCliAppConfig, builtinCommands } from 'devalbo-cli';
+import { startInteractiveCli, createCliAppConfig, builtinCommands } from '@devalbo-cli/cli';
 
 await startInteractiveCli({
   commands: { ...builtinCommands, hello, echo },
@@ -479,7 +479,7 @@ import {
   createFilesystemDriver,
   unbindCliRuntimeSource,
   useAppConfig
-} from 'devalbo-cli';
+} from '@devalbo-cli/cli';
 import { createLocalPersister } from 'tinybase/persisters/persister-browser';
 import { commands } from './commands';
 import { createProgram } from './program';
@@ -679,7 +679,7 @@ import { MyItemList } from '../components/output/MyItemList';
 
 Add Solid features explicitly. Do not include these unless your app uses them.
 
-This quickstart intentionally stays `devalbo-cli`-only. If you opt into Solid, add `@devalbo/solid-client` explicitly and thread `session` into `InteractiveShell` plus the bound console runtime context. The `session` prop is typed as `unknown | null` in `devalbo-cli`; Solid-aware commands should cast after runtime validation.
+This quickstart intentionally stays `devalbo-cli`-only. If you opt into Solid, add `@devalbo-cli/solid-client` explicitly and thread `session` into `InteractiveShell` plus the bound console runtime context. The `session` prop is typed as `unknown | null` in `devalbo-cli`; Solid-aware commands should cast after runtime validation.
 
 > **naveditor does this:** `editor-lib/src/commands/solid.ts` — uses a runtime type guard to cast `options.session` to `SolidSession`.
 

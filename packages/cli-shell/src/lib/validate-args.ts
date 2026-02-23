@@ -1,5 +1,5 @@
 import { Effect } from 'effect';
-import { MissingArgument } from '@devalbo/shared';
+import { MissingArgument } from '@devalbo-cli/shared';
 
 export interface NavigateArgs {
   path: string;

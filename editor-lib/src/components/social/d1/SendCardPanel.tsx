@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { personaToJsonLd, useContact, usePersona } from '@devalbo/state';
-import { deliverCard, fetchWebIdProfile, type SolidSession } from '@devalbo/solid-client';
-import { unsafeAsContactId, unsafeAsPersonaId, type ContactId, type PersonaId } from '@devalbo/shared';
+import { personaToJsonLd, useContact, usePersona } from '@devalbo-cli/state';
+import { deliverCard, fetchWebIdProfile, type SolidSession } from '@devalbo-cli/solid-client';
+import { unsafeAsContactId, unsafeAsPersonaId, type ContactId, type PersonaId } from '@devalbo-cli/shared';
 
 interface SendCardPanelProps {
   personaId: PersonaId;

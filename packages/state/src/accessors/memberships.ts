@@ -6,7 +6,7 @@ import {
   type MembershipId,
   type MembershipRow,
   type MembershipRowInput
-} from '@devalbo/shared';
+} from '@devalbo-cli/shared';
 import { CONTACTS_TABLE, GROUPS_TABLE, MEMBERSHIPS_TABLE } from '../schemas/social';
 import { safeParseWithWarning } from './_validation';
 

@@ -1,4 +1,4 @@
-import { createCliAppConfig } from 'devalbo-cli';
+import { createCliAppConfig } from '@devalbo-cli/cli';
 
 export const appConfig = createCliAppConfig({
   appId: 'hello-universal',

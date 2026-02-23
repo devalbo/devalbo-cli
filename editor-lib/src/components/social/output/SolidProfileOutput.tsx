@@ -1,5 +1,5 @@
 import { Box, Text } from 'ink';
-import type { PersonaId, PersonaRow, PersonaRowInput } from '@devalbo/shared';
+import type { PersonaId, PersonaRow, PersonaRowInput } from '@devalbo-cli/shared';
 
 interface SolidProfileOutputProps {
   id: PersonaId;

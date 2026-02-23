@@ -8,7 +8,7 @@ import {
   type ContactKind,
   type ContactRow,
   type ContactRowInput
-} from '@devalbo/shared';
+} from '@devalbo-cli/shared';
 
 type JsonLdObject = Record<string, unknown>;
 

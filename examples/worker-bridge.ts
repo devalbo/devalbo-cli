@@ -1,4 +1,4 @@
-import { WorkerBridge } from '@devalbo/worker-bridge';
+import { WorkerBridge } from '@devalbo-cli/worker-bridge';
 
 // WorkerLike for demo only.
 const worker = {

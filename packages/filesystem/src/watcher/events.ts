@@ -1,1 +1,1 @@
-export { WatchEventType } from '@devalbo/shared';
+export { WatchEventType } from '@devalbo-cli/shared';
