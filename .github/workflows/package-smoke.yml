@@ -1,0 +1,63 @@
+name: Package Smoke
+
+on:
+  push:
+    branches:
+      - main
+      - v2-go-with-codex
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  package-smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.29.3
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
+
+      - name: Install workspace dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build package dist
+        run: npm run build:dist
+
+      - name: Verify dist artifacts are committed and up to date
+        run: |
+          set -euo pipefail
+          if ! git diff --quiet -- dist; then
+            echo "dist/ is out of date. Run: npm run build:dist && commit dist/."
+            git --no-pager diff -- dist
+            exit 1
+          fi
+          UNTRACKED_DIST="$(git ls-files --others --exclude-standard dist)"
+          if [[ -n "$UNTRACKED_DIST" ]]; then
+            echo "dist/ contains untracked files. Commit these artifacts:"
+            echo "$UNTRACKED_DIST"
+            exit 1
+          fi
+
+      - name: Pack npm artifact
+        run: npm pack --ignore-scripts
+
+      - name: Verify packed artifact can be installed and imported
+        run: |
+          set -euo pipefail
+          PKG_TGZ="$(ls -1 devalbo-cli-*.tgz | head -n 1)"
+          TMP_DIR="$(mktemp -d)"
+          cp "$PKG_TGZ" "$TMP_DIR/"
+          cd "$TMP_DIR"
+          npm init -y >/dev/null
+          npm install "./$PKG_TGZ" >/dev/null
+          node --input-type=module -e "import * as m from 'devalbo-cli'; const required=['startInteractiveCli','InteractiveShell','bindCliRuntimeSource','unbindCliRuntimeSource','cli','builtinCommands','registerBuiltinCommands','mergeCommands','createCliAppConfig','defaultWelcomeMessage']; const missing=required.filter((k)=>!(k in m)); if(missing.length) {console.error('Missing exports:', missing.join(',')); process.exit(1);} console.log('Packed install/import check passed.');"
