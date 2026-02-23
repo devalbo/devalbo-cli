@@ -1,11 +1,11 @@
 import { useInput } from 'ink';
 
 export const useKeyboard = (handler: (input: string, key: { upArrow: boolean; downArrow: boolean; return: boolean }) => void) => {
-  useInput((input, key) => {
+  useInput((input: string, key: { upArrow?: boolean; downArrow?: boolean; return?: boolean }) => {
     handler(input, {
-      upArrow: key.upArrow,
-      downArrow: key.downArrow,
-      return: key.return
+      upArrow: Boolean(key.upArrow),
+      downArrow: Boolean(key.downArrow),
+      return: Boolean(key.return)
     });
   });
 };

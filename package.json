@@ -21,7 +21,7 @@
     }
   },
   "scripts": {
-    "build": "mkdir -p dist && cp packages/filesystem/dist/node.js packages/filesystem/dist/node.browser.js packages/filesystem/dist/node.d.ts packages/filesystem/dist/node.browser.d.ts dist/ && tsup",
+    "build": "mkdir -p dist && cp packages/filesystem/dist/node.js packages/filesystem/dist/node.browser.js packages/filesystem/dist/node.d.ts packages/filesystem/dist/node.browser.d.ts dist/ && rm -rf dist/drivers dist/watcher && cp -R packages/filesystem/dist/drivers packages/filesystem/dist/watcher dist/ && tsup",
     "build:packages": "node scripts/build-packages.cjs",
     "build:dist": "npm run build:packages && npm run build",
     "type-check": "pnpm run --recursive --if-present type-check",

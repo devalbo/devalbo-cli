@@ -27,12 +27,12 @@ export default defineConfig([
     external: [
       'react-devtools-core',
       'vite-plugin-node-polyfills',
-      '@devalbo-cli/cli/node', // not bundled; resolved to dist/node.js (Node) or dist/node.browser.js (browser)
+      'devalbo-cli/node', // not bundled; resolved to dist/node.js (Node) or dist/node.browser.js (browser)
       ...nodeBuiltins
     ],
     esbuildOptions(options) {
       options.alias = options.alias || {};
-      options.alias['@devalbo-cli/filesystem/node'] = '@devalbo-cli/cli/node';
+      options.alias['@devalbo-cli/filesystem/node'] = 'devalbo-cli/node';
     },
     noExternal: [
       '@devalbo-cli/cli-shell',
