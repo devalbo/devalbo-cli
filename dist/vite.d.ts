@@ -1,5 +1,3 @@
-import * as vite from 'vite';
-
 interface NodePolyfillsOpts {
     exclude?: string[];
     include?: string[];
@@ -7,6 +5,6 @@ interface NodePolyfillsOpts {
     overrides?: Record<string, string>;
     protocolImports?: boolean;
 }
-declare function nodePolyfills(opts?: NodePolyfillsOpts): vite.Plugin<any>[];
+declare function nodePolyfills(opts?: NodePolyfillsOpts): any[];
 
 export { nodePolyfills };

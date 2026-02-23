@@ -21,7 +21,7 @@ interface NodePolyfillsOpts {
   protocolImports?: boolean;
 }
 
-export function nodePolyfills(opts?: NodePolyfillsOpts) {
+export function nodePolyfills(opts?: NodePolyfillsOpts): any[] {
   // Exclude 'module' from the base polyfills so it doesn't get aliased to an
   // empty mock (which lacks the createRequire export). Our shim below provides
   // a stub instead. The alias set by the base plugin runs before resolveId
