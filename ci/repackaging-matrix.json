@@ -1,0 +1,6 @@
+{
+  "node_baseline": "24.12.0",
+  "node_active_lts": "22.17.1",
+  "npm_baseline": "11.7.0",
+  "npm_latest_minor": "11.10.1"
+}

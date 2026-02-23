@@ -32,15 +32,15 @@ mkdir -p src/commands
 
 ## Step 2 — Install dependencies
 
-Install `@devalbo-cli/cli` directly from GitHub, plus the other required packages:
+Install `devalbo-cli` directly from GitHub, plus the other required packages:
 
 ```sh
-npm install git+https://github.com/devalbo/devalbo-cli.git
+npm install git+https://github.com/devalbo/devalbo-cli.git#release
 npm install commander react
 npm install --save-dev typescript tsx @types/node @types/react
 ```
 
-`@devalbo-cli/cli` is installed directly from GitHub — no registry publish required.
+`devalbo-cli` is installed directly from GitHub — no registry publish required.
 
 Then edit `package.json` to add `"type": "module"` and the `scripts` block:
 
@@ -55,7 +55,7 @@ Then edit `package.json` to add `"type": "module"` and the `scripts` block:
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@devalbo-cli/cli": "git+https://github.com/devalbo/devalbo-cli.git",
+    "devalbo-cli": "git+https://github.com/devalbo/devalbo-cli.git#release",
     "commander": "^14.0.0",
     "react": "^19.1.1"
   },
@@ -97,8 +97,8 @@ Create `tsconfig.json`:
 **`src/commands/index.ts`**
 
 ```ts
-import type { AsyncCommandHandler, CommandHandler } from '@devalbo-cli/cli';
-import { builtinCommands, makeOutput } from '@devalbo-cli/cli';
+import type { AsyncCommandHandler, CommandHandler } from 'devalbo-cli';
+import { builtinCommands, makeOutput } from 'devalbo-cli';
 
 const hello: AsyncCommandHandler = async (args) => {
   const name = args[0] ?? 'world';
@@ -126,7 +126,7 @@ export const commands: Record<string, CommandHandler> = {
 
 ```ts
 import { Command } from 'commander';
-import { registerBuiltinCommands } from '@devalbo-cli/cli';
+import { registerBuiltinCommands } from 'devalbo-cli';
 
 export const createProgram = (): Command => {
   const program = new Command('my-app')
@@ -153,7 +153,7 @@ export const createProgram = (): Command => {
 **`src/config.ts`**
 
 ```ts
-import { createCliAppConfig } from '@devalbo-cli/cli';
+import { createCliAppConfig } from 'devalbo-cli';
 
 export const appConfig = createCliAppConfig({
   appId: 'my-app',
@@ -173,7 +173,7 @@ This config is shared by both the CLI and browser entry points.
 **`src/cli.ts`**
 
 ```ts
-import { startInteractiveCli } from '@devalbo-cli/cli';
+import { startInteractiveCli } from 'devalbo-cli';
 import { commands } from './commands/index';
 import { createProgram } from './program';
 import { appConfig, welcomeMessage } from './config';
@@ -236,7 +236,7 @@ import {
   createFilesystemDriver,
   unbindCliRuntimeSource,
   useAppConfig
-} from '@devalbo-cli/cli';
+} from 'devalbo-cli';
 import { commands } from './commands/index';
 import { createProgram } from './program';
 import { appConfig, welcomeMessage } from './config';
@@ -351,7 +351,7 @@ if (root) {
 ```ts
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
-import { nodePolyfills } from '@devalbo-cli/cli/vite';
+import { nodePolyfills } from 'devalbo-cli/vite';
 
 export default defineConfig({
   plugins: [react(), nodePolyfills()],
@@ -392,8 +392,8 @@ To add a new command, define a handler and register it in the commands map:
 **`src/commands/greet.ts`**
 
 ```ts
-import type { AsyncCommandHandler } from '@devalbo-cli/cli';
-import { makeOutput, makeError } from '@devalbo-cli/cli';
+import type { AsyncCommandHandler } from 'devalbo-cli';
+import { makeOutput, makeError } from 'devalbo-cli';
 
 export const greet: AsyncCommandHandler = async (args) => {
   const name = args[0];
@@ -430,8 +430,8 @@ For apps with many commands, split them into separate files and compose:
 **`src/commands/myCommands.ts`**
 
 ```ts
-import type { AsyncCommandHandler } from '@devalbo-cli/cli';
-import { makeOutput } from '@devalbo-cli/cli';
+import type { AsyncCommandHandler } from 'devalbo-cli';
+import { makeOutput } from 'devalbo-cli';
 
 const greet: AsyncCommandHandler = async (args) => { /* ... */ };
 const farewell: AsyncCommandHandler = async (args) => { /* ... */ };
@@ -442,7 +442,7 @@ export const myCommands = { greet, farewell };
 **`src/commands/index.ts`**
 
 ```ts
-import { builtinCommands } from '@devalbo-cli/cli';
+import { builtinCommands } from 'devalbo-cli';
 import { myCommands } from './myCommands';
 
 export const commands = {
@@ -479,7 +479,7 @@ type AsyncCommandHandler = (
 ### Output helpers
 
 ```ts
-import { makeOutput, makeError, makeResult, makeResultError } from '@devalbo-cli/cli';
+import { makeOutput, makeError, makeResult, makeResultError } from 'devalbo-cli';
 
 makeOutput('Hello world')                    // plain text
 makeError('Something went wrong')            // error (red text)
@@ -502,8 +502,8 @@ return {
 ### `StoreCommandHandler` (when store access is required)
 
 ```ts
-import type { StoreCommandHandler } from '@devalbo-cli/cli';
-import { makeOutput } from '@devalbo-cli/cli';
+import type { StoreCommandHandler } from 'devalbo-cli';
+import { makeOutput } from 'devalbo-cli';
 
 const myStoreCommand: StoreCommandHandler = async (args, options) => {
   // options.store is guaranteed — no null check needed
@@ -547,7 +547,7 @@ const myRead: AsyncCommandHandler = async (args, options) => {
 
 ### Browser app
 
-Steps 9–11 above walk through adding a browser shell alongside the CLI. The `InteractiveShell` component and `bindCliRuntimeSource` (for `window.cli` devtools access) are both exported from `@devalbo-cli/cli`.
+Steps 9–11 above walk through adding a browser shell alongside the CLI. The `InteractiveShell` component and `bindCliRuntimeSource` (for `window.cli` devtools access) are both exported from `devalbo-cli`.
 
 ### Desktop app (Tauri)
 
@@ -558,7 +558,7 @@ Same structure as the browser app. `createFilesystemDriver()` automatically sele
 The store is a TinyBase `Store`. In a React app, create it once with a lazy initializer:
 
 ```ts
-import { createDevalboStore } from '@devalbo-cli/cli';
+import { createDevalboStore } from 'devalbo-cli';
 
 const [store] = useState(() => createDevalboStore());
 ```
@@ -584,8 +584,8 @@ const [store] = useState(() => {
 
 | Package | What it provides | Direct use? |
 |---------|-----------------|-------------|
-| `@devalbo-cli/cli` | Shell framework, built-in commands, entry points | Yes — primary dependency |
-| `@devalbo/shared` | Core types (`AppConfig`, `CommandResult`) | No — re-exported via `@devalbo-cli/cli` |
+| `devalbo-cli` | Shell framework, built-in commands, entry points | Yes — primary dependency |
+| `@devalbo/shared` | Core types (`AppConfig`, `CommandResult`) | No — re-exported via `devalbo-cli` |
 | `@devalbo/state` | TinyBase store, schemas, persisters | Re-exported via `devalbo-cli` |
 | `@devalbo/filesystem` | Filesystem driver abstraction | Re-exported via `devalbo-cli` |
 | `@devalbo/ui` | Ink primitives (TextInput, Spinner, etc.) | Advanced custom UI only |
@@ -600,7 +600,7 @@ The browser files created in Steps 9–10 are the complete pattern. Key points:
 - **`src/config.ts`** — shared config between CLI and browser entry points (Step 6)
 - **`src/App.tsx`** — uses `InteractiveShell` inside an `InkTerminalBox` from `ink-web`
 - **`src/main.tsx`** — React DOM entry point; imports CSS from `ink-web` and `@xterm/xterm`
-- **`vite.config.ts`** — must include `nodePolyfills()` from `@devalbo-cli/cli/vite` so Node builtins work in the browser
+- **`vite.config.ts`** — must include `nodePolyfills()` from `devalbo-cli/vite` so Node builtins work in the browser
 
 ### Browser developer console (`window.cli`)
 

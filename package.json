@@ -1,5 +1,5 @@
 {
-  "name": "@devalbo-cli/cli",
+  "name": "devalbo-cli",
   "private": false,
   "version": "0.1.0",
   "type": "module",
@@ -44,7 +44,7 @@
   },
   "devDependencies": {
     "tsup": "^8.3.5",
-    "@devalbo-cli/cli-shell": "file:./packages/cli-shell",
+    "devalbo-cli-shell": "file:./packages/cli-shell",
     "@devalbo-cli/filesystem": "file:./packages/filesystem",
     "@devalbo-cli/shared": "file:./packages/shared",
     "@devalbo-cli/state": "file:./packages/state",

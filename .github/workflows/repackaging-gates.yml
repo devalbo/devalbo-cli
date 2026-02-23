@@ -1,0 +1,132 @@
+name: Repackaging Gates
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  matrix-config:
+    runs-on: ubuntu-latest
+    outputs:
+      node_baseline: ${{ steps.read.outputs.node_baseline }}
+      node_active_lts: ${{ steps.read.outputs.node_active_lts }}
+      npm_baseline: ${{ steps.read.outputs.npm_baseline }}
+      npm_latest_minor: ${{ steps.read.outputs.npm_latest_minor }}
+      node_matrix: ${{ steps.read.outputs.node_matrix }}
+      npm_matrix: ${{ steps.read.outputs.npm_matrix }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Read matrix config
+        id: read
+        run: |
+          set -euo pipefail
+          node -e "const fs=require('fs'); const m=JSON.parse(fs.readFileSync('ci/repackaging-matrix.json','utf8')); for (const k of ['node_baseline','node_active_lts','npm_baseline','npm_latest_minor']) { if (!m[k]) { throw new Error('Missing key: '+k); } fs.appendFileSync(process.env.GITHUB_OUTPUT, k+'='+m[k]+'\\n'); } fs.appendFileSync(process.env.GITHUB_OUTPUT, 'node_matrix='+JSON.stringify([m.node_baseline,m.node_active_lts])+'\\n'); fs.appendFileSync(process.env.GITHUB_OUTPUT, 'npm_matrix='+JSON.stringify([m.npm_baseline,m.npm_latest_minor])+'\\n');"
+
+  install-release-and-tag:
+    needs: matrix-config
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node: ${{ fromJSON(needs.matrix-config.outputs.node_matrix) }}
+        npm: ${{ fromJSON(needs.matrix-config.outputs.npm_matrix) }}
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+
+      - name: Setup npm version
+        run: npm i -g npm@${{ matrix.npm }}
+
+      - name: Install release branch staging gate
+        run: |
+          set -euo pipefail
+          bash tests/packaging/install-release-branch-staging.test.sh
+
+      - name: Install release tag gate
+        run: |
+          set -euo pipefail
+          bash tests/packaging/install-release-tag.test.sh
+
+  main-install-monitor:
+    needs: matrix-config
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node (baseline)
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ needs.matrix-config.outputs.node_baseline }}
+
+      - name: Setup npm (baseline)
+        run: npm i -g npm@${{ needs.matrix-config.outputs.npm_baseline }}
+
+      - name: Main install monitor
+        run: |
+          set -euo pipefail
+          bash tests/packaging/main-install-monitor.test.sh
+
+  runtime-and-contract:
+    needs: matrix-config
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node (baseline)
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ needs.matrix-config.outputs.node_baseline }}
+
+      - name: Setup npm (baseline)
+        run: npm i -g npm@${{ needs.matrix-config.outputs.npm_baseline }}
+
+      - name: Export contract
+        run: |
+          set -euo pipefail
+          node --experimental-strip-types tests/packaging/export-contract.test.ts
+
+      - name: Artifact scan
+        run: |
+          set -euo pipefail
+          STRICT_ARTIFACT_SCAN=0 bash tests/packaging/artifact-scan.test.sh
+
+      - name: Metadata sync
+        run: |
+          set -euo pipefail
+          STRICT_METADATA_SYNC=1 bash tests/packaging/metadata-sync.test.sh
+
+      - name: Public reference guard
+        run: |
+          set -euo pipefail
+          STRICT_PUBLIC_REFS=1 bash tests/packaging/public-reference-guard.test.sh
+
+      - name: CLI runtime smoke
+        continue-on-error: true
+        run: |
+          set -euo pipefail
+          bash tests/packaging/cli-runtime-smoke.test.sh
+
+      - name: Browser build smoke
+        continue-on-error: true
+        run: |
+          set -euo pipefail
+          bash tests/packaging/browser-build-smoke.test.sh
+
+      - name: Tauri build smoke (non-blocking until Phase 5)
+        continue-on-error: true
+        run: |
+          set -euo pipefail
+          bash tests/packaging/tauri-build-smoke.test.sh

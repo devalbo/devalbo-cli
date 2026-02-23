@@ -20,15 +20,16 @@ Walks through the CREATE_AN_APP.md quickstart exactly as a user would:
 
 Options:
   --dir <path>           Target directory (default: /tmp/devalbo-create-app-smoke)
-  --devalbo-spec <spec>  npm dependency spec for @devalbo-cli/cli
-                         (default: git+https://github.com/devalbo/devalbo-cli.git)
+  --devalbo-spec <spec>  npm dependency spec for devalbo-cli
+                         (default: git+https://github.com/devalbo/devalbo-cli.git#release)
   --force                Remove target directory if it already exists
   --help                 Show this help
 EOF
 }
 
 TARGET_DIR="/tmp/devalbo-create-app-smoke"
-DEVALBO_SPEC="git+https://github.com/devalbo/devalbo-cli.git"
+# Use #release so npm sees single-package layout (no file: deps); run scripts/prepare-release-ref.sh and push first.
+DEVALBO_SPEC="git+https://github.com/devalbo/devalbo-cli.git#release"
 FORCE=0
 NPM_CACHE_DIR=""
 
@@ -101,10 +102,10 @@ mkdir -p src/commands
 # Then edit package.json to add "type": "module" and scripts.
 
 log "Step 2: Install dependencies"
-log "@devalbo-cli/cli dependency spec: $DEVALBO_SPEC"
-run_cmd npm install "$DEVALBO_SPEC"
-run_cmd npm install commander react
-run_cmd npm install --save-dev typescript tsx @types/node @types/react
+log "devalbo-cli dependency spec: $DEVALBO_SPEC"
+# npx npm@11.10.1 + --legacy-peer-deps avoids "null parent" when installing git dep with file: sub-deps
+run_cmd npx --yes npm@11.10.1 install --legacy-peer-deps "$DEVALBO_SPEC" commander react
+run_cmd npx --yes npm@11.10.1 install --save-dev --legacy-peer-deps typescript tsx @types/node @types/react
 
 log "Updating package.json (type: module, scripts)"
 node -e "
@@ -141,8 +142,8 @@ EOF
 
 log "Step 4: Create src/commands/index.ts"
 cat > src/commands/index.ts <<'EOF'
-import type { AsyncCommandHandler, CommandHandler } from '@devalbo-cli/cli';
-import { builtinCommands, makeOutput } from '@devalbo-cli/cli';
+import type { AsyncCommandHandler, CommandHandler } from 'devalbo-cli';
+import { builtinCommands, makeOutput } from 'devalbo-cli';
 
 const hello: AsyncCommandHandler = async (args) => {
   const name = args[0] ?? 'world';
@@ -165,7 +166,7 @@ EOF
 log "Step 5: Create src/program.ts"
 cat > src/program.ts <<'EOF'
 import { Command } from 'commander';
-import { registerBuiltinCommands } from '@devalbo-cli/cli';
+import { registerBuiltinCommands } from 'devalbo-cli';
 
 export const createProgram = (): Command => {
   const program = new Command('my-app')
@@ -187,7 +188,7 @@ EOF
 
 log "Step 6: Create src/config.ts"
 cat > src/config.ts <<'EOF'
-import { createCliAppConfig } from '@devalbo-cli/cli';
+import { createCliAppConfig } from 'devalbo-cli';
 
 export const appConfig = createCliAppConfig({
   appId: 'my-app',
@@ -202,7 +203,7 @@ EOF
 
 log "Step 7: Create src/cli.ts"
 cat > src/cli.ts <<'EOF'
-import { startInteractiveCli } from '@devalbo-cli/cli';
+import { startInteractiveCli } from 'devalbo-cli';
 import { commands } from './commands/index';
 import { createProgram } from './program';
 import { appConfig, welcomeMessage } from './config';
@@ -227,8 +228,8 @@ run_cmd npm run type-check
 # ── Step 9: Install browser dependencies ─────────────────────────────────────
 
 log "Step 9: Install browser dependencies"
-run_cmd npm install react-dom ink-web @xterm/xterm
-run_cmd npm install --save-dev vite @vitejs/plugin-react @types/react-dom
+run_cmd npx --yes npm@11.10.1 install --legacy-peer-deps react-dom ink-web @xterm/xterm
+run_cmd npx --yes npm@11.10.1 install --save-dev --legacy-peer-deps vite @vitejs/plugin-react @types/react-dom
 
 log "Updating package.json (browser scripts)"
 node -e "
@@ -255,7 +256,7 @@ import {
   createFilesystemDriver,
   unbindCliRuntimeSource,
   useAppConfig
-} from '@devalbo-cli/cli';
+} from 'devalbo-cli';
 import { commands } from './commands/index';
 import { createProgram } from './program';
 import { appConfig, welcomeMessage } from './config';
@@ -364,7 +365,7 @@ EOF
 cat > vite.config.ts <<'EOF'
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
-import { nodePolyfills } from '@devalbo-cli/cli/vite';
+import { nodePolyfills } from 'devalbo-cli/vite';
 
 export default defineConfig({
   plugins: [react(), nodePolyfills()],
