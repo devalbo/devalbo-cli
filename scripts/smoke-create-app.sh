@@ -263,8 +263,8 @@ run_npm run type-check
 # ── Step 9: Install browser dependencies ─────────────────────────────────────
 
 log "Step 9: Install browser dependencies"
-run_npm install react-dom ink-web @xterm/xterm
-run_npm install --save-dev vite @vitejs/plugin-react @types/react-dom
+run_npm install react@19.2.4 react-dom@19.2.4 ink-web@0.1.11 @xterm/xterm@5.5.0
+run_npm install --save-dev vite@7.3.1 @vitejs/plugin-react@5.0.0 @types/react-dom@19
 
 log "Updating package.json (browser scripts)"
 node -e "
@@ -272,6 +272,12 @@ node -e "
   const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
   pkg.scripts['start:browser'] = 'vite';
   pkg.scripts['build:browser'] = 'vite build';
+  pkg.overrides = {
+    ...(pkg.overrides || {}),
+    react: '19.2.4',
+    'react-dom': '19.2.4',
+    'react-reconciler': '0.33.0'
+  };
   fs.writeFileSync('package.json', JSON.stringify(pkg, null, 2) + '\n');
 "
 
@@ -404,7 +410,17 @@ import { nodePolyfills } from 'devalbo-cli/vite';
 
 export default defineConfig({
   plugins: [react(), nodePolyfills()],
-  optimizeDeps: { exclude: ['react-devtools-core'] },
+  resolve: {
+    alias: { ink: 'ink-web' },
+    dedupe: ['react', 'react-dom'],
+  },
+  optimizeDeps: {
+    exclude: [
+      'devalbo-cli',
+      'react-devtools-core',
+      'is-in-ci',
+    ],
+  },
 });
 EOF
 

@@ -207,8 +207,8 @@ Try: `hello Alice`, `echo foo bar`, `help`, `pwd`, `ls`, `app-config`.
 ## Step 9 — Install browser dependencies
 
 ```sh
-npm install react-dom ink-web @xterm/xterm
-npm install --save-dev vite @vitejs/plugin-react @types/react-dom
+npm install react@19.2.4 react-dom@19.2.4 ink-web@0.1.11 @xterm/xterm@5.5.0
+npm install --save-dev vite@7.3.1 @vitejs/plugin-react@5.0.0 @types/react-dom@19
 ```
 
 Then add browser scripts to `package.json`:
@@ -216,6 +216,16 @@ Then add browser scripts to `package.json`:
 ```json
 "start:browser": "vite",
 "build:browser": "vite build"
+```
+
+Also add this `overrides` block to `package.json` to keep a single React/runtime graph:
+
+```json
+"overrides": {
+  "react": "19.2.4",
+  "react-dom": "19.2.4",
+  "react-reconciler": "0.33.0"
+}
 ```
 
 ---
@@ -355,11 +365,21 @@ import { nodePolyfills } from 'devalbo-cli/vite';
 
 export default defineConfig({
   plugins: [react(), nodePolyfills()],
-  optimizeDeps: { exclude: ['react-devtools-core'] },
+  resolve: {
+    alias: { ink: 'ink-web' },
+    dedupe: ['react', 'react-dom'],
+  },
+  optimizeDeps: {
+    exclude: [
+      'devalbo-cli',
+      'react-devtools-core',
+      'is-in-ci',
+    ],
+  },
 });
 ```
 
-`nodePolyfills()` is required — the devalbo-cli browser build still depends on Node builtin shims during bundling. Excluding `react-devtools-core` from `optimizeDeps` avoids Vite pre-bundling issues with that optional dependency.
+Use this config as-is. `nodePolyfills()` is required because the browser shell depends on Node builtin shims during bundling. `alias: { ink: 'ink-web' }` is required for browser runtime compatibility, and the `optimizeDeps.exclude` list avoids dependency optimizer rewrites that can break `node:process` handling.
 
 ---
 
