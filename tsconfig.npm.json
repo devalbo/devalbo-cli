@@ -18,5 +18,5 @@
       "ink": ["node_modules/ink-web/dist/index.d.ts"]
     }
   },
-  "include": ["src/**/*.ts", "packages/**/*.ts", "packages/**/*.tsx"]
+  "include": ["src/**/*.ts", "src/**/*.d.ts", "packages/**/*.ts", "packages/**/*.tsx"]
 }

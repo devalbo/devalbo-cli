@@ -15,7 +15,7 @@ usage() {
 Usage: scripts/smoke-create-app.sh [options]
 
 Creates a fresh app directory using the CREATE_AN_APP.md CLI quickstart steps,
-installs dependencies, and runs verification checks.
+installs dependencies, and runs verification checks for CLI + browser.
 
 Options:
   --dir <path>           Target directory (default: /tmp/devalbo-create-app-smoke)
@@ -112,18 +112,26 @@ cat > "$TARGET_DIR/package.json" <<EOF
   "type": "module",
   "scripts": {
     "start": "node --import tsx src/cli.ts",
+    "start:browser": "vite",
+    "build": "vite build",
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
     "devalbo-cli": "$DEVALBO_SPEC",
     "commander": "^14.0.0",
-    "react": "^19.1.1"
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
+    "ink-web": "^0.1.9",
+    "@xterm/xterm": "^5.5.0"
   },
   "devDependencies": {
     "@types/node": "^24.3.0",
     "@types/react": "^19.1.10",
+    "@types/react-dom": "^19.1.7",
+    "@vitejs/plugin-react": "^5.0.2",
     "tsx": "^4.20.4",
-    "typescript": "^5.9.2"
+    "typescript": "^5.9.2",
+    "vite": "^7.1.3"
   }
 }
 EOF
@@ -134,13 +142,44 @@ cat > "$TARGET_DIR/tsconfig.json" <<'EOF'
     "target": "ES2022",
     "module": "ESNext",
     "moduleResolution": "Bundler",
+    "jsx": "react-jsx",
     "strict": true,
     "skipLibCheck": true,
     "noEmit": true,
     "types": ["node"]
   },
-  "include": ["src"]
+  "include": ["src", "vite.config.ts"]
 }
+EOF
+
+cat > "$TARGET_DIR/vite.config.ts" <<'EOF'
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import { nodePolyfills } from 'devalbo-cli/vite';
+
+export default defineConfig({
+  plugins: [react(), nodePolyfills()],
+  build: {
+    rollupOptions: {
+      external: ['react-devtools-core']
+    }
+  }
+});
+EOF
+
+cat > "$TARGET_DIR/index.html" <<'EOF'
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>my-app</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
 EOF
 
 cat > "$TARGET_DIR/src/commands/index.ts" <<'EOF'
@@ -200,6 +239,123 @@ await startInteractiveCli({
 });
 EOF
 
+cat > "$TARGET_DIR/src/config.ts" <<'EOF'
+import { createCliAppConfig } from 'devalbo-cli';
+
+export const appConfig = createCliAppConfig({
+  appId: 'my-app',
+  appName: 'My App',
+  storageKey: 'my-app-store',
+});
+
+export const welcomeMessage = 'Welcome to My App. Type "help" for available commands.';
+EOF
+
+cat > "$TARGET_DIR/src/App.tsx" <<'EOF'
+import React, { useEffect, useRef, useState } from 'react';
+import { InkTerminalBox } from 'ink-web';
+import {
+  AppConfigProvider,
+  BrowserConnectivityService,
+  InteractiveShell,
+  bindCliRuntimeSource,
+  createDevalboStore,
+  createFilesystemDriver,
+  unbindCliRuntimeSource,
+  useAppConfig
+} from 'devalbo-cli';
+import { commands } from './commands/index';
+import { createProgram } from './program';
+import { appConfig, welcomeMessage } from './config';
+
+type StoreInstance = ReturnType<typeof createDevalboStore>;
+type DriverInstance = Awaited<ReturnType<typeof createFilesystemDriver>>;
+
+const AppContent: React.FC<{ store: StoreInstance }> = ({ store }) => {
+  const [driver, setDriver] = useState<DriverInstance | null>(null);
+  const [cwd, setCwd] = useState('/');
+  const [connectivity] = useState(() => new BrowserConnectivityService());
+  const config = useAppConfig();
+
+  const cwdRef = useRef(cwd);
+  const driverRef = useRef(driver);
+  const configRef = useRef(config);
+  cwdRef.current = cwd;
+  driverRef.current = driver;
+  configRef.current = config;
+
+  useEffect(() => {
+    let cancelled = false;
+    void createFilesystemDriver().then((nextDriver) => {
+      if (!cancelled) setDriver(nextDriver);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    bindCliRuntimeSource({
+      getContext: () => {
+        if (!driverRef.current) return null;
+        return {
+          commands,
+          createProgram,
+          store,
+          config: configRef.current,
+          driver: driverRef.current,
+          connectivity,
+          cwd: cwdRef.current,
+          setCwd
+        };
+      }
+    });
+    return () => unbindCliRuntimeSource();
+  }, [store, connectivity]);
+
+  return (
+    <div style={{ maxWidth: '960px', margin: '24px auto', padding: '0 16px' }}>
+      <h1>My App</h1>
+      <InkTerminalBox rows={24} focus>
+        <InteractiveShell
+          commands={commands}
+          createProgram={createProgram}
+          store={store}
+          config={config}
+          driver={driver}
+          cwd={cwd}
+          setCwd={setCwd}
+          welcomeMessage={welcomeMessage}
+        />
+      </InkTerminalBox>
+    </div>
+  );
+};
+
+export const App: React.FC = () => {
+  const [store] = useState(() => createDevalboStore());
+
+  return (
+    <AppConfigProvider config={appConfig}>
+      <AppContent store={store} />
+    </AppConfigProvider>
+  );
+};
+EOF
+
+cat > "$TARGET_DIR/src/main.tsx" <<'EOF'
+import React from 'react';
+import { createRoot } from 'react-dom/client';
+import 'ink-web/css';
+import '@xterm/xterm/css/xterm.css';
+import { App } from './App';
+
+const root = document.getElementById('root');
+if (root) {
+  createRoot(root).render(<App />);
+}
+EOF
+
 log "Created scaffold in: $TARGET_DIR"
 
 if [[ "$SKIP_INSTALL" -eq 1 ]]; then
@@ -218,6 +374,7 @@ if [[ "$SKIP_CHECKS" -eq 1 ]]; then
 fi
 
 run_cmd npm run type-check
+run_cmd npm run build
 popd >/dev/null
 
 cat <<EOF
@@ -227,4 +384,5 @@ All automated checks passed for $TARGET_DIR
 Optional manual checks:
   cd $TARGET_DIR
   npm run start
+  npm run start:browser
 EOF
