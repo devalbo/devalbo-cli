@@ -1,6 +1,6 @@
-# Creating a devalbo-core App
+# Creating a devalbo-cli App
 
-This guide walks through building an app on top of the devalbo-core packages. The framework provides:
+This guide walks through building an app on top of devalbo-cli. The framework provides:
 
 - A **command system** shared across all UI surfaces (terminal, browser shell, browser dev console)
 - A **reactive store** (TinyBase via `@devalbo/state`) for application data
@@ -71,7 +71,7 @@ my-app/
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "devalbo-cli": "git+https://github.com/devalbo/devalbo-core.git",
+    "devalbo-cli": "git+https://github.com/devalbo/devalbo-cli.git",
     "commander": "^14.0.0",
     "react": "^19.1.1"
   },
@@ -89,19 +89,15 @@ Note: `@devalbo/shared` is NOT a direct dependency — `createCliAppConfig` is r
 Install commands (npm):
 
 ```sh
-npm install devalbo-cli commander react
+npm install git+https://github.com/devalbo/devalbo-cli.git commander react
 npm install --save-dev typescript tsx @types/node @types/react
-```
-
-If you want to consume `devalbo-cli` directly from the GitHub monorepo (instead of npm publish), use:
-
-```sh
-npm install git+https://github.com/devalbo/devalbo-core.git
 ```
 
 Notes:
 - The `package.json` above is standalone-ready and does not require this monorepo.
-- Pinning to a branch/commit is recommended for reproducible builds.
+- `devalbo-cli` is currently installed from GitHub via npm git spec (not npm registry).
+- Git installs require committed `dist/` artifacts in the repository.
+- Pinning package versions is recommended for reproducible builds.
 
 ### Step 3 — Write commands
 

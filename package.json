@@ -15,7 +15,6 @@
   "scripts": {
     "build": "pnpm -r build",
     "build:dist": "tsup --config tsup.config.ts",
-    "prepare": "npm run build:dist",
     "type-check": "pnpm -r type-check",
     "test": "pnpm -r test",
     "test:workspace": "vitest run",
