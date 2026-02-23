@@ -12,21 +12,21 @@
   },
   "dependencies": {
     "@devalbo-cli/cli": "workspace:*",
-    "@xterm/xterm": "catalog:",
-    "commander": "catalog:",
-    "ink-web": "catalog:",
-    "react": "catalog:",
-    "react-dom": "catalog:"
+    "@xterm/xterm": "^6.0.0",
+    "commander": "^14.0.3",
+    "ink-web": "^0.1.11",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4"
   },
   "devDependencies": {
-    "@types/node": "catalog:",
-    "@types/react": "catalog:",
-    "@types/react-dom": "catalog:",
-    "@vitejs/plugin-react": "catalog:",
-    "tsx": "catalog:",
-    "typescript": "catalog:",
-    "vite": "catalog:",
-    "vite-plugin-node-polyfills": "catalog:",
-    "vitest": "catalog:"
+    "@types/node": "^25.2.3",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^5.1.4",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3",
+    "vite": "^7.3.1",
+    "vite-plugin-node-polyfills": "^0.25.0",
+    "vitest": "^4.0.18"
   }
 }

@@ -2,38 +2,38 @@
   "name": "@devalbo-cli/cli",
   "private": false,
   "version": "0.1.0",
-  "packageManager": "pnpm@10.29.3",
   "type": "module",
+  "workspaces": [
+    "packages/*",
+    "examples/*",
+    "naveditor",
+    "editor-lib",
+    "naveditor-web",
+    "naveditor-desktop",
+    "naveditor-terminal"
+  ],
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
-    },
-    "./vite": {
-      "types": "./dist/vite.d.ts",
-      "import": "./dist/vite.js"
-    }
+    ".": {"types": "./dist/index.d.ts", "import": "./dist/index.js"},
+    "./vite": {"types": "./dist/vite.d.ts", "import": "./dist/vite.js"}
   },
   "scripts": {
     "build": "tsc -p tsconfig.build.json && cp dist/vite-plugin.js dist/vite.js && cp dist/vite-plugin.d.ts dist/vite.d.ts",
-    "build:dist": "pnpm --filter './packages/*' -r build && pnpm run build",
-    "type-check": "pnpm -r type-check",
-    "test": "pnpm -r test",
+    "build:packages": "node scripts/build-packages.cjs",
+    "build:dist": "npm run build:packages && npm run build",
+    "type-check": "npm run type-check --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present",
     "test:workspace": "vitest run",
-    "web:dev": "pnpm -C naveditor-web dev",
-    "web:build": "pnpm -C naveditor-web build",
-    "terminal": "pnpm -C naveditor-terminal terminal",
-    "terminal:interactive": "pnpm -C naveditor-terminal interactive",
-    "terminal:dev": "pnpm -C naveditor-terminal terminal:dev",
-    "desktop:dev": "pnpm -C naveditor-desktop dev",
-    "desktop:build": "pnpm -C naveditor-desktop build"
+    "web:dev": "npm run dev -w naveditor-web",
+    "web:build": "npm run build -w naveditor-web",
+    "terminal": "npm run terminal -w naveditor-terminal",
+    "terminal:interactive": "npm run interactive -w naveditor-terminal",
+    "terminal:dev": "npm run terminal:dev -w naveditor-terminal",
+    "desktop:dev": "npm run dev -w naveditor-desktop",
+    "desktop:build": "npm run build -w naveditor-desktop"
   },
-  "files": [
-    "dist",
-    "README.md"
-  ],
+  "files": ["dist", "README.md"],
   "dependencies": {
     "@devalbo-cli/cli-shell": "workspace:*",
     "@devalbo-cli/filesystem": "workspace:*",

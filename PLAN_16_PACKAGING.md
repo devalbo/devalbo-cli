@@ -1,9 +1,11 @@
 # Plan 16: Multi-package publishing (drop tsup, use tsc)
 
+**No pnpm required.** The repo uses **npm workspaces** and concrete dependency versions (no pnpm catalog). Install and build with npm only.
+
 **After a fresh checkout**, before running the smoke script, run:
 ```sh
-pnpm install
-pnpm run build:dist
+npm install
+npm run build:dist
 ```
 Then run the smoke script with the local package, e.g.:
 ```sh
@@ -64,7 +66,7 @@ Publish the workspace packages so that apps install `@devalbo-cli/cli` plus its 
 
 - **Name:** `@devalbo-cli/cli` — the main app-facing entry, under the same scope as the rest (`@devalbo-cli/*`).
 - **Dependencies:** List @devalbo-cli/cli-shell, @devalbo-cli/filesystem, @devalbo-cli/shared, @devalbo-cli/state (and any others the root re-exports) with version ranges (e.g. `^0.1.0`). At publish time, `workspace:*` must be replaced with those ranges (pnpm or a version/publish tool).
-- **Build:** Remove tsup. Build = (1) build all workspace packages (`pnpm -r build`), (2) build root with **tsc**: compile the root entry points (e.g. `src/devalbo-cli.ts`, `src/vite-plugin.ts`) into `dist/`, with path mappings (or project references) so that `@devalbo-cli/*` resolve to `packages/*/dist` (or to the published package names). Output: `dist/index.js`, `dist/vite.js`, and `.d.ts`, with imports like `from '@devalbo-cli/cli-shell'` left as-is (not bundled).
+- **Build:** Remove tsup. Build = (1) build all workspace packages (`npm run build:packages`), (2) build root with **tsc**: compile the root entry points (e.g. `src/devalbo-cli.ts`, `src/vite-plugin.ts`) into `dist/`, with path mappings (or project references) so that `@devalbo-cli/*` resolve to `packages/*/dist` (or to the published package names). Output: `dist/index.js`, `dist/vite.js`, and `.d.ts`, with imports like `from '@devalbo-cli/cli-shell'` left as-is (not bundled).
 - **Publish:** Include `dist/` and README. Consumers get `@devalbo-cli/cli` + transitive `@devalbo-cli/*` from the registry.
 
 ---
@@ -95,7 +97,7 @@ Dependency order (publish in this order so versions exist):
 4. @devalbo-cli/cli-shell  
 5. @devalbo-cli/cli (root)
 
-Use pnpm’s publish workflow or a tool (e.g. changesets) to:
+Use npm’s publish workflow or a tool (e.g. changesets) to:
 
 - Bump versions and replace `workspace:*` with the chosen version range for each published dependency before `npm publish`.
 
