@@ -6,12 +6,12 @@
     "outDir": "dist",
     "paths": {
       "@/*": ["src/*"],
-      "@devalbo-cli/commands": ["../commands/dist/index.js"],
-      "@devalbo-cli/filesystem": ["../filesystem/dist/index.js"],
-      "@devalbo-cli/filesystem/node": ["../filesystem/dist/node.js"],
-      "@devalbo-cli/shared": ["../shared/dist/index.js"],
-      "@devalbo-cli/state": ["../state/dist/index.js"],
-      "@devalbo-cli/ui": ["../ui/dist/index.js"]
+      "@devalbo-cli/commands": ["../commands/dist/index.d.ts"],
+      "@devalbo-cli/filesystem": ["../filesystem/dist/index.d.ts"],
+      "@devalbo-cli/filesystem/node": ["../filesystem/dist/node.d.ts"],
+      "@devalbo-cli/shared": ["../shared/dist/index.d.ts"],
+      "@devalbo-cli/state": ["../state/dist/index.d.ts"],
+      "@devalbo-cli/ui": ["../ui/dist/index.d.ts"]
     }
   },
   "include": ["src"]
