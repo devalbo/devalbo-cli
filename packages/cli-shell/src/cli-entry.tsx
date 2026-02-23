@@ -1,17 +1,17 @@
 import { render } from 'ink';
 import { useState } from 'react';
 import React from 'react';
-import type { Command } from 'commander';
 import type { CommandHandler } from './commands/_util';
 import type { AppConfig } from '@devalbo-cli/shared';
 import { createDevalboStore } from '@devalbo-cli/state';
 import { createFilesystemDriver } from '@devalbo-cli/filesystem';
 import { InteractiveShell } from './components/InteractiveShell';
 import type { ReactNode } from 'react';
+import type { ProgramLike } from './types/program';
 
 export type CliEntryOptions = {
   commands: Record<string, CommandHandler>;
-  createProgram: () => Command;
+  createProgram: () => ProgramLike;
   config: AppConfig;
   welcomeMessage: string | ReactNode;
 };

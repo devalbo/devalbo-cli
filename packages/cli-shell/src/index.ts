@@ -14,6 +14,7 @@ export type {
   ExtendedCommandOptions,
   ExtendedCommandOptionsWithStore
 } from './commands/_util';
+export type { ProgramLike, ProgramCommandLike, ProgramArgumentLike } from './types/program';
 export { makeOutput, makeError, makeResult, makeResultError, mergeCommands } from './commands/_util';
 
 export { filesystemCommands } from './commands/filesystem';

@@ -3,6 +3,7 @@ import React from 'react';
 import type { AppConfig, CommandOptions, CommandResult, IConnectivityService } from '@devalbo-cli/shared';
 import type { Store } from 'tinybase';
 import type { IFilesystemDriver } from '@devalbo-cli/filesystem';
+import type { ProgramLike } from '../types/program';
 
 type CommandOptionsBase = CommandOptions & {
   cwd?: string;
@@ -13,7 +14,7 @@ type CommandOptionsBase = CommandOptions & {
   config?: AppConfig;
   driver?: IFilesystemDriver;
   connectivity?: IConnectivityService;
-  createProgram?: () => import('commander').Command;
+  createProgram?: () => ProgramLike;
 };
 
 export type ExtendedCommandOptions = CommandOptionsBase | (CommandOptionsBase & { store: Store });

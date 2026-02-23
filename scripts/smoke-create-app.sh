@@ -34,6 +34,8 @@ DEVALBO_SPEC="git+https://github.com/devalbo/devalbo-cli.git#release"
 FORCE=0
 NPM_CACHE_DIR=""
 NPM_USERCONFIG=""
+PACK_TMP_DIR=""
+RESOLVED_DEVALBO_SPEC=""
 
 run_npm() {
   run_cmd env -u NPM_CONFIG_GLOBALCONFIG \
@@ -87,6 +89,10 @@ touch "$NPM_USERCONFIG"
 cleanup() {
   log "Cleaning npm cache dir: $NPM_CACHE_DIR"
   rm -rf "$NPM_CACHE_DIR"
+  if [[ -n "$PACK_TMP_DIR" ]]; then
+    log "Cleaning pack temp dir: $PACK_TMP_DIR"
+    rm -rf "$PACK_TMP_DIR"
+  fi
 }
 trap cleanup EXIT
 log "Using fresh npm cache: $NPM_CACHE_DIR"
@@ -119,7 +125,21 @@ mkdir -p src/commands
 
 log "Step 2: Install dependencies"
 log "devalbo-cli dependency spec: $DEVALBO_SPEC"
-run_npm install "$DEVALBO_SPEC" commander react
+RESOLVED_DEVALBO_SPEC="$DEVALBO_SPEC"
+if [[ "$DEVALBO_SPEC" == file:* ]]; then
+  LOCAL_REPO_PATH="${DEVALBO_SPEC#file:}"
+  if [[ ! -d "$LOCAL_REPO_PATH" ]]; then
+    echo "Local file: path does not exist: $LOCAL_REPO_PATH" >&2
+    exit 1
+  fi
+  PACK_TMP_DIR="$(mktemp -d "${TMPDIR:-/tmp}/devalbo-create-app-pack.XXXXXX")"
+  log "Packing local devalbo-cli from: $LOCAL_REPO_PATH"
+  PKG_TGZ="$(cd "$LOCAL_REPO_PATH" && npm pack --ignore-scripts --silent | tail -n 1)"
+  cp "$LOCAL_REPO_PATH/$PKG_TGZ" "$PACK_TMP_DIR/"
+  RESOLVED_DEVALBO_SPEC="$PACK_TMP_DIR/$PKG_TGZ"
+  log "Using packed artifact: $RESOLVED_DEVALBO_SPEC"
+fi
+run_npm install "$RESOLVED_DEVALBO_SPEC" commander react
 run_npm install --save-dev typescript tsx @types/node @types/react
 
 log "Updating package.json (type: module, scripts)"

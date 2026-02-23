@@ -3,6 +3,7 @@ import type { AppConfig, CommandResult, IConnectivityService } from '@devalbo-cl
 import type { DevalboStore } from '@devalbo-cli/state';
 import type { IFilesystemDriver } from '@devalbo-cli/filesystem';
 import { makeError, makeOutput, type CommandHandler, type ExtendedCommandOptions } from '../commands/_util';
+import type { ProgramLike } from '../types/program';
 
 export type CommandRuntimeContext = {
   commands: Record<string, CommandHandler>;
@@ -13,7 +14,7 @@ export type CommandRuntimeContext = {
   connectivity?: IConnectivityService;
   cwd: string;
   setCwd: (next: string) => void;
-  createProgram?: () => import('commander').Command;
+  createProgram?: () => ProgramLike;
   clearScreen?: () => void;
   exit?: () => void;
 };

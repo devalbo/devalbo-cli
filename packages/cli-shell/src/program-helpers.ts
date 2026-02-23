@@ -1,5 +1,5 @@
-import type { Command } from 'commander';
 import type { AppConfig } from '@devalbo-cli/shared';
+import type { ProgramLike } from './types/program';
 
 /**
  * Register all built-in cli-shell commands on a commander program.
@@ -8,7 +8,7 @@ import type { AppConfig } from '@devalbo-cli/shared';
  * `help` displays everything. Built-in commands include filesystem
  * operations, system commands, and app-config.
  */
-export const registerBuiltinCommands = (program: Command): void => {
+export const registerBuiltinCommands = (program: ProgramLike): void => {
   // Filesystem
   program.command('pwd').description('Print working directory');
   program.command('cd <path>').description('Change directory');

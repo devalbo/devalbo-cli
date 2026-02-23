@@ -14,6 +14,7 @@ import { createDevalboStore, type DevalboStore } from '@devalbo-cli/state';
 import type { IFilesystemDriver } from '@devalbo-cli/filesystem';
 import type { CommandHandler } from '../commands/_util';
 import { executeCommandRaw, parseCommandLine } from '../lib/command-runtime';
+import type { ProgramLike } from '../types/program';
 
 interface CommandOutput {
   command?: string;
@@ -33,7 +34,7 @@ function ShellContent({
   welcomeMessage
 }: {
   commands: Record<string, CommandHandler>;
-  createProgram?: () => import('commander').Command;
+  createProgram?: () => ProgramLike;
   runtime: 'browser' | 'terminal';
   store: DevalboStore;
   config?: AppConfig;
@@ -111,7 +112,7 @@ function ShellContent({
 
 export const InteractiveShell: React.FC<{
   commands: Record<string, CommandHandler>;
-  createProgram?: () => import('commander').Command;
+  createProgram?: () => ProgramLike;
   runtime?: 'browser' | 'terminal';
   store?: DevalboStore;
   config?: AppConfig;

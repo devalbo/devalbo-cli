@@ -25,6 +25,9 @@ export default defineConfig([
       js: "import { createRequire } from 'node:module'; const require = createRequire(import.meta.url);"
     },
     external: [
+      'react',
+      'react-dom',
+      'react/jsx-runtime',
       'react-devtools-core',
       'vite-plugin-node-polyfills',
       'devalbo-cli/node', // not bundled; resolved to dist/node.js (Node) or dist/node.browser.js (browser)
@@ -41,9 +44,7 @@ export default defineConfig([
       '@devalbo-cli/filesystem',
       '@devalbo-cli/commands',
       '@devalbo-cli/ui',
-      '@devalbo-cli/branded-types',
-      'react',
-      'react-dom'
+      '@devalbo-cli/branded-types'
     ]
   },
   // Browser entry — no Node banner and no Node-only alias remap.
@@ -60,8 +61,6 @@ export default defineConfig([
       'react-dom',
       'react/jsx-runtime',
       'ink-web',
-      '@inkjs/ui',
-      'ink-select-input',
       'react-devtools-core',
       'vite-plugin-node-polyfills',
       ...nodeBuiltins
