@@ -55,9 +55,13 @@ export default defineConfig([
     clean: false,
     tsconfig: 'tsconfig.npm.json',
     external: [
+      'ink',
       'react',
       'react-dom',
       'react/jsx-runtime',
+      'ink-web',
+      '@inkjs/ui',
+      'ink-select-input',
       'react-devtools-core',
       'vite-plugin-node-polyfills',
       ...nodeBuiltins
@@ -65,7 +69,6 @@ export default defineConfig([
     esbuildOptions(options) {
       options.alias = options.alias || {};
       options.alias['@devalbo-cli/filesystem'] = '@devalbo-cli/filesystem/browser';
-      options.alias['ink'] = 'ink-web';
     },
     noExternal: [
       '@devalbo-cli/cli-shell',

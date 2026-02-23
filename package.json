@@ -41,8 +41,13 @@
     "README.md"
   ],
   "dependencies": {
-    "ink-web": "^0.1.11",
     "vite-plugin-node-polyfills": "^0.25.0"
+  },
+  "peerDependencies": {
+    "ink": "^6.7.0",
+    "ink-web": "^0.1.11",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4"
   },
   "devDependencies": {
     "tsup": "^8.3.5",

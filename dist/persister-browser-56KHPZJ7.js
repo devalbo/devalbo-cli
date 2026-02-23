@@ -1,5 +1,5 @@
 import { createRequire } from 'node:module'; const require = createRequire(import.meta.url);
-import "./chunk-WPQ5MXLX.js";
+import "./chunk-H32PEK2K.js";
 
 // node_modules/.pnpm/tinybase@7.3.4_@sqlite.org+sqlite-wasm@3.51.2-build6_effect@3.19.18_react-dom@19.2.4_re_6b17624b1e1b989d6af746770c44149e/node_modules/tinybase/persisters/persister-browser/index.js
 var EMPTY_STRING = "";
