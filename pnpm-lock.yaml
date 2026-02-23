@@ -4,102 +4,34 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
-catalogs:
-  default:
-    '@inkjs/ui':
-      specifier: ^2.0.0
-      version: 2.0.0
-    '@inrupt/solid-client-authn-browser':
-      specifier: ^3.0.3
-      version: 3.1.1
-    '@inrupt/vocab-common-rdf':
-      specifier: ^1.0.5
-      version: 1.0.5
-    '@inrupt/vocab-solid-common':
-      specifier: ^0.7.5
-      version: 0.7.5
-    '@sqlite.org/sqlite-wasm':
-      specifier: 3.51.2-build6
-      version: 3.51.2-build6
-    '@tauri-apps/api':
-      specifier: ^2.10.1
-      version: 2.10.1
-    '@types/node':
-      specifier: ^25.2.3
-      version: 25.2.3
-    '@types/react':
-      specifier: ^19.2.14
-      version: 19.2.14
-    '@types/react-dom':
-      specifier: ^19.2.3
-      version: 19.2.3
-    '@types/react-test-renderer':
-      specifier: ^19.1.0
-      version: 19.1.0
-    '@vitejs/plugin-react':
-      specifier: ^5.1.4
-      version: 5.1.4
-    '@xterm/xterm':
-      specifier: ^6.0.0
-      version: 6.0.0
-    commander:
-      specifier: ^14.0.3
-      version: 14.0.3
-    effect:
-      specifier: ^3.19.18
-      version: 3.19.18
-    ink:
-      specifier: ^6.7.0
-      version: 6.7.0
-    ink-select-input:
-      specifier: ^6.2.0
-      version: 6.2.0
-    ink-web:
-      specifier: ^0.1.11
-      version: 0.1.11
-    react:
-      specifier: ^19.2.4
-      version: 19.2.4
-    react-dom:
-      specifier: ^19.2.4
-      version: 19.2.4
-    react-test-renderer:
-      specifier: ^19.2.4
-      version: 19.2.4
-    tinybase:
-      specifier: ^7.3.4
-      version: 7.3.4
-    tsx:
-      specifier: ^4.21.0
-      version: 4.21.0
-    typescript:
-      specifier: ^5.9.3
-      version: 5.9.3
-    vite:
-      specifier: ^7.3.1
-      version: 7.3.1
-    vite-plugin-node-polyfills:
-      specifier: ^0.25.0
-      version: 0.25.0
-    vitest:
-      specifier: ^4.0.18
-      version: 4.0.18
-    zod:
-      specifier: ^4.3.6
-      version: 4.3.6
-
 importers:
 
   .:
+    dependencies:
+      vite-plugin-node-polyfills:
+        specifier: ^0.25.0
+        version: 0.25.0(rollup@4.57.1)(vite@7.3.1(@types/node@25.2.3)(tsx@4.21.0)(yaml@2.8.2))
     devDependencies:
+      '@devalbo-cli/filesystem':
+        specifier: file:./packages/filesystem
+        version: link:packages/filesystem
+      '@devalbo-cli/shared':
+        specifier: file:./packages/shared
+        version: link:packages/shared
+      '@devalbo-cli/state':
+        specifier: file:./packages/state
+        version: link:packages/state
       '@types/node':
         specifier: ^25.2.3
         version: 25.2.3
       '@types/react':
         specifier: ^19.2.14
         version: 19.2.14
+      devalbo-cli-shell:
+        specifier: file:./packages/cli-shell
+        version: link:packages/cli-shell
       tsup:
-        specifier: ^8.5.0
+        specifier: ^8.3.5
         version: 8.5.1(postcss@8.5.6)(tsx@4.21.0)(typescript@5.9.3)(yaml@2.8.2)
       typescript:
         specifier: ^5.9.3
@@ -110,200 +42,203 @@ importers:
 
   editor-lib:
     dependencies:
-      '@devalbo/cli-shell':
-        specifier: workspace:*
+      '@devalbo-cli/cli-shell':
+        specifier: file:../packages/cli-shell
         version: link:../packages/cli-shell
-      '@devalbo/commands':
-        specifier: workspace:*
+      '@devalbo-cli/commands':
+        specifier: file:../packages/commands
         version: link:../packages/commands
-      '@devalbo/filesystem':
-        specifier: workspace:*
+      '@devalbo-cli/filesystem':
+        specifier: file:../packages/filesystem
         version: link:../packages/filesystem
-      '@devalbo/shared':
-        specifier: workspace:*
+      '@devalbo-cli/shared':
+        specifier: file:../packages/shared
         version: link:../packages/shared
-      '@devalbo/solid-client':
-        specifier: workspace:*
+      '@devalbo-cli/solid-client':
+        specifier: file:../packages/solid-client
         version: link:../packages/solid-client
-      '@devalbo/state':
-        specifier: workspace:*
+      '@devalbo-cli/state':
+        specifier: file:../packages/state
         version: link:../packages/state
-      '@devalbo/ui':
-        specifier: workspace:*
+      '@devalbo-cli/ui':
+        specifier: file:../packages/ui
         version: link:../packages/ui
       '@optique/core':
         specifier: ^0.10.3
         version: 0.10.3
       '@sqlite.org/sqlite-wasm':
-        specifier: 'catalog:'
+        specifier: 3.51.2-build6
         version: 3.51.2-build6
       '@xterm/xterm':
-        specifier: 'catalog:'
+        specifier: ^6.0.0
         version: 6.0.0
       commander:
-        specifier: 'catalog:'
+        specifier: ^14.0.3
         version: 14.0.3
       effect:
-        specifier: 'catalog:'
+        specifier: ^3.19.18
         version: 3.19.18
       ink:
-        specifier: 'catalog:'
+        specifier: ^6.7.0
         version: 6.7.0(@types/react@19.2.14)(react@19.2.4)
       ink-select-input:
-        specifier: 'catalog:'
+        specifier: ^6.2.0
         version: 6.2.0(ink@6.7.0(@types/react@19.2.14)(react@19.2.4))(react@19.2.4)
       ink-web:
-        specifier: 'catalog:'
+        specifier: ^0.1.11
         version: 0.1.11(@xterm/xterm@6.0.0)(ink@6.7.0(@types/react@19.2.14)(react@19.2.4))(react-reconciler@0.33.0(react@19.2.4))(react@19.2.4)(scheduler@0.27.0)(vite@7.3.1(@types/node@25.2.3)(tsx@4.21.0)(yaml@2.8.2))(xterm@5.3.0)
       react:
-        specifier: 'catalog:'
+        specifier: ^19.2.4
         version: 19.2.4
       react-dom:
-        specifier: 'catalog:'
+        specifier: ^19.2.4
         version: 19.2.4(react@19.2.4)
       tinybase:
-        specifier: 'catalog:'
+        specifier: ^7.3.4
         version: 7.3.4(@sqlite.org/sqlite-wasm@3.51.2-build6)(effect@3.19.18)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(ws@8.19.0)(zod@4.3.6)
       zod:
-        specifier: 'catalog:'
+        specifier: ^4.3.6
         version: 4.3.6
     devDependencies:
       '@types/node':
-        specifier: 'catalog:'
+        specifier: ^25.2.3
         version: 25.2.3
       '@types/react':
-        specifier: 'catalog:'
+        specifier: ^19.2.14
         version: 19.2.14
       '@types/react-dom':
-        specifier: 'catalog:'
+        specifier: ^19.2.3
         version: 19.2.3(@types/react@19.2.14)
       typescript:
-        specifier: 'catalog:'
+        specifier: ^5.9.3
         version: 5.9.3
 
   examples/hello-universal:
     dependencies:
+      '@devalbo-cli/cli':
+        specifier: file:../..
+        version: devalbo-cli@file:(rollup@4.57.1)(vite@7.3.1(@types/node@25.2.3)(tsx@4.21.0)(yaml@2.8.2))
       '@xterm/xterm':
-        specifier: 'catalog:'
+        specifier: ^6.0.0
         version: 6.0.0
       commander:
-        specifier: 'catalog:'
+        specifier: ^14.0.3
         version: 14.0.3
       ink-web:
-        specifier: 'catalog:'
+        specifier: ^0.1.11
         version: 0.1.11(@xterm/xterm@6.0.0)(ink@6.7.0(@types/react@19.2.14)(react@19.2.4))(react-reconciler@0.33.0(react@19.2.4))(react@19.2.4)(scheduler@0.27.0)(vite@7.3.1(@types/node@25.2.3)(tsx@4.21.0)(yaml@2.8.2))(xterm@5.3.0)
       react:
-        specifier: 'catalog:'
+        specifier: ^19.2.4
         version: 19.2.4
       react-dom:
-        specifier: 'catalog:'
+        specifier: ^19.2.4
         version: 19.2.4(react@19.2.4)
     devDependencies:
       '@types/node':
-        specifier: 'catalog:'
+        specifier: ^25.2.3
         version: 25.2.3
       '@types/react':
-        specifier: 'catalog:'
+        specifier: ^19.2.14
         version: 19.2.14
       '@types/react-dom':
-        specifier: 'catalog:'
+        specifier: ^19.2.3
         version: 19.2.3(@types/react@19.2.14)
       '@vitejs/plugin-react':
-        specifier: 'catalog:'
+        specifier: ^5.1.4
         version: 5.1.4(vite@7.3.1(@types/node@25.2.3)(tsx@4.21.0)(yaml@2.8.2))
       tsx:
-        specifier: 'catalog:'
+        specifier: ^4.21.0
         version: 4.21.0
       typescript:
-        specifier: 'catalog:'
+        specifier: ^5.9.3
         version: 5.9.3
       vite:
-        specifier: 'catalog:'
+        specifier: ^7.3.1
         version: 7.3.1(@types/node@25.2.3)(tsx@4.21.0)(yaml@2.8.2)
       vite-plugin-node-polyfills:
-        specifier: 'catalog:'
+        specifier: ^0.25.0
         version: 0.25.0(rollup@4.57.1)(vite@7.3.1(@types/node@25.2.3)(tsx@4.21.0)(yaml@2.8.2))
       vitest:
-        specifier: 'catalog:'
+        specifier: ^4.0.18
         version: 4.0.18(@types/node@25.2.3)(@vitest/ui@4.0.18)(tsx@4.21.0)(yaml@2.8.2)
 
   naveditor:
     dependencies:
-      '@devalbo/cli-shell':
-        specifier: workspace:*
+      '@devalbo-cli/cli-shell':
+        specifier: file:../packages/cli-shell
         version: link:../packages/cli-shell
-      '@devalbo/commands':
-        specifier: workspace:*
+      '@devalbo-cli/commands':
+        specifier: file:../packages/commands
         version: link:../packages/commands
-      '@devalbo/editor-lib':
-        specifier: workspace:*
+      '@devalbo-cli/editor-lib':
+        specifier: file:../editor-lib
         version: link:../editor-lib
-      '@devalbo/filesystem':
-        specifier: workspace:*
+      '@devalbo-cli/filesystem':
+        specifier: file:../packages/filesystem
         version: link:../packages/filesystem
-      '@devalbo/shared':
-        specifier: workspace:*
+      '@devalbo-cli/shared':
+        specifier: file:../packages/shared
         version: link:../packages/shared
-      '@devalbo/state':
-        specifier: workspace:*
+      '@devalbo-cli/state':
+        specifier: file:../packages/state
         version: link:../packages/state
-      '@devalbo/ui':
-        specifier: workspace:*
+      '@devalbo-cli/ui':
+        specifier: file:../packages/ui
         version: link:../packages/ui
       '@sqlite.org/sqlite-wasm':
-        specifier: 'catalog:'
+        specifier: 3.51.2-build6
         version: 3.51.2-build6
       '@xterm/xterm':
-        specifier: 'catalog:'
+        specifier: ^6.0.0
         version: 6.0.0
       commander:
-        specifier: 'catalog:'
+        specifier: ^14.0.3
         version: 14.0.3
       effect:
-        specifier: 'catalog:'
+        specifier: ^3.19.18
         version: 3.19.18
       ink-select-input:
-        specifier: 'catalog:'
+        specifier: ^6.2.0
         version: 6.2.0(ink@6.7.0(@types/react@19.2.14)(react@19.2.4))(react@19.2.4)
       ink-web:
-        specifier: 'catalog:'
+        specifier: ^0.1.11
         version: 0.1.11(@xterm/xterm@6.0.0)(ink@6.7.0(@types/react@19.2.14)(react@19.2.4))(react-reconciler@0.33.0(react@19.2.4))(react@19.2.4)(scheduler@0.27.0)(vite@7.3.1(@types/node@25.2.3)(tsx@4.21.0)(yaml@2.8.2))(xterm@5.3.0)
       react:
-        specifier: 'catalog:'
+        specifier: ^19.2.4
         version: 19.2.4
       react-dom:
-        specifier: 'catalog:'
+        specifier: ^19.2.4
         version: 19.2.4(react@19.2.4)
       tinybase:
-        specifier: 'catalog:'
+        specifier: ^7.3.4
         version: 7.3.4(@sqlite.org/sqlite-wasm@3.51.2-build6)(effect@3.19.18)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(ws@8.19.0)(zod@4.3.6)
       zod:
-        specifier: 'catalog:'
+        specifier: ^4.3.6
         version: 4.3.6
     devDependencies:
       '@cucumber/cucumber':
         specifier: ^12.6.0
         version: 12.6.0
       '@inkjs/ui':
-        specifier: 'catalog:'
+        specifier: ^2.0.0
         version: 2.0.0(ink@6.7.0(@types/react@19.2.14)(react@19.2.4))
       '@playwright/test':
         specifier: ^1.58.2
         version: 1.58.2
       '@types/node':
-        specifier: 'catalog:'
+        specifier: ^25.2.3
         version: 25.2.3
       '@types/react':
-        specifier: 'catalog:'
+        specifier: ^19.2.14
         version: 19.2.14
       '@types/react-dom':
-        specifier: 'catalog:'
+        specifier: ^19.2.3
         version: 19.2.3(@types/react@19.2.14)
       '@types/react-test-renderer':
         specifier: ^19.1.0
         version: 19.1.0
       '@vitejs/plugin-react':
-        specifier: 'catalog:'
+        specifier: ^5.1.4
         version: 5.1.4(vite@7.3.1(@types/node@25.2.3)(tsx@4.21.0)(yaml@2.8.2))
       '@vitest/coverage-v8':
         specifier: ^4.0.18
@@ -312,7 +247,7 @@ importers:
         specifier: ^4.0.18
         version: 4.0.18(vitest@4.0.18)
       ink:
-        specifier: 'catalog:'
+        specifier: ^6.7.0
         version: 6.7.0(@types/react@19.2.14)(react@19.2.4)
       ink-testing-library:
         specifier: ^4.0.0
@@ -324,460 +259,460 @@ importers:
         specifier: ^19.2.4
         version: 19.2.4(react@19.2.4)
       tsx:
-        specifier: 'catalog:'
+        specifier: ^4.21.0
         version: 4.21.0
       typescript:
-        specifier: 'catalog:'
+        specifier: ^5.9.3
         version: 5.9.3
       vite:
-        specifier: 'catalog:'
+        specifier: ^7.3.1
         version: 7.3.1(@types/node@25.2.3)(tsx@4.21.0)(yaml@2.8.2)
       vite-plugin-node-polyfills:
-        specifier: 'catalog:'
+        specifier: ^0.25.0
         version: 0.25.0(rollup@4.57.1)(vite@7.3.1(@types/node@25.2.3)(tsx@4.21.0)(yaml@2.8.2))
       vitest:
-        specifier: 'catalog:'
+        specifier: ^4.0.18
         version: 4.0.18(@types/node@25.2.3)(@vitest/ui@4.0.18)(tsx@4.21.0)(yaml@2.8.2)
 
   naveditor-desktop:
     dependencies:
-      '@devalbo/cli-shell':
-        specifier: workspace:*
+      '@devalbo-cli/cli-shell':
+        specifier: file:../packages/cli-shell
         version: link:../packages/cli-shell
-      '@devalbo/commands':
-        specifier: workspace:*
+      '@devalbo-cli/commands':
+        specifier: file:../packages/commands
         version: link:../packages/commands
-      '@devalbo/editor-lib':
-        specifier: workspace:*
+      '@devalbo-cli/editor-lib':
+        specifier: file:../editor-lib
         version: link:../editor-lib
-      '@devalbo/filesystem':
-        specifier: workspace:*
+      '@devalbo-cli/filesystem':
+        specifier: file:../packages/filesystem
         version: link:../packages/filesystem
-      '@devalbo/shared':
-        specifier: workspace:*
+      '@devalbo-cli/shared':
+        specifier: file:../packages/shared
         version: link:../packages/shared
-      '@devalbo/solid-client':
-        specifier: workspace:*
+      '@devalbo-cli/solid-client':
+        specifier: file:../packages/solid-client
         version: link:../packages/solid-client
-      '@devalbo/state':
-        specifier: workspace:*
+      '@devalbo-cli/state':
+        specifier: file:../packages/state
         version: link:../packages/state
-      '@devalbo/ui':
-        specifier: workspace:*
+      '@devalbo-cli/ui':
+        specifier: file:../packages/ui
         version: link:../packages/ui
       '@tauri-apps/api':
-        specifier: 'catalog:'
+        specifier: ^2.10.1
         version: 2.10.1
       '@xterm/xterm':
-        specifier: 'catalog:'
+        specifier: ^6.0.0
         version: 6.0.0
       commander:
-        specifier: 'catalog:'
+        specifier: ^14.0.3
         version: 14.0.3
       effect:
-        specifier: 'catalog:'
+        specifier: ^3.19.18
         version: 3.19.18
       ink-select-input:
-        specifier: 'catalog:'
+        specifier: ^6.2.0
         version: 6.2.0(ink@6.7.0(@types/react@19.2.14)(react@19.2.4))(react@19.2.4)
       ink-web:
-        specifier: 'catalog:'
+        specifier: ^0.1.11
         version: 0.1.11(@xterm/xterm@6.0.0)(ink@6.7.0(@types/react@19.2.14)(react@19.2.4))(react-reconciler@0.33.0(react@19.2.4))(react@19.2.4)(scheduler@0.27.0)(vite@7.3.1(@types/node@25.2.3)(tsx@4.21.0)(yaml@2.8.2))(xterm@5.3.0)
       react:
-        specifier: 'catalog:'
+        specifier: ^19.2.4
         version: 19.2.4
       react-dom:
-        specifier: 'catalog:'
+        specifier: ^19.2.4
         version: 19.2.4(react@19.2.4)
       tinybase:
-        specifier: 'catalog:'
+        specifier: ^7.3.4
         version: 7.3.4(@sqlite.org/sqlite-wasm@3.51.2-build6)(effect@3.19.18)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(ws@8.19.0)(zod@4.3.6)
       zod:
-        specifier: 'catalog:'
+        specifier: ^4.3.6
         version: 4.3.6
     devDependencies:
       '@tauri-apps/cli':
         specifier: ^2.10.0
         version: 2.10.0
       '@types/node':
-        specifier: 'catalog:'
+        specifier: ^25.2.3
         version: 25.2.3
       '@types/react':
-        specifier: 'catalog:'
+        specifier: ^19.2.14
         version: 19.2.14
       '@types/react-dom':
-        specifier: 'catalog:'
+        specifier: ^19.2.3
         version: 19.2.3(@types/react@19.2.14)
       '@vitejs/plugin-react':
-        specifier: 'catalog:'
+        specifier: ^5.1.4
         version: 5.1.4(vite@7.3.1(@types/node@25.2.3)(tsx@4.21.0)(yaml@2.8.2))
       typescript:
-        specifier: 'catalog:'
+        specifier: ^5.9.3
         version: 5.9.3
       vite:
-        specifier: 'catalog:'
+        specifier: ^7.3.1
         version: 7.3.1(@types/node@25.2.3)(tsx@4.21.0)(yaml@2.8.2)
       vite-plugin-node-polyfills:
-        specifier: 'catalog:'
+        specifier: ^0.25.0
         version: 0.25.0(rollup@4.57.1)(vite@7.3.1(@types/node@25.2.3)(tsx@4.21.0)(yaml@2.8.2))
 
   naveditor-terminal:
     dependencies:
-      '@devalbo/cli-shell':
-        specifier: workspace:*
+      '@devalbo-cli/cli-shell':
+        specifier: file:../packages/cli-shell
         version: link:../packages/cli-shell
-      '@devalbo/commands':
-        specifier: workspace:*
+      '@devalbo-cli/commands':
+        specifier: file:../packages/commands
         version: link:../packages/commands
-      '@devalbo/editor-lib':
-        specifier: workspace:*
+      '@devalbo-cli/editor-lib':
+        specifier: file:../editor-lib
         version: link:../editor-lib
-      '@devalbo/filesystem':
-        specifier: workspace:*
+      '@devalbo-cli/filesystem':
+        specifier: file:../packages/filesystem
         version: link:../packages/filesystem
-      '@devalbo/shared':
-        specifier: workspace:*
+      '@devalbo-cli/shared':
+        specifier: file:../packages/shared
         version: link:../packages/shared
-      '@devalbo/state':
-        specifier: workspace:*
+      '@devalbo-cli/state':
+        specifier: file:../packages/state
         version: link:../packages/state
-      '@devalbo/ui':
-        specifier: workspace:*
+      '@devalbo-cli/ui':
+        specifier: file:../packages/ui
         version: link:../packages/ui
       commander:
-        specifier: 'catalog:'
+        specifier: ^14.0.3
         version: 14.0.3
       effect:
-        specifier: 'catalog:'
+        specifier: ^3.19.18
         version: 3.19.18
       ink:
-        specifier: 'catalog:'
+        specifier: ^6.7.0
         version: 6.7.0(@types/react@19.2.14)(react@19.2.4)
       ink-select-input:
-        specifier: 'catalog:'
+        specifier: ^6.2.0
         version: 6.2.0(ink@6.7.0(@types/react@19.2.14)(react@19.2.4))(react@19.2.4)
       react:
-        specifier: 'catalog:'
+        specifier: ^19.2.4
         version: 19.2.4
       zod:
-        specifier: 'catalog:'
+        specifier: ^4.3.6
         version: 4.3.6
     devDependencies:
       '@types/node':
-        specifier: 'catalog:'
+        specifier: ^25.2.3
         version: 25.2.3
       '@types/react':
-        specifier: 'catalog:'
+        specifier: ^19.2.14
         version: 19.2.14
       tsx:
-        specifier: 'catalog:'
+        specifier: ^4.21.0
         version: 4.21.0
       typescript:
-        specifier: 'catalog:'
+        specifier: ^5.9.3
         version: 5.9.3
 
   naveditor-web:
     dependencies:
-      '@devalbo/cli-shell':
-        specifier: workspace:*
+      '@devalbo-cli/cli-shell':
+        specifier: file:../packages/cli-shell
         version: link:../packages/cli-shell
-      '@devalbo/commands':
-        specifier: workspace:*
+      '@devalbo-cli/commands':
+        specifier: file:../packages/commands
         version: link:../packages/commands
-      '@devalbo/editor-lib':
-        specifier: workspace:*
+      '@devalbo-cli/editor-lib':
+        specifier: file:../editor-lib
         version: link:../editor-lib
-      '@devalbo/filesystem':
-        specifier: workspace:*
+      '@devalbo-cli/filesystem':
+        specifier: file:../packages/filesystem
         version: link:../packages/filesystem
-      '@devalbo/shared':
-        specifier: workspace:*
+      '@devalbo-cli/shared':
+        specifier: file:../packages/shared
         version: link:../packages/shared
-      '@devalbo/solid-client':
-        specifier: workspace:*
+      '@devalbo-cli/solid-client':
+        specifier: file:../packages/solid-client
         version: link:../packages/solid-client
-      '@devalbo/state':
-        specifier: workspace:*
+      '@devalbo-cli/state':
+        specifier: file:../packages/state
         version: link:../packages/state
-      '@devalbo/ui':
-        specifier: workspace:*
+      '@devalbo-cli/ui':
+        specifier: file:../packages/ui
         version: link:../packages/ui
       '@sqlite.org/sqlite-wasm':
-        specifier: 'catalog:'
+        specifier: 3.51.2-build6
         version: 3.51.2-build6
       '@xterm/xterm':
-        specifier: 'catalog:'
+        specifier: ^6.0.0
         version: 6.0.0
       commander:
-        specifier: 'catalog:'
+        specifier: ^14.0.3
         version: 14.0.3
       effect:
-        specifier: 'catalog:'
+        specifier: ^3.19.18
         version: 3.19.18
       ink:
-        specifier: 'catalog:'
+        specifier: ^6.7.0
         version: 6.7.0(@types/react@19.2.14)(react@19.2.4)
       ink-select-input:
-        specifier: 'catalog:'
+        specifier: ^6.2.0
         version: 6.2.0(ink@6.7.0(@types/react@19.2.14)(react@19.2.4))(react@19.2.4)
       ink-web:
-        specifier: 'catalog:'
+        specifier: ^0.1.11
         version: 0.1.11(@xterm/xterm@6.0.0)(ink@6.7.0(@types/react@19.2.14)(react@19.2.4))(react-reconciler@0.33.0(react@19.2.4))(react@19.2.4)(scheduler@0.27.0)(vite@7.3.1(@types/node@25.2.3)(tsx@4.21.0)(yaml@2.8.2))(xterm@5.3.0)
       react:
-        specifier: 'catalog:'
+        specifier: ^19.2.4
         version: 19.2.4
       react-dom:
-        specifier: 'catalog:'
+        specifier: ^19.2.4
         version: 19.2.4(react@19.2.4)
       tinybase:
-        specifier: 'catalog:'
+        specifier: ^7.3.4
         version: 7.3.4(@sqlite.org/sqlite-wasm@3.51.2-build6)(effect@3.19.18)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(ws@8.19.0)(zod@4.3.6)
       zod:
-        specifier: 'catalog:'
+        specifier: ^4.3.6
         version: 4.3.6
     devDependencies:
       '@types/node':
-        specifier: 'catalog:'
+        specifier: ^25.2.3
         version: 25.2.3
       '@types/react':
-        specifier: 'catalog:'
+        specifier: ^19.2.14
         version: 19.2.14
       '@types/react-dom':
-        specifier: 'catalog:'
+        specifier: ^19.2.3
         version: 19.2.3(@types/react@19.2.14)
       '@vitejs/plugin-react':
-        specifier: 'catalog:'
+        specifier: ^5.1.4
         version: 5.1.4(vite@7.3.1(@types/node@25.2.3)(tsx@4.21.0)(yaml@2.8.2))
       typescript:
-        specifier: 'catalog:'
+        specifier: ^5.9.3
         version: 5.9.3
       vite:
-        specifier: 'catalog:'
+        specifier: ^7.3.1
         version: 7.3.1(@types/node@25.2.3)(tsx@4.21.0)(yaml@2.8.2)
       vite-plugin-node-polyfills:
-        specifier: 'catalog:'
+        specifier: ^0.25.0
         version: 0.25.0(rollup@4.57.1)(vite@7.3.1(@types/node@25.2.3)(tsx@4.21.0)(yaml@2.8.2))
 
   packages/branded-types:
     dependencies:
       zod:
-        specifier: 'catalog:'
+        specifier: ^4.3.6
         version: 4.3.6
     devDependencies:
       vitest:
-        specifier: 'catalog:'
+        specifier: ^4.0.18
         version: 4.0.18(@types/node@25.2.3)(@vitest/ui@4.0.18)(tsx@4.21.0)(yaml@2.8.2)
 
   packages/cli-shell:
     dependencies:
-      '@devalbo/commands':
-        specifier: workspace:*
+      '@devalbo-cli/commands':
+        specifier: file:../commands
         version: link:../commands
-      '@devalbo/filesystem':
-        specifier: workspace:*
+      '@devalbo-cli/filesystem':
+        specifier: file:../filesystem
         version: link:../filesystem
-      '@devalbo/shared':
-        specifier: workspace:*
+      '@devalbo-cli/shared':
+        specifier: file:../shared
         version: link:../shared
-      '@devalbo/state':
-        specifier: workspace:*
+      '@devalbo-cli/state':
+        specifier: file:../state
         version: link:../state
-      '@devalbo/ui':
-        specifier: workspace:*
+      '@devalbo-cli/ui':
+        specifier: file:../ui
         version: link:../ui
       '@optique/core':
         specifier: ^0.10.3
         version: 0.10.3
       commander:
-        specifier: 'catalog:'
+        specifier: ^14.0.3
         version: 14.0.3
       effect:
-        specifier: 'catalog:'
+        specifier: ^3.19.18
         version: 3.19.18
       ink:
-        specifier: 'catalog:'
+        specifier: ^6.7.0
         version: 6.7.0(@types/react@19.2.14)(react@19.2.4)
       ink-web:
-        specifier: 'catalog:'
+        specifier: ^0.1.11
         version: 0.1.11(@xterm/xterm@6.0.0)(ink@6.7.0(@types/react@19.2.14)(react@19.2.4))(react-reconciler@0.33.0(react@19.2.4))(react@19.2.4)(scheduler@0.27.0)(vite@7.3.1(@types/node@25.2.3)(tsx@4.21.0)(yaml@2.8.2))(xterm@5.3.0)
       react:
-        specifier: 'catalog:'
+        specifier: ^19.2.4
         version: 19.2.4
       tinybase:
-        specifier: 'catalog:'
+        specifier: ^7.3.4
         version: 7.3.4(@sqlite.org/sqlite-wasm@3.51.2-build6)(effect@3.19.18)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(ws@8.19.0)(zod@4.3.6)
       zod:
-        specifier: 'catalog:'
+        specifier: ^4.3.6
         version: 4.3.6
     devDependencies:
       '@types/node':
-        specifier: 'catalog:'
+        specifier: ^25.2.3
         version: 25.2.3
       '@types/react':
-        specifier: 'catalog:'
+        specifier: ^19.2.14
         version: 19.2.14
       typescript:
-        specifier: 'catalog:'
+        specifier: ^5.9.3
         version: 5.9.3
 
   packages/commands:
     dependencies:
-      '@devalbo/shared':
-        specifier: workspace:*
+      '@devalbo-cli/shared':
+        specifier: file:../shared
         version: link:../shared
       effect:
-        specifier: 'catalog:'
+        specifier: ^3.19.18
         version: 3.19.18
       react:
-        specifier: 'catalog:'
+        specifier: ^19.2.4
         version: 19.2.4
 
   packages/devalbo-cli:
     dependencies:
-      '@devalbo/cli-shell':
-        specifier: workspace:*
+      '@devalbo-cli/cli-shell':
+        specifier: file:../cli-shell
         version: link:../cli-shell
-      '@devalbo/filesystem':
-        specifier: workspace:*
+      '@devalbo-cli/filesystem':
+        specifier: file:../filesystem
         version: link:../filesystem
-      '@devalbo/shared':
-        specifier: workspace:*
+      '@devalbo-cli/shared':
+        specifier: file:../shared
         version: link:../shared
-      '@devalbo/state':
-        specifier: workspace:*
+      '@devalbo-cli/state':
+        specifier: file:../state
         version: link:../state
     devDependencies:
       '@types/node':
-        specifier: 'catalog:'
+        specifier: ^25.2.3
         version: 25.2.3
       '@types/react':
-        specifier: 'catalog:'
+        specifier: ^19.2.14
         version: 19.2.14
       typescript:
-        specifier: 'catalog:'
+        specifier: ^5.9.3
         version: 5.9.3
 
   packages/filesystem:
     dependencies:
-      '@devalbo/shared':
-        specifier: workspace:*
+      '@devalbo-cli/shared':
+        specifier: file:../shared
         version: link:../shared
       '@tauri-apps/api':
-        specifier: 'catalog:'
+        specifier: ^2.10.1
         version: 2.10.1
       tinybase:
-        specifier: 'catalog:'
+        specifier: ^7.3.4
         version: 7.3.4(@sqlite.org/sqlite-wasm@3.51.2-build6)(effect@3.19.18)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(ws@8.19.0)(zod@4.3.6)
 
   packages/shared:
     dependencies:
-      '@devalbo/branded-types':
-        specifier: workspace:*
+      '@devalbo-cli/branded-types':
+        specifier: file:../branded-types
         version: link:../branded-types
       '@inrupt/vocab-common-rdf':
-        specifier: 'catalog:'
+        specifier: ^1.0.5
         version: 1.0.5
       '@inrupt/vocab-solid-common':
-        specifier: 'catalog:'
+        specifier: ^0.7.5
         version: 0.7.5
       effect:
-        specifier: 'catalog:'
+        specifier: ^3.19.18
         version: 3.19.18
       react:
-        specifier: 'catalog:'
+        specifier: ^19.2.4
         version: 19.2.4
       zod:
-        specifier: 'catalog:'
+        specifier: ^4.3.6
         version: 4.3.6
 
   packages/solid-client:
     dependencies:
-      '@devalbo/filesystem':
-        specifier: workspace:*
+      '@devalbo-cli/filesystem':
+        specifier: file:../filesystem
         version: link:../filesystem
-      '@devalbo/shared':
-        specifier: workspace:*
+      '@devalbo-cli/shared':
+        specifier: file:../shared
         version: link:../shared
-      '@devalbo/state':
-        specifier: workspace:*
+      '@devalbo-cli/state':
+        specifier: file:../state
         version: link:../state
       '@inrupt/solid-client-authn-browser':
-        specifier: 'catalog:'
+        specifier: ^3.0.3
         version: 3.1.1
       tinybase:
-        specifier: 'catalog:'
+        specifier: ^7.3.4
         version: 7.3.4(@sqlite.org/sqlite-wasm@3.51.2-build6)(effect@3.19.18)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(ws@8.19.0)(zod@4.3.6)
     devDependencies:
       '@types/react':
-        specifier: 'catalog:'
+        specifier: ^19.2.14
         version: 19.2.14
       '@types/react-test-renderer':
-        specifier: 'catalog:'
+        specifier: ^19.1.0
         version: 19.1.0
       react:
-        specifier: 'catalog:'
+        specifier: ^19.2.4
         version: 19.2.4
       react-dom:
-        specifier: 'catalog:'
+        specifier: ^19.2.4
         version: 19.2.4(react@19.2.4)
       react-test-renderer:
-        specifier: 'catalog:'
+        specifier: ^19.2.4
         version: 19.2.4(react@19.2.4)
       typescript:
-        specifier: 'catalog:'
+        specifier: ^5.9.3
         version: 5.9.3
       vitest:
-        specifier: 'catalog:'
+        specifier: ^4.0.18
         version: 4.0.18(@types/node@25.2.3)(@vitest/ui@4.0.18)(tsx@4.21.0)(yaml@2.8.2)
 
   packages/state:
     dependencies:
-      '@devalbo/shared':
-        specifier: workspace:*
+      '@devalbo-cli/shared':
+        specifier: file:../shared
         version: link:../shared
       react:
-        specifier: 'catalog:'
+        specifier: ^19.2.4
         version: 19.2.4
       tinybase:
-        specifier: 'catalog:'
+        specifier: ^7.3.4
         version: 7.3.4(@sqlite.org/sqlite-wasm@3.51.2-build6)(effect@3.19.18)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(ws@8.19.0)(zod@4.3.6)
       zod:
-        specifier: 'catalog:'
+        specifier: ^4.3.6
         version: 4.3.6
     devDependencies:
       '@types/react-test-renderer':
-        specifier: 'catalog:'
+        specifier: ^19.1.0
         version: 19.1.0
       react-test-renderer:
-        specifier: 'catalog:'
+        specifier: ^19.2.4
         version: 19.2.4(react@19.2.4)
       vitest:
-        specifier: 'catalog:'
+        specifier: ^4.0.18
         version: 4.0.18(@types/node@25.2.3)(@vitest/ui@4.0.18)(tsx@4.21.0)(yaml@2.8.2)
 
   packages/ui:
     dependencies:
-      '@devalbo/shared':
-        specifier: workspace:*
+      '@devalbo-cli/shared':
+        specifier: file:../shared
         version: link:../shared
       '@inkjs/ui':
-        specifier: 'catalog:'
+        specifier: ^2.0.0
         version: 2.0.0(ink@6.7.0(@types/react@19.2.14)(react@19.2.4))
       ink:
-        specifier: 'catalog:'
+        specifier: ^6.7.0
         version: 6.7.0(@types/react@19.2.14)(react@19.2.4)
       ink-select-input:
-        specifier: 'catalog:'
+        specifier: ^6.2.0
         version: 6.2.0(ink@6.7.0(@types/react@19.2.14)(react@19.2.4))(react@19.2.4)
       ink-web:
-        specifier: 'catalog:'
+        specifier: ^0.1.11
         version: 0.1.11(@xterm/xterm@6.0.0)(ink@6.7.0(@types/react@19.2.14)(react@19.2.4))(react-reconciler@0.33.0(react@19.2.4))(react@19.2.4)(scheduler@0.27.0)(vite@7.3.1(@types/node@25.2.3)(tsx@4.21.0)(yaml@2.8.2))(xterm@5.3.0)
       react:
-        specifier: 'catalog:'
+        specifier: ^19.2.4
         version: 19.2.4
     devDependencies:
       '@types/react':
-        specifier: 'catalog:'
+        specifier: ^19.2.14
         version: 19.2.14
 
   packages/worker-bridge: {}
@@ -1813,6 +1748,9 @@ packages:
 
   des.js@1.1.0:
     resolution: {integrity: sha512-r17GxjhUCjSRy8aiJpr8/UadFIzMzJGexI3Nmz4ADi9LYSFx4gTBp80+NaX/YsXWWLhpZ7v/v/ubEc/bCNfKwg==}
+
+  'devalbo-cli@file:':
+    resolution: {directory: '', type: directory}
 
   diff@4.0.4:
     resolution: {integrity: sha512-X07nttJQkwkfKfvTPG/KSnE2OMdcUCao6+eXF3wmnIQRn2aPAHH3VxDbDOdegkd6JbPsXqShpvEOHfAT+nCNwQ==}
@@ -4170,6 +4108,13 @@ snapshots:
     dependencies:
       inherits: 2.0.4
       minimalistic-assert: 1.0.1
+
+  devalbo-cli@file:(rollup@4.57.1)(vite@7.3.1(@types/node@25.2.3)(tsx@4.21.0)(yaml@2.8.2)):
+    dependencies:
+      vite-plugin-node-polyfills: 0.25.0(rollup@4.57.1)(vite@7.3.1(@types/node@25.2.3)(tsx@4.21.0)(yaml@2.8.2))
+    transitivePeerDependencies:
+      - rollup
+      - vite
 
   diff@4.0.4: {}
 
