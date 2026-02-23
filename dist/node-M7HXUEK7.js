@@ -4,7 +4,7 @@ import {
 } from "./chunk-IQRLQ6B6.js";
 import "./chunk-WPQ5MXLX.js";
 
-// packages/filesystem/src/drivers/native.ts
+// dist/drivers/native.js
 import { promises as fs } from "fs";
 import path from "path";
 function toEntry(fullPath, stats) {
@@ -26,13 +26,11 @@ var NativeFSDriver = class {
   }
   async readdir(dirPath) {
     const names = await fs.readdir(dirPath);
-    return Promise.all(
-      names.map(async (name) => {
-        const fullPath = path.join(dirPath, name);
-        const stats = await fs.stat(fullPath);
-        return toEntry(fullPath, stats);
-      })
-    );
+    return Promise.all(names.map(async (name) => {
+      const fullPath = path.join(dirPath, name);
+      const stats = await fs.stat(fullPath);
+      return toEntry(fullPath, stats);
+    }));
   }
   async stat(filePath) {
     const stats = await fs.stat(filePath);
@@ -54,13 +52,14 @@ var NativeFSDriver = class {
   }
 };
 
-// packages/filesystem/src/watcher/node-watcher.ts
+// dist/watcher/node-watcher.js
 import { watch } from "fs";
 import path2 from "path";
 var NodeWatcherService = class {
   watch(target, callback) {
     const watcher = watch(target, (_eventType, filename) => {
-      if (!filename) return;
+      if (!filename)
+        return;
       callback({
         type: "modified" /* Modified */,
         path: unsafeAsFilePath(path2.join(target, filename.toString())),
@@ -81,7 +80,7 @@ var NodeWatcherService = class {
   }
 };
 
-// packages/filesystem/src/watcher/polling-watcher.ts
+// dist/watcher/polling-watcher.js
 import { promises as fs2 } from "fs";
 var PollingWatcherService = class {
   watch(path3, callback) {

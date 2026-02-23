@@ -25023,7 +25023,7 @@ var createFilesystemDriver = async () => {
     if (env3.platform === "nodejs" /* NodeJS */) {
       const { NativeFSDriver } = await import(
         /* @vite-ignore */
-        "./node-4CCLYT3S.js"
+        "./node-M7HXUEK7.js"
       );
       return new NativeFSDriver();
     }
