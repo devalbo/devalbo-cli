@@ -1,64 +1,47 @@
-# Creating a @devalbo-cli/cli App
+# Creating a devalbo-cli App
 
-This guide walks through building an app on top of @devalbo-cli/cli. The framework provides:
+devalbo-cli is a shell framework that provides:
 
-- A **command system** shared across all UI surfaces (terminal, browser shell, browser dev console)
-- A **reactive store** (TinyBase via `@devalbo-cli/state`) for application data
-- A **filesystem abstraction** (`@devalbo-cli/filesystem`) that works in Node.js, browser, and Tauri
-- **Ink-based UI rendering** for command output (works in all surfaces)
+- A **command system** shared across CLI, browser shell, and browser dev console
+- A **reactive store** (TinyBase) for application data
+- A **filesystem abstraction** that works in Node.js, browser, and Tauri
+- **Ink-based UI rendering** for command output
 
-You can opt into any combination of UI surfaces: CLI only, browser app, Tauri desktop app.
-
-Solid integration is **explicit and opt-in** — do not add `SolidSessionProvider` unless your app uses Solid features.
-
-naveditor is an app built on this framework — it follows the same patterns described here. Wherever a pattern is introduced, you'll find a pointer to the corresponding naveditor file.
-
-### App structure parallel
-
-Every app follows the same shape. naveditor is the reference implementation:
-
-| Your app | naveditor equivalent | Role |
-|---|---|---|
-| `my-app-lib/` | `editor-lib/` | App library — commands, config, program definition |
-| `my-app-cli/` | `naveditor-terminal/` | CLI entry point |
-| `my-app-web/` | `naveditor-web/` | Browser entry point (Vite + React) |
-| `my-app-desktop/` | `naveditor-desktop/` | Tauri entry point |
+This guide walks through creating a CLI app from scratch — picking up dependencies from GitHub, writing commands, and running the shell.
 
 ---
 
-## Package Map
+## Prerequisites
 
-| Package | What it provides | Direct use? |
-|---------|-----------------|-------------|
-| `@devalbo-cli/cli` | Shell framework, built-in commands, entry points | Yes — primary dependency |
-| `@devalbo-cli/shared` | Core types (`AppConfig`, `CommandResult`, branded types) | Advanced internal use only |
-| `@devalbo-cli/state` | TinyBase store, schemas, persisters | Re-exported via `@devalbo-cli/cli` |
-| `@devalbo-cli/filesystem` | Filesystem driver abstraction | Re-exported via `@devalbo-cli/cli` |
-| `@devalbo-cli/commands` | Command parser and validation | Used internally by `@devalbo-cli/cli` |
-| `@devalbo-cli/ui` | Ink primitives (TextInput, Spinner, etc.) | Advanced custom UI use only |
-| `@devalbo-cli/solid-client` | Solid pod auth and sync | Optional advanced integration |
-
-For the quickstart, you only need one import source: `@devalbo-cli/cli`.
+- Node.js 20+ and npm
 
 ---
 
-## Quickstart: CLI-Only App (5 minutes)
+## Step 1 — Initialize the project
 
-This walkthrough builds a minimal CLI-only app. Code matches `examples/hello-universal/` exactly.
-
-### Step 1 — Create your app directory
-
-```
-my-app/
-  package.json
-  tsconfig.json
-  src/
-    commands/index.ts
-    program.ts
-    cli.ts
+```sh
+mkdir my-app
+cd my-app
+npm init -y
+mkdir -p src/commands
 ```
 
-### Step 2 — `package.json`
+`npm init -y` creates a baseline `package.json`. You'll update it in the next step.
+
+---
+
+## Step 2 — Install dependencies
+
+Install `@devalbo-cli/cli` directly from GitHub, plus the other required packages:
+
+```sh
+npm install git+https://github.com/devalbo/devalbo-cli.git commander react
+npm install --save-dev typescript tsx @types/node @types/react
+```
+
+`@devalbo-cli/cli` is installed directly from GitHub — no registry publish required.
+
+Then edit `package.json` to add `"type": "module"` and the `scripts` block:
 
 ```json
 {
@@ -84,26 +67,36 @@ my-app/
 }
 ```
 
-Note: `@devalbo-cli/shared` is NOT a direct dependency — `createCliAppConfig` is re-exported from `@devalbo-cli/cli`.
+---
 
-Install commands (npm):
+## Step 3 — `tsconfig.json`
 
-```sh
-npm install @devalbo-cli/cli@git+https://github.com/devalbo/devalbo-cli.git commander react
-npm install --save-dev typescript tsx @types/node @types/react
+Create `tsconfig.json`:
+
+```json
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "jsx": "react-jsx",
+    "strict": true,
+    "skipLibCheck": true,
+    "noEmit": true,
+    "types": ["node"]
+  },
+  "include": ["src"]
+}
 ```
 
-Notes:
-- The `package.json` above is standalone-ready and does not require this monorepo.
-- `@devalbo-cli/cli` is currently installed from GitHub via npm git spec (not npm registry).
-- Git installs require committed `dist/` artifacts in the repository.
-- Pinning package versions is recommended for reproducible builds.
+---
 
-### Step 3 — Write commands
+## Step 4 — Write commands
 
 **`src/commands/index.ts`**
+
 ```ts
-import type { CommandHandler, AsyncCommandHandler } from '@devalbo-cli/cli';
+import type { AsyncCommandHandler, CommandHandler } from '@devalbo-cli/cli';
 import { builtinCommands, makeOutput } from '@devalbo-cli/cli';
 
 const hello: AsyncCommandHandler = async (args) => {
@@ -122,13 +115,14 @@ export const commands: Record<string, CommandHandler> = {
 };
 ```
 
-`builtinCommands` is a single-import aggregate of all built-in commands (filesystem, system, app-config). Spread it into your command registry to get pwd, cd, ls, tree, cat, touch, mkdir, cp, mv, rm, stat, clear, backend, exit, help, and app-config.
+`builtinCommands` is a single-import aggregate that includes: `pwd`, `cd`, `ls`, `tree`, `cat`, `touch`, `mkdir`, `cp`, `mv`, `rm`, `stat`, `clear`, `backend`, `exit`, `help`, and `app-config`. Spread it into your registry to get all of them.
 
-> **naveditor does this too:** `editor-lib/src/commands/index.ts` uses the individual groups (`filesystemCommands`, `systemCommands`, `appCommands`) instead of the aggregate because it has 6+ app-specific command groups to compose alongside them. Both patterns work — use `builtinCommands` for simplicity, individual groups when you need selective composition.
+---
 
-### Step 4 — Define the program (for `help` text)
+## Step 5 — Define the program (for `help` text)
 
 **`src/program.ts`**
+
 ```ts
 import { Command } from 'commander';
 import { registerBuiltinCommands } from '@devalbo-cli/cli';
@@ -138,24 +132,25 @@ export const createProgram = (): Command => {
     .description('A minimal devalbo CLI app')
     .version('0.1.0');
 
-  // App-specific commands
+  // App-specific commands — register these first
   program.command('hello [name]').description('Say hello');
   program.command('echo <words...>').description('Echo arguments back');
 
-  // All built-in commands (pwd, ls, cd, help, app-config, etc.)
+  // Built-in commands (pwd, ls, cd, help, app-config, etc.)
   registerBuiltinCommands(program);
 
   return program;
 };
 ```
 
-`registerBuiltinCommands(program)` registers all 16 built-in commands on the commander program, so `help` displays them. Register your app-specific commands first, then call `registerBuiltinCommands`.
+`createProgram` is only used by the `help` command to display usage text. Register your app commands first, then call `registerBuiltinCommands`.
 
-> **naveditor does this too:** `editor-lib/src/program.ts` — (TODO: currently uses manual registration, will switch to `registerBuiltinCommands` in Plan 14).
+---
 
-### Step 5 — Wire up the CLI entry point
+## Step 6 — Wire up the CLI entry point
 
 **`src/cli.ts`**
+
 ```ts
 import { startInteractiveCli, createCliAppConfig } from '@devalbo-cli/cli';
 import { commands } from './commands/index';
@@ -173,14 +168,13 @@ await startInteractiveCli({
 });
 ```
 
-`createCliAppConfig()` creates an `AppConfig` with Solid features disabled — appropriate for CLI-only apps. `welcomeMessage` is required: every app provides its own welcome string or ReactNode.
+`createCliAppConfig` creates an `AppConfig` appropriate for CLI-only apps (Solid features disabled). `welcomeMessage` is required — provide a string or ReactNode.
 
-> **naveditor does this too:** `editor-lib/src/cli.tsx` uses a custom welcome message: `"Try: pwd, ls, export ., import snapshot.bft restore, backend"`.
+---
 
-### Step 6 — Run it
+## Step 7 — Run it
 
 ```sh
-npm install
 npm run start
 ```
 
@@ -188,52 +182,117 @@ You'll see: `Welcome to My App. Type "help" for available commands.`
 
 Try: `hello Alice`, `echo foo bar`, `help`, `pwd`, `ls`, `app-config`.
 
-Note: `npm run start` requires a TTY terminal (interactive Ink shell). It will not work in CI or non-interactive shells.
+> `npm run start` requires a real TTY (interactive terminal). It will not work in CI or piped shells.
 
 ---
 
-## Writing Commands
+## Adding more commands
 
-### AsyncCommandHandler
+To add a new command, define a handler and register it in the commands map:
 
-The simplest command handler signature:
+**`src/commands/greet.ts`**
 
 ```ts
-type AsyncCommandHandler = (args: string[], options?: ExtendedCommandOptions) => Promise<CommandResult>;
+import type { AsyncCommandHandler } from '@devalbo-cli/cli';
+import { makeOutput, makeError } from '@devalbo-cli/cli';
+
+export const greet: AsyncCommandHandler = async (args) => {
+  const name = args[0];
+  if (!name) return makeError('Usage: greet <name>');
+  return makeOutput(`Greetings, ${name}! Welcome aboard.`);
+};
+```
+
+Then add it to **`src/commands/index.ts`**:
+
+```ts
+import { greet } from './greet';
+
+export const commands: Record<string, CommandHandler> = {
+  ...builtinCommands,
+  hello,
+  echo,
+  greet,           // ← add here
+};
+```
+
+And add it to **`src/program.ts`** so it shows in `help`:
+
+```ts
+program.command('greet <name>').description('Greet someone');
+```
+
+Restart (`npm run start`) and try `greet Alice`.
+
+### Grouping commands into modules
+
+For apps with many commands, split them into separate files and compose:
+
+**`src/commands/myCommands.ts`**
+
+```ts
+import type { AsyncCommandHandler } from '@devalbo-cli/cli';
+import { makeOutput } from '@devalbo-cli/cli';
+
+const greet: AsyncCommandHandler = async (args) => { /* ... */ };
+const farewell: AsyncCommandHandler = async (args) => { /* ... */ };
+
+export const myCommands = { greet, farewell };
+```
+
+**`src/commands/index.ts`**
+
+```ts
+import { builtinCommands } from '@devalbo-cli/cli';
+import { myCommands } from './myCommands';
+
+export const commands = {
+  ...builtinCommands,
+  ...myCommands,
+};
+```
+
+---
+
+## Command patterns reference
+
+### `AsyncCommandHandler`
+
+```ts
+type AsyncCommandHandler = (
+  args: string[],
+  options?: ExtendedCommandOptions
+) => Promise<CommandResult>;
 ```
 
 `ExtendedCommandOptions` gives you:
 
-| Field | Type | When available |
-|-------|------|----------------|
-| `store` | `DevalboStore` | always |
-| `cwd` | `string` | always |
-| `setCwd` | `(next: string) => void` | always |
-| `config` | `AppConfig` | always |
-| `driver` | `IFilesystemDriver` | after async driver init |
-| `session` | `unknown \| null` | only when using Solid integration (cast to `SolidSession`) |
-| `connectivity` | `IConnectivityService` | in browser/Tauri |
-| `clearScreen` | `() => void` | in interactive terminal mode |
-| `exit` | `() => void` | in interactive terminal mode |
+| Field | Type | Notes |
+|-------|------|-------|
+| `store` | `DevalboStore` | TinyBase store |
+| `cwd` | `string` | Current working directory |
+| `setCwd` | `(next: string) => void` | Change the cwd |
+| `config` | `AppConfig` | App configuration |
+| `driver` | `IFilesystemDriver` | Available after async init |
+| `clearScreen` | `() => void` | CLI only |
+| `exit` | `() => void` | CLI only |
 
 ### Output helpers
-
-All imported from `devalbo-cli`:
 
 ```ts
 import { makeOutput, makeError, makeResult, makeResultError } from '@devalbo-cli/cli';
 
-makeOutput('Hello world')                    // simple text
-makeError('Something went wrong')            // red text, sets result.error
-makeResult('Done', { count: 3 })             // success with structured data
-makeResultError('Failed', { reason: 'x' })   // error with structured data
+makeOutput('Hello world')                    // plain text
+makeError('Something went wrong')            // error (red text)
+makeResult('Done', { count: 3 })             // success + structured data
+makeResultError('Failed', { reason: 'x' })   // error + structured data
 ```
 
-For rich output, return a custom Ink component:
+### Rich output (Ink components)
 
 ```ts
 import { createElement } from 'react';
-import { MyOutputComponent } from '../components/output/MyOutputComponent';
+import { MyOutputComponent } from '../components/MyOutputComponent';
 
 return {
   ...makeResult('Loaded item', data),
@@ -241,145 +300,78 @@ return {
 };
 ```
 
-> **naveditor does this too:** `editor-lib/src/commands/io.ts` returns custom Ink components for export/import results.
-
-### StoreCommandHandler (when commands need the store)
-
-For commands that always require store access, use `StoreCommandHandler`:
-
-```ts
-type StoreCommandHandler = (args: string[], options: ExtendedCommandOptionsWithStore) => Promise<CommandResult>;
-```
-
-The difference: `options` is required and always includes `store` (non-optional). Use `StoreCommandHandler` when your command reads/writes TinyBase rows and shouldn't run without a store.
+### `StoreCommandHandler` (when store access is required)
 
 ```ts
 import type { StoreCommandHandler } from '@devalbo-cli/cli';
-import { makeOutput, makeError } from '@devalbo-cli/cli';
+import { makeOutput } from '@devalbo-cli/cli';
 
 const myStoreCommand: StoreCommandHandler = async (args, options) => {
-  // options.store is guaranteed — no need to null-check
+  // options.store is guaranteed — no null check needed
   const count = options.store.getCell('my-table', 'stats', 'count') ?? 0;
   return makeOutput(`Count: ${count}`);
 };
 ```
 
-> **naveditor does this too:** `editor-lib/src/commands/persona.ts`, `contact.ts`, `group.ts` all use `StoreCommandHandler` because they manage store-backed social entities.
+Use `StoreCommandHandler` when your command reads or writes TinyBase data and should not run without a store.
 
-### Command Registry Pattern
-
-Two patterns for composing commands:
-
-**Pattern 1: `builtinCommands` aggregate** (recommended for most apps)
+### Reading from the store
 
 ```ts
-import { builtinCommands } from '@devalbo-cli/cli';
-
-export const commands: Record<string, CommandHandler> = {
-  ...builtinCommands,
-  hello,
-  echo,
+const myList: AsyncCommandHandler = async (_args, options) => {
+  if (!options?.store) return makeError('No store');
+  const rows = options.store.getTable('my-items');
+  const lines = Object.entries(rows).map(([id, row]) => `${id}: ${row.name}`);
+  return makeOutput(lines.join('\n') || '(empty)');
 };
 ```
 
-**Pattern 2: Individual groups** (for apps with many command groups)
+### Reading from the filesystem
 
 ```ts
-import { filesystemCommands, systemCommands, appCommands } from '@devalbo-cli/cli';
-
-export const commands: Record<CommandName, CommandHandler> = {
-  ...filesystemCommands,
-  ...systemCommands,
-  ...appCommands,
-  ...myCommands,
-  ...solidCommands,
+const myRead: AsyncCommandHandler = async (args, options) => {
+  if (!options?.driver) return makeError('Filesystem not ready');
+  const path = args[0];
+  if (!path) return makeError('Usage: my-read <path>');
+  try {
+    const content = await options.driver.readTextFile(options.cwd ?? '/', path);
+    return makeOutput(content);
+  } catch {
+    return makeError(`Cannot read: ${path}`);
+  }
 };
 ```
 
-> **naveditor uses Pattern 2:** `editor-lib/src/commands/index.ts` — it has 6+ app-specific command groups (io, solid, files, persona, contact, group) that it composes alongside the built-in groups individually.
-
 ---
 
-## Program Definition (help text)
+## Going further
 
-The `createProgram()` function defines a commander program used by the `help` command to display available commands and their arguments.
+### Browser app
 
-**Recommended:** Use `registerBuiltinCommands(program)` for all built-in commands:
+To add a browser shell alongside the CLI, install additional dependencies:
 
-```ts
-import { Command } from 'commander';
-import { registerBuiltinCommands } from '@devalbo-cli/cli';
-
-export function createProgram() {
-  const program = new Command();
-  program.name('my-app').description('My devalbo app').version('0.1.0');
-
-  // App-specific commands
-  program.command('my-greet [name]').description('Greet someone');
-
-  // Built-in commands (pwd, cd, ls, ..., help, app-config)
-  registerBuiltinCommands(program);
-
-  return program;
-}
+```sh
+npm install react-dom ink-web @xterm/xterm
+npm install --save-dev vite @vitejs/plugin-react @types/react-dom
 ```
 
-Manual registration is allowed when you need fine-grained control over built-in command metadata (argument names, descriptions). In that case, register each command individually instead of using `registerBuiltinCommands`.
+Then add `src/App.tsx`, `src/main.tsx`, `src/config.ts`, `index.html`, and `vite.config.ts`. The `InteractiveShell` component and `bindCliRuntimeSource` (for `window.cli` devtools access) are both exported from `@devalbo-cli/cli`. See the `Browser app` section below for the full component pattern.
 
----
+### Desktop app (Tauri)
 
-## Configuration
+Same structure as the browser app. `createFilesystemDriver()` automatically selects the Tauri FS backend when running inside a Tauri window.
 
-### CLI-only apps: `createCliAppConfig`
+### Store integration
 
-```ts
-import { createCliAppConfig } from '@devalbo-cli/cli';
-
-const config = createCliAppConfig({
-  appId: 'my-app',
-  appName: 'My App',
-  storageKey: 'my-app-store',
-});
-```
-
-This creates an `AppConfig` with Solid features disabled and sensible defaults.
-
-### Browser/desktop apps with custom config
-
-Start with `createCliAppConfig` and keep the app simple. For advanced Solid sync timing controls, see `naveditor` (`editor-lib/src/web/config.ts`) and treat that as an advanced path outside this quickstart.
-
-### Welcome message
-
-`welcomeMessage` is required on both `InteractiveShell` and `startInteractiveCli`. Every app provides its own welcome string or ReactNode.
-
-```ts
-// Simple string
-welcomeMessage: 'Welcome to My App. Type "help" for available commands.'
-
-// Or use the utility for a standard format
-import { defaultWelcomeMessage } from '@devalbo-cli/cli';
-welcomeMessage: defaultWelcomeMessage(config)
-// → 'Welcome to My App. Type "help" for available commands.'
-```
-
-> **naveditor does this:** `editor-lib/src/cli.tsx` — `welcomeMessage="Try: pwd, ls, export ., import snapshot.bft restore, backend"` (custom hint text).
-
----
-
-## Store integration
-
-The store is a TinyBase `Store`. Create it once, stably, at the top of your App.
+The store is a TinyBase `Store`. In a React app, create it once with a lazy initializer:
 
 ```ts
 import { createDevalboStore } from '@devalbo-cli/cli';
 
-// Always use useState lazy initializer — never useMemo
 const [store] = useState(() => createDevalboStore());
 ```
 
-### Custom store schema
-
-Apps can define their own tables alongside the built-in ones:
+Apps can define custom tables alongside built-in ones:
 
 ```ts
 const [store] = useState(() => {
@@ -394,79 +386,39 @@ const [store] = useState(() => {
 });
 ```
 
-### Persistence (browser and Tauri)
+---
 
-```ts
-import { createLocalPersister } from 'tinybase/persisters/persister-browser';
+## Package map
 
-useEffect(() => {
-  const persister = createLocalPersister(store, defaultAppConfig.storageKey);
-  let stopped = false;
-  void persister.startAutoLoad().then(() => {
-    if (stopped) return;
-    return persister.startAutoSave();
-  });
-  return () => {
-    stopped = true;
-    void persister.stopAutoLoad();
-    void persister.stopAutoSave();
-  };
-}, [store]);
-```
+| Package | What it provides | Direct use? |
+|---------|-----------------|-------------|
+| `@devalbo-cli/cli` | Shell framework, built-in commands, entry points | Yes — primary dependency |
+| `@devalbo/shared` | Core types (`AppConfig`, `CommandResult`) | No — re-exported via `@devalbo-cli/cli` |
+| `@devalbo/state` | TinyBase store, schemas, persisters | Re-exported via `devalbo-cli` |
+| `@devalbo/filesystem` | Filesystem driver abstraction | Re-exported via `devalbo-cli` |
+| `@devalbo/ui` | Ink primitives (TextInput, Spinner, etc.) | Advanced custom UI only |
+| `@devalbo/solid-client` | Solid pod auth and sync | Optional, explicit opt-in |
 
 ---
 
-## Filesystem driver
+## Browser app (full pattern)
 
-The driver initializes asynchronously and is platform-specific (`createFilesystemDriver()` picks the right backend automatically: Node.js, browser OPFS, or Tauri FS). An **in-memory backend is always available** as a fallback.
-
-Always treat the driver as nullable until initialized:
+**`src/config.ts`**
 
 ```ts
-import { createFilesystemDriver } from '@devalbo-cli/cli';
+import { createCliAppConfig } from '@devalbo-cli/cli';
 
-type DriverInstance = Awaited<ReturnType<typeof createFilesystemDriver>>;
-const [driver, setDriver] = useState<DriverInstance | null>(null);
-
-useEffect(() => {
-  let cancelled = false;
-  void createFilesystemDriver().then((d) => {
-    if (!cancelled) setDriver(d);
-  });
-  return () => { cancelled = true; };
-}, []);
-```
-
-Pass `driver` to `InteractiveShell` and into the CLI runtime context. The CLI is **not ready** until the driver is initialized — this is all-or-nothing, no partial-ready state.
-
----
-
-## CLI-only app (Node.js)
-
-`startInteractiveCli` is the primary entry point for CLI-only apps. It handles store creation, filesystem driver init, and `InteractiveShell` rendering via Ink to stdout.
-
-```ts
-import { startInteractiveCli, createCliAppConfig, builtinCommands } from '@devalbo-cli/cli';
-
-await startInteractiveCli({
-  commands: { ...builtinCommands, hello, echo },
-  createProgram,
-  config: createCliAppConfig({ appId: 'my-app', appName: 'My App', storageKey: 'my-app' }),
-  welcomeMessage: 'Welcome to My App. Type "help" for available commands.',
+export const appConfig = createCliAppConfig({
+  appId: 'my-app',
+  appName: 'My App',
+  storageKey: 'my-app-store',
 });
+
+export const welcomeMessage = 'Welcome to My App. Type "help" for available commands.';
 ```
 
-If you need to customize beyond defaults (custom store schema, batch command mode, specific driver), use the lower-level `InteractiveShell` component directly in your own Ink entry point.
+**`src/App.tsx`**
 
-> **naveditor does this:** `editor-lib/src/cli.tsx` renders `InteractiveShell` directly (rather than using `startInteractiveCli`) because it supports both interactive and batch command execution modes.
-
----
-
-## Browser app
-
-No Solid integration by default. Only add `SolidSessionProvider` when your app explicitly uses Solid features.
-
-**`my-app-web/src/App.tsx`**
 ```tsx
 import React, { useEffect, useRef, useState } from 'react';
 import { InkTerminalBox } from 'ink-web';
@@ -480,10 +432,9 @@ import {
   unbindCliRuntimeSource,
   useAppConfig
 } from '@devalbo-cli/cli';
-import { createLocalPersister } from 'tinybase/persisters/persister-browser';
-import { commands } from './commands';
+import { commands } from './commands/index';
 import { createProgram } from './program';
-import { defaultAppConfig } from './config';
+import { appConfig, welcomeMessage } from './config';
 
 type StoreInstance = ReturnType<typeof createDevalboStore>;
 type DriverInstance = Awaited<ReturnType<typeof createFilesystemDriver>>;
@@ -494,7 +445,6 @@ const AppContent: React.FC<{ store: StoreInstance }> = ({ store }) => {
   const [connectivity] = useState(() => new BrowserConnectivityService());
   const config = useAppConfig();
 
-  // Refs for stable CLI closure (avoids stale values in the bind effect)
   const cwdRef = useRef(cwd);
   const driverRef = useRef(driver);
   const configRef = useRef(config);
@@ -510,11 +460,10 @@ const AppContent: React.FC<{ store: StoreInstance }> = ({ store }) => {
     return () => { cancelled = true; };
   }, []);
 
-  // Bind window.cli for browser devtools access
   useEffect(() => {
     bindCliRuntimeSource({
       getContext: () => {
-        if (!store || !driverRef.current) return null;
+        if (!driverRef.current) return null;
         return {
           commands,
           createProgram,
@@ -528,11 +477,11 @@ const AppContent: React.FC<{ store: StoreInstance }> = ({ store }) => {
       }
     });
     return () => unbindCliRuntimeSource();
-  }, [store, connectivity, setCwd]);
+  }, [store, connectivity]);
 
   return (
-    <div>
-      <h1>{config.appName}</h1>
+    <div style={{ maxWidth: '960px', margin: '24px auto', padding: '0 16px' }}>
+      <h1>My App</h1>
       <InkTerminalBox rows={24} focus>
         <InteractiveShell
           commands={commands}
@@ -542,7 +491,7 @@ const AppContent: React.FC<{ store: StoreInstance }> = ({ store }) => {
           driver={driver}
           cwd={cwd}
           setCwd={setCwd}
-          welcomeMessage="Welcome to My App. Type 'help' for available commands."
+          welcomeMessage={welcomeMessage}
         />
       </InkTerminalBox>
     </div>
@@ -552,150 +501,83 @@ const AppContent: React.FC<{ store: StoreInstance }> = ({ store }) => {
 export const App: React.FC = () => {
   const [store] = useState(() => createDevalboStore());
 
-  useEffect(() => {
-    const persister = createLocalPersister(store, defaultAppConfig.storageKey);
-    let stopped = false;
-    void persister.startAutoLoad().then(() => {
-      if (stopped) return;
-      return persister.startAutoSave();
-    });
-    return () => {
-      stopped = true;
-      void persister.stopAutoLoad();
-      void persister.stopAutoSave();
-    };
-  }, [store]);
-
   return (
-    <AppConfigProvider config={defaultAppConfig}>
+    <AppConfigProvider config={appConfig}>
       <AppContent store={store} />
     </AppConfigProvider>
   );
 };
 ```
 
-Key points:
-- `InteractiveShell`, `bindCliRuntimeSource`, `unbindCliRuntimeSource` all import from `devalbo-cli`
-- `welcomeMessage` is required on `InteractiveShell`
-- `bindCliRuntimeSource` uses refs to avoid stale closure values
-
-> **naveditor does this:** `naveditor-web/src/App.tsx` — same pattern, plus Solid session and social sync wiring.
-
----
-
-## Browser developer console CLI (`window.cli`)
-
-`window.cli` is powered by `bindCliRuntimeSource` in your App. Once the driver initializes, it becomes ready.
-
-```ts
-// In your App component's useEffect:
-bindCliRuntimeSource({
-  getContext: () => ({
-    commands, createProgram, store, config: configRef.current,
-    driver: driverRef.current, cwd: cwdRef.current, setCwd
-  })
-});
-
-// Then in browser devtools:
-await cli.exec('hello', ['Alice'])   // run any registered command
-await cli.ls('/')                     // filesystem shortcut
-await cli.helpText()                  // get help output as string
-```
-
-| API | Throws? | On |
-|-----|---------|------|
-| `cli.exec(name, args)` | Yes | CLI not ready, or command returned an error |
-| `cli.execRaw(raw)` | Yes | CLI not ready, or command returned an error |
-| `cli.execText(name, args)` | Never | returns `{ text: '', error: '...' }` on failure |
-
-> **naveditor does this:** `editor-lib/src/web/App.tsx` — binds `window.cli` with the full context including session.
-
----
-
-## Desktop app (Tauri)
-
-Same structure as the browser app. `createFilesystemDriver()` automatically selects the Tauri FS backend when running inside a Tauri window.
-
-```
-my-app-desktop/src/App.tsx     — identical structure to my-app-web/src/App.tsx
-my-app-desktop/src/main.tsx    — same as web main.tsx
-my-app-desktop/src/config.ts   — same config re-export
-```
-
-Tauri-specific additions go in `src-tauri/` and use the `@tauri-apps` APIs for native features (file dialogs, system tray, etc.).
-
-> **naveditor does this:** `naveditor-desktop/` — same structure as `naveditor-web/` with Tauri additions.
-
----
-
-## Rendering document content
-
-### From the store
-
-```ts
-'my-list': async (_args, options) => {
-  if (!options?.store) return makeError('No store');
-  const rows = options.store.getTable('my-items');
-  const lines = Object.entries(rows).map(([id, row]) => `${id}: ${row.name}`);
-  return makeOutput(lines.join('\n') || '(empty)');
-},
-```
-
-For rich output, return a custom Ink component:
+**`src/main.tsx`**
 
 ```tsx
-import { createElement } from 'react';
-import { MyItemList } from '../components/output/MyItemList';
+import React from 'react';
+import { createRoot } from 'react-dom/client';
+import 'ink-web/css';
+import '@xterm/xterm/css/xterm.css';
+import { App } from './App';
 
-'my-list': async (_args, options) => {
-  const rows = options?.store?.getTable('my-items') ?? {};
-  const items = Object.entries(rows).map(([id, row]) => ({ id, name: String(row.name ?? '') }));
-  return {
-    ...makeResult(`${items.length} item(s)`, { items }),
-    component: createElement(MyItemList, { items })
-  };
-},
-```
-
-### From the filesystem
-
-```ts
-'my-read': async (args, options) => {
-  if (!options?.driver) return makeError('Filesystem not ready');
-  const path = args[0];
-  if (!path) return makeError('Usage: my-read <path>');
-  try {
-    const content = await options.driver.readTextFile(options.cwd ?? '/', path);
-    return makeOutput(content);
-  } catch {
-    return makeError(`Cannot read: ${path}`);
-  }
+const root = document.getElementById('root');
+if (root) {
+  createRoot(root).render(<App />);
 }
 ```
 
----
+**`index.html`**
 
-## Opt-in: Solid integration
+```html
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>my-app</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
+```
 
-Add Solid features explicitly. Do not include these unless your app uses them.
+**`vite.config.ts`**
 
-This quickstart intentionally stays `devalbo-cli`-only. If you opt into Solid, add `@devalbo-cli/solid-client` explicitly and thread `session` into `InteractiveShell` plus the bound console runtime context. The `session` prop is typed as `unknown | null` in `devalbo-cli`; Solid-aware commands should cast after runtime validation.
+```ts
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
 
-> **naveditor does this:** `editor-lib/src/commands/solid.ts` — uses a runtime type guard to cast `options.session` to `SolidSession`.
+export default defineConfig({
+  plugins: [react()],
+  build: {
+    rollupOptions: {
+      external: ['react-devtools-core']
+    }
+  }
+});
+```
 
----
+Add browser scripts to `package.json`:
 
-## Summary: where things live
+```json
+"start:browser": "vite",
+"build": "vite build"
+```
 
-| What | File | Package |
-|------|------|---------|
-| App config | `src/web/config.ts` | `my-app-lib` |
-| App commands | `src/commands/my-commands.ts` | `my-app-lib` |
-| Command registry | `src/commands/index.ts` | `my-app-lib` |
-| Program (for `help`) | `src/program.ts` | `my-app-lib` |
-| Command runtime | `src/lib/command-runtime.ts` | `devalbo-cli` |
-| InteractiveShell component | `src/components/InteractiveShell.tsx` | `devalbo-cli` |
-| Console helpers | `src/web/console-helpers.ts` | `devalbo-cli` |
-| App component | `src/App.tsx` | `my-app-web` / `my-app-desktop` |
-| Entry point + `window.cli` | `src/main.tsx` | `my-app-web` / `my-app-desktop` |
-| CLI entry point | `src/cli.ts` | `my-app-cli` |
+Run with `npm run start:browser`.
+
+### Browser developer console (`window.cli`)
+
+Once `bindCliRuntimeSource` is wired up (it is, in the `App.tsx` above), use the browser devtools console:
+
+```ts
+await cli.exec('hello', ['Alice'])   // run any registered command
+await cli.ls('/')                     // filesystem shortcut
+await cli.helpText()                  // get help as string
+```
+
+| API | Throws? |
+|-----|---------|
+| `cli.exec(name, args)` | Yes, on error |
+| `cli.execRaw(raw)` | Yes, on error |
+| `cli.execText(name, args)` | Never — returns `{ text, error }` |
