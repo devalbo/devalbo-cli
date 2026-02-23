@@ -148,32 +148,49 @@ export const createProgram = (): Command => {
 
 ---
 
-## Step 6 — Wire up the CLI entry point
+## Step 6 — Shared config
+
+**`src/config.ts`**
+
+```ts
+import { createCliAppConfig } from '@devalbo-cli/cli';
+
+export const appConfig = createCliAppConfig({
+  appId: 'my-app',
+  appName: 'My App',
+  storageKey: 'my-app-store',
+});
+
+export const welcomeMessage = 'Welcome to My App. Type "help" for available commands.';
+```
+
+This config is shared by both the CLI and browser entry points.
+
+---
+
+## Step 7 — Wire up the CLI entry point
 
 **`src/cli.ts`**
 
 ```ts
-import { startInteractiveCli, createCliAppConfig } from '@devalbo-cli/cli';
+import { startInteractiveCli } from '@devalbo-cli/cli';
 import { commands } from './commands/index';
 import { createProgram } from './program';
+import { appConfig, welcomeMessage } from './config';
 
 await startInteractiveCli({
   commands,
   createProgram,
-  config: createCliAppConfig({
-    appId: 'my-app',
-    appName: 'My App',
-    storageKey: 'my-app-store',
-  }),
-  welcomeMessage: 'Welcome to My App. Type "help" for available commands.',
+  config: appConfig,
+  welcomeMessage,
 });
 ```
 
-`createCliAppConfig` creates an `AppConfig` appropriate for CLI-only apps (Solid features disabled). `welcomeMessage` is required — provide a string or ReactNode.
+`startInteractiveCli` starts the Ink-based interactive shell in the terminal.
 
 ---
 
-## Step 7 — Run it
+## Step 8 — Run the CLI
 
 ```sh
 npm run start
@@ -184,6 +201,186 @@ You'll see: `Welcome to My App. Type "help" for available commands.`
 Try: `hello Alice`, `echo foo bar`, `help`, `pwd`, `ls`, `app-config`.
 
 > `npm run start` requires a real TTY (interactive terminal). It will not work in CI or piped shells.
+
+---
+
+## Step 9 — Install browser dependencies
+
+```sh
+npm install react-dom ink-web @xterm/xterm
+npm install --save-dev vite @vitejs/plugin-react @types/react-dom
+```
+
+Then add browser scripts to `package.json`:
+
+```json
+"start:browser": "vite",
+"build:browser": "vite build"
+```
+
+---
+
+## Step 10 — Create browser files
+
+**`src/App.tsx`**
+
+```tsx
+import React, { useEffect, useRef, useState } from 'react';
+import { InkTerminalBox } from 'ink-web';
+import {
+  AppConfigProvider,
+  BrowserConnectivityService,
+  InteractiveShell,
+  bindCliRuntimeSource,
+  createDevalboStore,
+  createFilesystemDriver,
+  unbindCliRuntimeSource,
+  useAppConfig
+} from '@devalbo-cli/cli';
+import { commands } from './commands/index';
+import { createProgram } from './program';
+import { appConfig, welcomeMessage } from './config';
+
+type StoreInstance = ReturnType<typeof createDevalboStore>;
+type DriverInstance = Awaited<ReturnType<typeof createFilesystemDriver>>;
+
+const AppContent: React.FC<{ store: StoreInstance }> = ({ store }) => {
+  const [driver, setDriver] = useState<DriverInstance | null>(null);
+  const [cwd, setCwd] = useState('/');
+  const [connectivity] = useState(() => new BrowserConnectivityService());
+  const config = useAppConfig();
+
+  const cwdRef = useRef(cwd);
+  const driverRef = useRef(driver);
+  const configRef = useRef(config);
+  cwdRef.current = cwd;
+  driverRef.current = driver;
+  configRef.current = config;
+
+  useEffect(() => {
+    let cancelled = false;
+    void createFilesystemDriver().then((d) => {
+      if (!cancelled) setDriver(d);
+    });
+    return () => { cancelled = true; };
+  }, []);
+
+  useEffect(() => {
+    bindCliRuntimeSource({
+      getContext: () => {
+        if (!driverRef.current) return null;
+        return {
+          commands,
+          createProgram,
+          store,
+          config: configRef.current,
+          driver: driverRef.current,
+          connectivity,
+          cwd: cwdRef.current,
+          setCwd
+        };
+      }
+    });
+    return () => unbindCliRuntimeSource();
+  }, [store, connectivity]);
+
+  return (
+    <div style={{ maxWidth: '960px', margin: '24px auto', padding: '0 16px' }}>
+      <h1>My App</h1>
+      <InkTerminalBox rows={24} focus>
+        <InteractiveShell
+          commands={commands}
+          createProgram={createProgram}
+          store={store}
+          config={config}
+          driver={driver}
+          cwd={cwd}
+          setCwd={setCwd}
+          welcomeMessage={welcomeMessage}
+        />
+      </InkTerminalBox>
+    </div>
+  );
+};
+
+export const App: React.FC = () => {
+  const [store] = useState(() => createDevalboStore());
+
+  return (
+    <AppConfigProvider config={appConfig}>
+      <AppContent store={store} />
+    </AppConfigProvider>
+  );
+};
+```
+
+**`src/main.tsx`**
+
+```tsx
+import React from 'react';
+import { createRoot } from 'react-dom/client';
+import 'ink-web/css';
+import '@xterm/xterm/css/xterm.css';
+import { App } from './App';
+
+const root = document.getElementById('root');
+if (root) {
+  createRoot(root).render(<App />);
+}
+```
+
+**`index.html`** (project root)
+
+```html
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>my-app</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
+```
+
+**`vite.config.ts`** (project root)
+
+```ts
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import { nodePolyfills } from '@devalbo-cli/cli/vite';
+
+export default defineConfig({
+  plugins: [react(), nodePolyfills()],
+  build: {
+    rollupOptions: {
+      shimMissingExports: true,
+      external: ['react-devtools-core']
+    }
+  }
+});
+```
+
+`nodePolyfills()` is required — the devalbo-cli dist references Node builtins (`assert`, `path`, etc.) that must be polyfilled for the browser. `shimMissingExports` allows Rollup to stub Node-only named exports (like `fs.promises`) that have no browser equivalent.
+
+---
+
+## Step 11 — Run the browser app
+
+```sh
+npm run start:browser
+```
+
+Open `http://localhost:5173` in your browser. You'll see the same interactive shell running in the browser with xterm.js rendering.
+
+To create a production build:
+
+```sh
+npm run build:browser
+```
 
 ---
 
@@ -349,14 +546,7 @@ const myRead: AsyncCommandHandler = async (args, options) => {
 
 ### Browser app
 
-To add a browser shell alongside the CLI, install additional dependencies:
-
-```sh
-npm install react-dom ink-web @xterm/xterm
-npm install --save-dev vite @vitejs/plugin-react @types/react-dom
-```
-
-Then add `src/App.tsx`, `src/main.tsx`, `src/config.ts`, `index.html`, and `vite.config.ts`. The `InteractiveShell` component and `bindCliRuntimeSource` (for `window.cli` devtools access) are both exported from `@devalbo-cli/cli`. See the `Browser app` section below for the full component pattern.
+Steps 9–11 above walk through adding a browser shell alongside the CLI. The `InteractiveShell` component and `bindCliRuntimeSource` (for `window.cli` devtools access) are both exported from `@devalbo-cli/cli`.
 
 ### Desktop app (Tauri)
 
@@ -402,170 +592,14 @@ const [store] = useState(() => {
 
 ---
 
-## Browser app (full pattern)
+## Browser app — reference
 
-**`src/config.ts`**
+The browser files created in Steps 9–10 are the complete pattern. Key points:
 
-```ts
-import { createCliAppConfig } from '@devalbo-cli/cli';
-
-export const appConfig = createCliAppConfig({
-  appId: 'my-app',
-  appName: 'My App',
-  storageKey: 'my-app-store',
-});
-
-export const welcomeMessage = 'Welcome to My App. Type "help" for available commands.';
-```
-
-**`src/App.tsx`**
-
-```tsx
-import React, { useEffect, useRef, useState } from 'react';
-import { InkTerminalBox } from 'ink-web';
-import {
-  AppConfigProvider,
-  BrowserConnectivityService,
-  InteractiveShell,
-  bindCliRuntimeSource,
-  createDevalboStore,
-  createFilesystemDriver,
-  unbindCliRuntimeSource,
-  useAppConfig
-} from '@devalbo-cli/cli';
-import { commands } from './commands/index';
-import { createProgram } from './program';
-import { appConfig, welcomeMessage } from './config';
-
-type StoreInstance = ReturnType<typeof createDevalboStore>;
-type DriverInstance = Awaited<ReturnType<typeof createFilesystemDriver>>;
-
-const AppContent: React.FC<{ store: StoreInstance }> = ({ store }) => {
-  const [driver, setDriver] = useState<DriverInstance | null>(null);
-  const [cwd, setCwd] = useState('/');
-  const [connectivity] = useState(() => new BrowserConnectivityService());
-  const config = useAppConfig();
-
-  const cwdRef = useRef(cwd);
-  const driverRef = useRef(driver);
-  const configRef = useRef(config);
-  cwdRef.current = cwd;
-  driverRef.current = driver;
-  configRef.current = config;
-
-  useEffect(() => {
-    let cancelled = false;
-    void createFilesystemDriver().then((d) => {
-      if (!cancelled) setDriver(d);
-    });
-    return () => { cancelled = true; };
-  }, []);
-
-  useEffect(() => {
-    bindCliRuntimeSource({
-      getContext: () => {
-        if (!driverRef.current) return null;
-        return {
-          commands,
-          createProgram,
-          store,
-          config: configRef.current,
-          driver: driverRef.current,
-          connectivity,
-          cwd: cwdRef.current,
-          setCwd
-        };
-      }
-    });
-    return () => unbindCliRuntimeSource();
-  }, [store, connectivity]);
-
-  return (
-    <div style={{ maxWidth: '960px', margin: '24px auto', padding: '0 16px' }}>
-      <h1>My App</h1>
-      <InkTerminalBox rows={24} focus>
-        <InteractiveShell
-          commands={commands}
-          createProgram={createProgram}
-          store={store}
-          config={config}
-          driver={driver}
-          cwd={cwd}
-          setCwd={setCwd}
-          welcomeMessage={welcomeMessage}
-        />
-      </InkTerminalBox>
-    </div>
-  );
-};
-
-export const App: React.FC = () => {
-  const [store] = useState(() => createDevalboStore());
-
-  return (
-    <AppConfigProvider config={appConfig}>
-      <AppContent store={store} />
-    </AppConfigProvider>
-  );
-};
-```
-
-**`src/main.tsx`**
-
-```tsx
-import React from 'react';
-import { createRoot } from 'react-dom/client';
-import 'ink-web/css';
-import '@xterm/xterm/css/xterm.css';
-import { App } from './App';
-
-const root = document.getElementById('root');
-if (root) {
-  createRoot(root).render(<App />);
-}
-```
-
-**`index.html`**
-
-```html
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>my-app</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
-</html>
-```
-
-**`vite.config.ts`**
-
-```ts
-import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
-
-export default defineConfig({
-  plugins: [react()],
-  build: {
-    rollupOptions: {
-      external: ['react-devtools-core']
-    }
-  }
-});
-```
-
-Add browser scripts to `package.json`:
-
-```json
-"start:browser": "vite",
-"build": "vite build"
-```
-
-Run with `npm run start:browser`.
+- **`src/config.ts`** — shared config between CLI and browser entry points (Step 6)
+- **`src/App.tsx`** — uses `InteractiveShell` inside an `InkTerminalBox` from `ink-web`
+- **`src/main.tsx`** — React DOM entry point; imports CSS from `ink-web` and `@xterm/xterm`
+- **`vite.config.ts`** — must include `nodePolyfills()` from `@devalbo-cli/cli/vite` so Node builtins work in the browser
 
 ### Browser developer console (`window.cli`)
 

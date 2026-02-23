@@ -183,41 +183,214 @@ export const createProgram = (): Command => {
 };
 EOF
 
-# ── Step 6: src/cli.ts ───────────────────────────────────────────────────────
+# ── Step 6: src/config.ts ─────────────────────────────────────────────────────
 
-log "Step 6: Create src/cli.ts"
+log "Step 6: Create src/config.ts"
+cat > src/config.ts <<'EOF'
+import { createCliAppConfig } from '@devalbo-cli/cli';
+
+export const appConfig = createCliAppConfig({
+  appId: 'my-app',
+  appName: 'My App',
+  storageKey: 'my-app-store',
+});
+
+export const welcomeMessage = 'Welcome to My App. Type "help" for available commands.';
+EOF
+
+# ── Step 7: src/cli.ts ───────────────────────────────────────────────────────
+
+log "Step 7: Create src/cli.ts"
 cat > src/cli.ts <<'EOF'
-import { startInteractiveCli, createCliAppConfig } from '@devalbo-cli/cli';
+import { startInteractiveCli } from '@devalbo-cli/cli';
 import { commands } from './commands/index';
 import { createProgram } from './program';
+import { appConfig, welcomeMessage } from './config';
 
 await startInteractiveCli({
   commands,
   createProgram,
-  config: createCliAppConfig({
-    appId: 'my-app',
-    appName: 'My App',
-    storageKey: 'my-app-store',
-  }),
-  welcomeMessage: 'Welcome to My App. Type "help" for available commands.',
+  config: appConfig,
+  welcomeMessage,
 });
 EOF
 
 log "Created scaffold in: $TARGET_DIR"
 
-# ── Step 7: Verify ───────────────────────────────────────────────────────────
+# ── Step 8: Verify CLI ───────────────────────────────────────────────────────
 # Mirrors: npm run type-check
 # (npm run start requires a TTY so it stays a manual step)
 
-log "Step 7: Verify"
+log "Step 8: Verify CLI (type-check)"
 run_cmd npm run type-check
+
+# ── Step 9: Install browser dependencies ─────────────────────────────────────
+
+log "Step 9: Install browser dependencies"
+run_cmd npm install react-dom ink-web @xterm/xterm
+run_cmd npm install --save-dev vite @vitejs/plugin-react @types/react-dom
+
+log "Updating package.json (browser scripts)"
+node -e "
+  const fs = require('fs');
+  const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+  pkg.scripts['start:browser'] = 'vite';
+  pkg.scripts['build:browser'] = 'vite build';
+  fs.writeFileSync('package.json', JSON.stringify(pkg, null, 2) + '\n');
+"
+
+# ── Step 10: Create browser files ────────────────────────────────────────────
+
+log "Step 10: Create browser files"
+
+cat > src/App.tsx <<'EOF'
+import React, { useEffect, useRef, useState } from 'react';
+import { InkTerminalBox } from 'ink-web';
+import {
+  AppConfigProvider,
+  BrowserConnectivityService,
+  InteractiveShell,
+  bindCliRuntimeSource,
+  createDevalboStore,
+  createFilesystemDriver,
+  unbindCliRuntimeSource,
+  useAppConfig
+} from '@devalbo-cli/cli';
+import { commands } from './commands/index';
+import { createProgram } from './program';
+import { appConfig, welcomeMessage } from './config';
+
+type StoreInstance = ReturnType<typeof createDevalboStore>;
+type DriverInstance = Awaited<ReturnType<typeof createFilesystemDriver>>;
+
+const AppContent: React.FC<{ store: StoreInstance }> = ({ store }) => {
+  const [driver, setDriver] = useState<DriverInstance | null>(null);
+  const [cwd, setCwd] = useState('/');
+  const [connectivity] = useState(() => new BrowserConnectivityService());
+  const config = useAppConfig();
+
+  const cwdRef = useRef(cwd);
+  const driverRef = useRef(driver);
+  const configRef = useRef(config);
+  cwdRef.current = cwd;
+  driverRef.current = driver;
+  configRef.current = config;
+
+  useEffect(() => {
+    let cancelled = false;
+    void createFilesystemDriver().then((d) => {
+      if (!cancelled) setDriver(d);
+    });
+    return () => { cancelled = true; };
+  }, []);
+
+  useEffect(() => {
+    bindCliRuntimeSource({
+      getContext: () => {
+        if (!driverRef.current) return null;
+        return {
+          commands,
+          createProgram,
+          store,
+          config: configRef.current,
+          driver: driverRef.current,
+          connectivity,
+          cwd: cwdRef.current,
+          setCwd
+        };
+      }
+    });
+    return () => unbindCliRuntimeSource();
+  }, [store, connectivity]);
+
+  return (
+    <div style={{ maxWidth: '960px', margin: '24px auto', padding: '0 16px' }}>
+      <h1>My App</h1>
+      <InkTerminalBox rows={24} focus>
+        <InteractiveShell
+          commands={commands}
+          createProgram={createProgram}
+          store={store}
+          config={config}
+          driver={driver}
+          cwd={cwd}
+          setCwd={setCwd}
+          welcomeMessage={welcomeMessage}
+        />
+      </InkTerminalBox>
+    </div>
+  );
+};
+
+export const App: React.FC = () => {
+  const [store] = useState(() => createDevalboStore());
+
+  return (
+    <AppConfigProvider config={appConfig}>
+      <AppContent store={store} />
+    </AppConfigProvider>
+  );
+};
+EOF
+
+cat > src/main.tsx <<'EOF'
+import React from 'react';
+import { createRoot } from 'react-dom/client';
+import 'ink-web/css';
+import '@xterm/xterm/css/xterm.css';
+import { App } from './App';
+
+const root = document.getElementById('root');
+if (root) {
+  createRoot(root).render(<App />);
+}
+EOF
+
+cat > index.html <<'EOF'
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>my-app</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
+EOF
+
+cat > vite.config.ts <<'EOF'
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import { nodePolyfills } from '@devalbo-cli/cli/vite';
+
+export default defineConfig({
+  plugins: [react(), nodePolyfills()],
+  build: {
+    rollupOptions: {
+      shimMissingExports: true,
+      external: ['react-devtools-core']
+    }
+  }
+});
+EOF
+
+# ── Step 11: Verify browser build ────────────────────────────────────────────
+# vite build is headless — no browser needed. Verifies the full pipeline.
+
+log "Step 11: Verify browser build"
+run_cmd npm run build:browser
+
 popd >/dev/null
 
 cat <<EOF
 
 All automated checks passed for $TARGET_DIR
 
-Manual check (requires a TTY):
+Manual checks (require a TTY / browser):
   cd $TARGET_DIR
-  npm run start
+  npm run start            # CLI (needs interactive terminal)
+  npm run start:browser    # Browser (open http://localhost:5173)
 EOF
