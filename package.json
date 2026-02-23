@@ -6,11 +6,22 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "exports": {
-    ".": {"types": "./dist/index.d.ts", "import": "./dist/index.js"},
-    "./vite": {"types": "./dist/vite.d.ts", "import": "./dist/vite.js"}
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./vite": {
+      "types": "./dist/vite.d.ts",
+      "import": "./dist/vite.js"
+    },
+    "./node": {
+      "types": "./dist/node.d.ts",
+      "browser": "./dist/node.browser.js",
+      "import": "./dist/node.js"
+    }
   },
   "scripts": {
-    "build": "tsup",
+    "build": "mkdir -p dist && cp packages/filesystem/dist/node.js packages/filesystem/dist/node.browser.js packages/filesystem/dist/node.d.ts packages/filesystem/dist/node.browser.d.ts dist/ && tsup",
     "build:packages": "node scripts/build-packages.cjs",
     "build:dist": "npm run build:packages && npm run build",
     "type-check": "pnpm run --recursive --if-present type-check",
@@ -24,7 +35,10 @@
     "desktop:dev": "pnpm run --filter naveditor-desktop dev",
     "desktop:build": "pnpm run --filter naveditor-desktop build"
   },
-  "files": ["dist", "README.md"],
+  "files": [
+    "dist",
+    "README.md"
+  ],
   "dependencies": {
     "vite-plugin-node-polyfills": "^0.25.0"
   },
@@ -38,5 +52,14 @@
     "@types/react": "^19.2.14",
     "typescript": "^5.9.3",
     "vitest": "^4.0.18"
-  }
+  },
+  "workspaces": [
+    "packages/*",
+    "examples/*",
+    "naveditor",
+    "editor-lib",
+    "naveditor-web",
+    "naveditor-desktop",
+    "naveditor-terminal"
+  ]
 }

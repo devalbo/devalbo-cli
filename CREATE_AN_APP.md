@@ -355,6 +355,7 @@ import { nodePolyfills } from '@devalbo-cli/cli/vite';
 
 export default defineConfig({
   plugins: [react(), nodePolyfills()],
+  optimizeDeps: { exclude: ['react-devtools-core'] },
   build: {
     rollupOptions: {
       shimMissingExports: true,

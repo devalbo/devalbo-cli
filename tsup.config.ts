@@ -19,12 +19,21 @@ export default defineConfig([
     format: ['esm'],
     dts: true,
     outDir: 'dist',
-    clean: true,
+    clean: false, // keep dist/node.js and dist/node.browser.js (copied before tsup) so external resolves
     tsconfig: 'tsconfig.npm.json',
     banner: {
       js: "import { createRequire } from 'node:module'; const require = createRequire(import.meta.url);"
     },
-    external: ['react-devtools-core', 'vite-plugin-node-polyfills', ...nodeBuiltins],
+    external: [
+      'react-devtools-core',
+      'vite-plugin-node-polyfills',
+      '@devalbo-cli/cli/node', // not bundled; resolved to dist/node.js (Node) or dist/node.browser.js (browser)
+      ...nodeBuiltins
+    ],
+    esbuildOptions(options) {
+      options.alias = options.alias || {};
+      options.alias['@devalbo-cli/filesystem/node'] = '@devalbo-cli/cli/node';
+    },
     noExternal: [
       '@devalbo-cli/cli-shell',
       '@devalbo-cli/shared',
