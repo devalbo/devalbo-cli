@@ -242,6 +242,7 @@ import {
   BrowserConnectivityService,
   InteractiveShell,
   bindCliRuntimeSource,
+  cli,
   createDevalboStore,
   createFilesystemDriver,
   unbindCliRuntimeSource,
@@ -253,6 +254,12 @@ import { appConfig, welcomeMessage } from './config';
 
 type StoreInstance = ReturnType<typeof createDevalboStore>;
 type DriverInstance = Awaited<ReturnType<typeof createFilesystemDriver>>;
+
+declare global {
+  interface Window {
+    cli?: typeof cli;
+  }
+}
 
 const AppContent: React.FC<{ store: StoreInstance }> = ({ store }) => {
   const [driver, setDriver] = useState<DriverInstance | null>(null);
@@ -291,7 +298,14 @@ const AppContent: React.FC<{ store: StoreInstance }> = ({ store }) => {
         };
       }
     });
-    return () => unbindCliRuntimeSource();
+
+    // Expose helper API in browser devtools console: window.cli
+    window.cli = cli;
+
+    return () => {
+      unbindCliRuntimeSource();
+      delete window.cli;
+    };
   }, [store, connectivity]);
 
   return (
