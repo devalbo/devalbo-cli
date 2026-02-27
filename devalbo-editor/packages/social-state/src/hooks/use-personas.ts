@@ -2,8 +2,7 @@ import { useMemo } from 'react';
 import type { PersonaId, PersonaRow } from '@devalbo-cli/shared';
 import { listPersonas } from '../accessors/personas';
 import { PERSONAS_TABLE } from '../schemas/social';
-import { useTable } from './use-table';
-import { useStore } from './use-store';
+import { useStore, useTable } from '@devalbo-cli/state';
 
 export const usePersonas = (): Array<{ id: PersonaId; row: PersonaRow }> => {
   const store = useStore();

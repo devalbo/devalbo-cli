@@ -3,13 +3,13 @@ import { act, create } from 'react-test-renderer';
 import { describe, expect, it } from 'vitest';
 import type { ContactId, GroupId, PersonaId } from '@devalbo-cli/shared';
 import { unsafeAsContactId, unsafeAsGroupId, unsafeAsPersonaId } from '@devalbo-cli/shared';
+import { createDevalboStore, StoreContext } from '@devalbo-cli/state';
 import {
   addMember,
-  createDevalboStore,
+  addSocialTablesToStore,
   setContact,
   setGroup,
   setPersona,
-  StoreContext,
   useContact,
   useContacts,
   useGroup,

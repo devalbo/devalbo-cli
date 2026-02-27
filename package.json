@@ -27,14 +27,7 @@
     "build:dist": "npm run build:packages && npm run build",
     "type-check": "pnpm run --recursive --if-present type-check",
     "test": "pnpm run --recursive --if-present test",
-    "test:workspace": "vitest run",
-    "web:dev": "pnpm run --filter naveditor-web dev",
-    "web:build": "pnpm run --filter naveditor-web build",
-    "terminal": "pnpm run --filter naveditor-terminal terminal",
-    "terminal:interactive": "pnpm run --filter naveditor-terminal interactive",
-    "terminal:dev": "pnpm run --filter naveditor-terminal terminal:dev",
-    "desktop:dev": "pnpm run --filter naveditor-desktop dev",
-    "desktop:build": "pnpm run --filter naveditor-desktop build"
+    "test:workspace": "vitest run"
   },
   "files": [
     "dist",
@@ -62,11 +55,6 @@
   },
   "workspaces": [
     "packages/*",
-    "examples/*",
-    "naveditor",
-    "editor-lib",
-    "naveditor-web",
-    "naveditor-desktop",
-    "naveditor-terminal"
+    "examples/*"
   ]
 }

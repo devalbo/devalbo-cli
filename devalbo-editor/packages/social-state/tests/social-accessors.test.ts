@@ -4,7 +4,8 @@ import {
   unsafeAsGroupId,
   unsafeAsPersonaId
 } from '@devalbo-cli/shared';
-import { createDevalboStore } from '../src/store';
+import { createDevalboStore } from '@devalbo-cli/state';
+import { addSocialTablesToStore } from '../src/store-extension';
 import {
   addMember,
   deleteContact,
@@ -56,6 +57,7 @@ const BAD_GROUP = unsafeAsGroupId('bad-group');
 describe('social accessors', () => {
   it('creates store with social schema and version value', () => {
     const store = createDevalboStore();
+    addSocialTablesToStore(store);
 
     expect(store.hasTable(PERSONAS_TABLE)).toBe(false);
     expect(store.hasTable(CONTACTS_TABLE)).toBe(false);
@@ -67,6 +69,7 @@ describe('social accessors', () => {
 
   it('persona CRUD and default selection', () => {
     const store = createDevalboStore();
+    addSocialTablesToStore(store);
 
     setPersona(store, PERSONA_A, {
       name: 'Alice',
@@ -94,6 +97,7 @@ describe('social accessors', () => {
 
   it('setPersona with isDefault true keeps only one default persona', () => {
     const store = createDevalboStore();
+    addSocialTablesToStore(store);
 
     setPersona(store, PERSONA_A, {
       name: 'Alice',
@@ -114,6 +118,7 @@ describe('social accessors', () => {
 
   it('contact CRUD/search/link', () => {
     const store = createDevalboStore();
+    addSocialTablesToStore(store);
 
     setPersona(store, PERSONA_1, {
       name: 'Primary',
@@ -153,6 +158,7 @@ describe('social accessors', () => {
 
   it('group CRUD', () => {
     const store = createDevalboStore();
+    addSocialTablesToStore(store);
 
     setGroup(store, GROUP_1, {
       name: 'Core Team',
@@ -169,6 +175,7 @@ describe('social accessors', () => {
 
   it('membership lifecycle and reverse lookup', () => {
     const store = createDevalboStore();
+    addSocialTablesToStore(store);
 
     setGroup(store, GROUP_1, {
       name: 'Core Team',
@@ -208,6 +215,7 @@ describe('social accessors', () => {
 
   it('deleteContact and deleteGroup cascade memberships', () => {
     const store = createDevalboStore();
+    addSocialTablesToStore(store);
 
     setGroup(store, GROUP_1, {
       name: 'Core Team',
@@ -246,6 +254,7 @@ describe('social accessors', () => {
 
   it('rejects invalid persona/contact/group rows', () => {
     const store = createDevalboStore();
+    addSocialTablesToStore(store);
 
     expect(() => setPersona(store, BAD_PERSONA, {
       name: '',
@@ -269,6 +278,7 @@ describe('social accessors', () => {
 
   it('rejects membership when group or contact does not exist', () => {
     const store = createDevalboStore();
+    addSocialTablesToStore(store);
 
     setGroup(store, GROUP_1, {
       name: 'Core Team',
@@ -296,6 +306,7 @@ describe('social accessors', () => {
 
   it('handles stores with no social rows (migration safety)', () => {
     const store = createDevalboStore();
+    addSocialTablesToStore(store);
 
     store.setTables({
       entries: {
@@ -329,6 +340,7 @@ describe('social accessors', () => {
   it('warns when malformed rows exist but fail accessor validation', () => {
     const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
     const store = createDevalboStore();
+    addSocialTablesToStore(store);
 
     store.setRow(PERSONAS_TABLE, 'bad-persona', {
       name: '',

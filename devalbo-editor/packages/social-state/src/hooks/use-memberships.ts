@@ -2,8 +2,7 @@ import { useMemo } from 'react';
 import type { ContactId, GroupId, MembershipId, MembershipRow } from '@devalbo-cli/shared';
 import { listMemberships } from '../accessors/memberships';
 import { MEMBERSHIPS_TABLE } from '../schemas/social';
-import { useTable } from './use-table';
-import { useStore } from './use-store';
+import { useStore, useTable } from '@devalbo-cli/state';
 
 export interface MembershipFilter {
   groupId?: GroupId;

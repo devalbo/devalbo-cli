@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { ActivityIdToolbox, unsafeAsPersonaId } from '@devalbo-cli/shared';
-import { createDevalboStore } from '../src/store';
+import { createDevalboStore } from '@devalbo-cli/state';
 import { listActivities, listActivitiesForSubject, logActivity } from '../src/accessors/activities';
 
 describe('activity accessors', () => {

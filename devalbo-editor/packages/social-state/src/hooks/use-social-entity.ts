@@ -10,8 +10,7 @@ import { getContact } from '../accessors/contacts';
 import { getGroup } from '../accessors/groups';
 import { getPersona } from '../accessors/personas';
 import { CONTACTS_TABLE, GROUPS_TABLE, PERSONAS_TABLE } from '../schemas/social';
-import { useRow } from './use-row';
-import { useStore } from './use-store';
+import { useRow, useStore } from '@devalbo-cli/state';
 
 export const usePersona = (id: PersonaId): PersonaRow | null => {
   const store = useStore();

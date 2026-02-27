@@ -13,7 +13,6 @@ const packageDirs = [
   'packages/state',
   'packages/ui',
   'packages/filesystem',
-  'packages/solid-client',
   'packages/worker-bridge',
   'packages/cli-shell',
 ];

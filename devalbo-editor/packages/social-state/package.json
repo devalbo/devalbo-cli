@@ -1,0 +1,26 @@
+{
+  "name": "@devalbo-cli/social-state",
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "type-check": "tsc --noEmit",
+    "test": "vitest run tests"
+  },
+  "dependencies": {
+    "@devalbo-cli/shared": "file:../../../packages/shared",
+    "@devalbo-cli/state": "file:../../../packages/state",
+    "tinybase": "^7.3.4",
+    "zod": "^4.3.6"
+  },
+  "peerDependencies": {
+    "react": "^19.2.4"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.14",
+    "@types/react-test-renderer": "^19.1.0",
+    "react": "^19.2.4",
+    "react-test-renderer": "^19.2.4",
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.18"
+  }
+}

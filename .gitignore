@@ -8,3 +8,6 @@ coverage
 tests/results
 .pnpm-home/
 .pnpm-store/
+.claude/
+*.tgz
+/package-lock.json
