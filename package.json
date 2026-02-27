@@ -37,6 +37,7 @@
     "vite-plugin-node-polyfills": "^0.25.0"
   },
   "peerDependencies": {
+    "commander": "^14.0.0",
     "ink": "^6.7.0",
     "ink-web": "^0.1.11",
     "react": "^19.2.4",

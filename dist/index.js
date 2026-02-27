@@ -1,21 +1,16 @@
 import { createRequire } from 'node:module'; const require = createRequire(import.meta.url);
 import {
   createStore
-} from "./chunk-IPDQ5QT3.js";
+} from "./chunk-EG6SR2WZ.js";
 import {
-  ActivityRowStoreSchema,
   BrowserConnectivityService,
-  ContactRowStoreSchema,
-  GroupRowStoreSchema,
-  MembershipRowStoreSchema,
-  PersonaRowStoreSchema,
   createCliAppConfig,
   detectPlatform,
   external_exports,
   pathArgSchema,
   unsafeAsDirectoryPath,
   unsafeAsFilePath
-} from "./chunk-6JN7P56Y.js";
+} from "./chunk-C334HCXJ.js";
 import "./chunk-TWWXOWDW.js";
 
 // packages/cli-shell/src/lib/filesystem-actions.ts
@@ -33,15 +28,15 @@ var createFilesystemDriver = async () => {
     if (env.platform === "nodejs" /* NodeJS */) {
       const { NativeFSDriver } = await import(
         /* @vite-ignore */
-        "./node-W45T22FL.js"
+        "./node-6ONHZHKL.js"
       );
       return new NativeFSDriver();
     }
     if (env.platform === "tauri" /* Tauri */) {
-      const { TauriFSDriver } = await import("./tauri-IS32HVBU.js");
+      const { TauriFSDriver } = await import("./tauri-B6BNUQJ2.js");
       return new TauriFSDriver();
     }
-    const { BrowserStoreFSDriver } = await import("./browser-store-A5A3HOB4.js");
+    const { BrowserStoreFSDriver } = await import("./browser-store-IFRDMCZC.js");
     return new BrowserStoreFSDriver();
   })();
   return driverPromise;
@@ -1976,7 +1971,7 @@ var appCommands = {
 };
 
 // packages/cli-shell/src/components/InteractiveShell.tsx
-import { useMemo as useMemo14, useState as useState12 } from "react";
+import { useMemo as useMemo8, useState as useState11 } from "react";
 import { Box as Box7, Text as Text8 } from "ink";
 
 // packages/ui/src/primitives/text-input.tsx
@@ -2089,169 +2084,29 @@ import { jsx as jsx10, jsxs as jsxs3 } from "react/jsx-runtime";
 // packages/ui/src/hooks/use-keyboard.ts
 import { useInput as useInput3 } from "ink";
 
-// packages/ui/src/social/persona-card.tsx
-import "react";
+// packages/ui/src/file-handlers/image-file-preview.tsx
+import { useEffect as useEffect3, useMemo as useMemo3, useState as useState5 } from "react";
 import { jsx as jsx11, jsxs as jsxs4 } from "react/jsx-runtime";
 
-// packages/ui/src/social/persona-list.tsx
-import "react";
-import { jsx as jsx12 } from "react/jsx-runtime";
-
-// packages/ui/src/social/contact-card.tsx
-import "react";
-import { jsx as jsx13, jsxs as jsxs5 } from "react/jsx-runtime";
-
-// packages/ui/src/social/contact-list.tsx
-import { useMemo as useMemo3, useState as useState5 } from "react";
-import { jsx as jsx14, jsxs as jsxs6 } from "react/jsx-runtime";
-
-// packages/ui/src/social/group-card.tsx
-import "react";
-import { jsx as jsx15, jsxs as jsxs7 } from "react/jsx-runtime";
-
-// packages/ui/src/social/group-list.tsx
-import "react";
-import { jsx as jsx16 } from "react/jsx-runtime";
-
-// packages/ui/src/social/membership-list.tsx
-import "react";
-import { jsx as jsx17, jsxs as jsxs8 } from "react/jsx-runtime";
-
-// packages/ui/src/social/social-entity-badge.tsx
-import "react";
-import { jsx as jsx18, jsxs as jsxs9 } from "react/jsx-runtime";
-
-// packages/ui/src/file-handlers/image-file-preview.tsx
-import { useEffect as useEffect3, useMemo as useMemo4, useState as useState6 } from "react";
-import { jsx as jsx19, jsxs as jsxs10 } from "react/jsx-runtime";
-
 // packages/ui/src/file-handlers/markdown-edit.tsx
-import { useEffect as useEffect4, useMemo as useMemo5, useState as useState7 } from "react";
-import { jsx as jsx20, jsxs as jsxs11 } from "react/jsx-runtime";
+import { useEffect as useEffect4, useMemo as useMemo4, useState as useState6 } from "react";
+import { jsx as jsx12, jsxs as jsxs5 } from "react/jsx-runtime";
 
 // packages/ui/src/file-handlers/markdown-view.tsx
-import { useMemo as useMemo6 } from "react";
-import { jsx as jsx21 } from "react/jsx-runtime";
+import { useMemo as useMemo5 } from "react";
+import { jsx as jsx13 } from "react/jsx-runtime";
 
 // packages/ui/src/file-handlers/markdown-view-edit.tsx
-import { useEffect as useEffect5, useMemo as useMemo7, useState as useState8 } from "react";
-import { jsx as jsx22, jsxs as jsxs12 } from "react/jsx-runtime";
+import { useEffect as useEffect5, useMemo as useMemo6, useState as useState7 } from "react";
+import { jsx as jsx14, jsxs as jsxs6 } from "react/jsx-runtime";
 
 // packages/ui/src/file-handlers/text-file-view-edit.tsx
-import { useEffect as useEffect6, useMemo as useMemo8, useState as useState9 } from "react";
-import { jsx as jsx23, jsxs as jsxs13 } from "react/jsx-runtime";
-
-// node_modules/.pnpm/tinybase@7.3.4_@sqlite.org+sqlite-wasm@3.51.2-build6_effect@3.19.18_react-dom@19.2.4_re_6b17624b1e1b989d6af746770c44149e/node_modules/tinybase/schematizers/schematizer-zod/index.js
-var getTypeOf = (thing) => typeof thing;
-var EMPTY_STRING = "";
-var STRING = getTypeOf(EMPTY_STRING);
-var BOOLEAN = getTypeOf(true);
-var NUMBER = getTypeOf(0);
-var TYPE = "type";
-var DEFAULT = "default";
-var ALLOW_NULL = "allowNull";
-var NULLABLE = "nullable";
-var OPTIONAL = "optional";
-var getIfNotFunction = (predicate) => (value2, then, otherwise) => predicate(value2) ? otherwise?.() : then(value2);
-var isNullish = (thing) => thing == null;
-var isUndefined = (thing) => thing === void 0;
-var ifNotNullish = getIfNotFunction(isNullish);
-var ifNotUndefined = getIfNotFunction(isUndefined);
-var size = (arrayOrString) => arrayOrString.length;
-var arrayForEach = (array, cb) => array.forEach(cb);
-var object2 = Object;
-var getPrototypeOf = (obj) => object2.getPrototypeOf(obj);
-var objEntries = object2.entries;
-var isObject = (obj) => !isNullish(obj) && ifNotNullish(
-  getPrototypeOf(obj),
-  (objPrototype) => objPrototype == object2.prototype || isNullish(getPrototypeOf(objPrototype)),
-  /* istanbul ignore next */
-  () => true
-);
-var objIds = object2.keys;
-var objFreeze = object2.freeze;
-var objNew = (entries = []) => object2.fromEntries(entries);
-var objForEach = (obj, cb) => arrayForEach(objEntries(obj), ([id, value2]) => cb(value2, id));
-var objSize = (obj) => size(objIds(obj));
-var objIsEmpty = (obj) => isObject(obj) && objSize(obj) == 0;
-var createCustomSchematizer = (unwrapSchema2, getProperties2) => {
-  const toCellOrValueSchema = (schema) => {
-    const [unwrapped, defaultValue, allowNull] = unwrapSchema2(schema);
-    const type = unwrapped?.type;
-    if (type !== STRING && type !== NUMBER && type !== BOOLEAN) {
-      return void 0;
-    }
-    const cellOrValueSchema = { [TYPE]: type };
-    ifNotUndefined(defaultValue, (defaultValue2) => {
-      cellOrValueSchema[DEFAULT] = defaultValue2;
-    });
-    if (allowNull) {
-      cellOrValueSchema[ALLOW_NULL] = true;
-    }
-    return cellOrValueSchema;
-  };
-  const toTablesSchema = (schemas) => {
-    const tablesSchema = objNew();
-    objForEach(schemas, (schema, tableId) => {
-      const tableSchema = objNew();
-      ifNotUndefined(
-        getProperties2(schema),
-        (properties) => objForEach(
-          properties,
-          (cellSchema, cellId) => ifNotUndefined(toCellOrValueSchema(cellSchema), (cellSchema2) => {
-            tableSchema[cellId] = cellSchema2;
-          })
-        )
-      );
-      if (!objIsEmpty(tableSchema)) {
-        tablesSchema[tableId] = tableSchema;
-      }
-    });
-    return tablesSchema;
-  };
-  const toValuesSchema = (schemas) => {
-    const valuesSchema = objNew();
-    objForEach(
-      schemas,
-      (schema, valueId) => ifNotUndefined(toCellOrValueSchema(schema), (valueSchema) => {
-        valuesSchema[valueId] = valueSchema;
-      })
-    );
-    return valuesSchema;
-  };
-  return objFreeze({
-    toTablesSchema,
-    toValuesSchema
-  });
-};
-var unwrapSchema = (schema, defaultValue, allowNull) => {
-  const type = schema?.def?.type;
-  return type === OPTIONAL ? unwrapSchema(schema.def.innerType, defaultValue, allowNull) : type === NULLABLE ? unwrapSchema(schema.def.innerType, defaultValue, true) : type === DEFAULT ? unwrapSchema(schema.def.innerType, schema.def.defaultValue, allowNull) : [schema, defaultValue, allowNull ?? false];
-};
-var getProperties = (schema) => schema?.def?.shape;
-var createZodSchematizer = () => createCustomSchematizer(unwrapSchema, getProperties);
-
-// packages/state/src/schemas/social.ts
-var PERSONAS_TABLE = "personas";
-var CONTACTS_TABLE = "contacts";
-var GROUPS_TABLE = "groups";
-var MEMBERSHIPS_TABLE = "memberships";
-var ACTIVITIES_TABLE = "activities";
-var DEFAULT_PERSONA_ID_VALUE = "defaultPersonaId";
-var SCHEMA_VERSION_VALUE = "schemaVersion";
-var CURRENT_SCHEMA_VERSION = 3;
+import { useEffect as useEffect6, useMemo as useMemo7, useState as useState8 } from "react";
+import { jsx as jsx15, jsxs as jsxs7 } from "react/jsx-runtime";
 
 // packages/state/src/store.ts
 var createDevalboStore = () => {
   const store = createStore();
-  const schematizer = createZodSchematizer();
-  const socialTablesSchema = schematizer.toTablesSchema({
-    [PERSONAS_TABLE]: PersonaRowStoreSchema,
-    [CONTACTS_TABLE]: ContactRowStoreSchema,
-    [GROUPS_TABLE]: GroupRowStoreSchema,
-    [MEMBERSHIPS_TABLE]: MembershipRowStoreSchema,
-    [ACTIVITIES_TABLE]: ActivityRowStoreSchema
-  });
   store.setTablesSchema({
     entries: {
       path: { type: "string" },
@@ -2282,21 +2137,8 @@ var createDevalboStore = () => {
       podEtag: { type: "string" },
       contentHash: { type: "string" },
       status: { type: "string" }
-    },
-    ...socialTablesSchema
+    }
   });
-  store.setValuesSchema({
-    [DEFAULT_PERSONA_ID_VALUE]: { type: "string", default: "" },
-    [SCHEMA_VERSION_VALUE]: { type: "number", default: CURRENT_SCHEMA_VERSION }
-  });
-  const schemaVersion = store.getValue(SCHEMA_VERSION_VALUE);
-  if (schemaVersion == null || schemaVersion === 0) {
-    store.setValue(SCHEMA_VERSION_VALUE, CURRENT_SCHEMA_VERSION);
-  } else if (typeof schemaVersion === "number" && schemaVersion > CURRENT_SCHEMA_VERSION) {
-    console.warn(
-      `[devalbo-state] Store schema version (${schemaVersion}) is newer than supported (${CURRENT_SCHEMA_VERSION}). Unknown tables/values may be ignored by this runtime.`
-    );
-  }
   return store;
 };
 
@@ -2305,31 +2147,16 @@ import { createContext as createContext2, useContext as useContext2 } from "reac
 var StoreContext = createContext2(null);
 
 // packages/state/src/hooks/use-table.ts
-import { useEffect as useEffect7, useState as useState10 } from "react";
+import { useEffect as useEffect7, useState as useState9 } from "react";
 
 // packages/state/src/hooks/use-row.ts
-import { useEffect as useEffect8, useState as useState11 } from "react";
-
-// packages/state/src/hooks/use-personas.ts
-import { useMemo as useMemo9 } from "react";
-
-// packages/state/src/hooks/use-contacts.ts
-import { useMemo as useMemo10 } from "react";
-
-// packages/state/src/hooks/use-groups.ts
-import { useMemo as useMemo11 } from "react";
-
-// packages/state/src/hooks/use-memberships.ts
-import { useMemo as useMemo12 } from "react";
-
-// packages/state/src/hooks/use-activities.ts
-import { useMemo as useMemo13 } from "react";
+import { useEffect as useEffect8, useState as useState10 } from "react";
 
 // packages/state/src/hooks/use-app-config.tsx
 import { createContext as createContext3, useContext as useContext3 } from "react";
-import { jsx as jsx24 } from "react/jsx-runtime";
+import { jsx as jsx16 } from "react/jsx-runtime";
 var AppConfigContext = createContext3(null);
-var AppConfigProvider = ({ config, children }) => /* @__PURE__ */ jsx24(AppConfigContext.Provider, { value: config, children });
+var AppConfigProvider = ({ config, children }) => /* @__PURE__ */ jsx16(AppConfigContext.Provider, { value: config, children });
 var useAppConfig = () => {
   const ctx = useContext3(AppConfigContext);
   if (!ctx) throw new Error("useAppConfig must be used inside AppConfigProvider");
@@ -2393,7 +2220,7 @@ var executeCommandRaw = async (raw, ctx) => {
 };
 
 // packages/cli-shell/src/components/InteractiveShell.tsx
-import { jsx as jsx25, jsxs as jsxs14 } from "react/jsx-runtime";
+import { jsx as jsx17, jsxs as jsxs8 } from "react/jsx-runtime";
 function ShellContent({
   commands,
   createProgram,
@@ -2406,12 +2233,12 @@ function ShellContent({
   session,
   welcomeMessage
 }) {
-  const [connectivity] = useState12(() => new BrowserConnectivityService());
-  const [input, setInput] = useState12("");
-  const [inputKey, setInputKey] = useState12(0);
-  const [history, setHistory] = useState12([
+  const [connectivity] = useState11(() => new BrowserConnectivityService());
+  const [input, setInput] = useState11("");
+  const [inputKey, setInputKey] = useState11(0);
+  const [history, setHistory] = useState11([
     {
-      component: typeof welcomeMessage === "string" ? /* @__PURE__ */ jsx25(Text8, { color: "cyan", children: welcomeMessage }) : welcomeMessage
+      component: typeof welcomeMessage === "string" ? /* @__PURE__ */ jsx17(Text8, { color: "cyan", children: welcomeMessage }) : welcomeMessage
     }
   ]);
   const executeCommand2 = async (raw) => {
@@ -2441,14 +2268,14 @@ function ShellContent({
     setInput("");
     setInputKey((prev) => prev + 1);
   };
-  return /* @__PURE__ */ jsxs14(Box7, { flexDirection: "column", padding: 1, children: [
-    history.map((item, idx) => /* @__PURE__ */ jsxs14(Box7, { flexDirection: "column", marginBottom: 1, children: [
-      item.command ? /* @__PURE__ */ jsx25(Text8, { dimColor: true, children: item.command }) : null,
-      item.component && /* @__PURE__ */ jsx25(Box7, { marginLeft: 2, children: item.component })
+  return /* @__PURE__ */ jsxs8(Box7, { flexDirection: "column", padding: 1, children: [
+    history.map((item, idx) => /* @__PURE__ */ jsxs8(Box7, { flexDirection: "column", marginBottom: 1, children: [
+      item.command ? /* @__PURE__ */ jsx17(Text8, { dimColor: true, children: item.command }) : null,
+      item.component && /* @__PURE__ */ jsx17(Box7, { marginLeft: 2, children: item.component })
     ] }, idx)),
-    /* @__PURE__ */ jsxs14(Box7, { children: [
-      /* @__PURE__ */ jsx25(Text8, { color: "green", children: "$ " }),
-      /* @__PURE__ */ jsx25(
+    /* @__PURE__ */ jsxs8(Box7, { children: [
+      /* @__PURE__ */ jsx17(Text8, { color: "green", children: "$ " }),
+      /* @__PURE__ */ jsx17(
         TextInput,
         {
           defaultValue: input,
@@ -2473,8 +2300,8 @@ var InteractiveShell = ({
   session,
   welcomeMessage
 }) => {
-  const shellStore = useMemo14(() => store ?? createDevalboStore(), [store]);
-  const fallbackCwd = useMemo14(() => {
+  const shellStore = useMemo8(() => store ?? createDevalboStore(), [store]);
+  const fallbackCwd = useMemo8(() => {
     if (detectPlatform().platform !== "nodejs" /* NodeJS */) return "/";
     const nodeProcess = globalThis.process;
     return nodeProcess?.cwd?.() ?? "/";
@@ -2482,7 +2309,7 @@ var InteractiveShell = ({
   const resolvedCwd = cwd ?? fallbackCwd;
   const resolvedSetCwd = setCwd ?? (() => void 0);
   if (runtime === "terminal") {
-    return /* @__PURE__ */ jsx25(TerminalShellProvider, { children: /* @__PURE__ */ jsx25(
+    return /* @__PURE__ */ jsx17(TerminalShellProvider, { children: /* @__PURE__ */ jsx17(
       ShellContent,
       {
         commands,
@@ -2498,7 +2325,7 @@ var InteractiveShell = ({
       }
     ) });
   }
-  return /* @__PURE__ */ jsx25(BrowserShellProvider, { children: /* @__PURE__ */ jsx25(
+  return /* @__PURE__ */ jsx17(BrowserShellProvider, { children: /* @__PURE__ */ jsx17(
     ShellContent,
     {
       commands,
@@ -2647,16 +2474,16 @@ var cli = {
 
 // packages/cli-shell/src/cli-entry.tsx
 import { render } from "ink";
-import { useState as useState13 } from "react";
+import { useState as useState12 } from "react";
 import "react";
-import { jsx as jsx26 } from "react/jsx-runtime";
+import { jsx as jsx18 } from "react/jsx-runtime";
 async function startInteractiveCli(opts) {
   const store = createDevalboStore();
   const driver = await createFilesystemDriver();
   const initialCwd = globalThis.process?.cwd?.() ?? "/";
   const App = () => {
-    const [cwd, setCwd] = useState13(initialCwd);
-    return /* @__PURE__ */ jsx26(
+    const [cwd, setCwd] = useState12(initialCwd);
+    return /* @__PURE__ */ jsx18(
       InteractiveShell,
       {
         runtime: "terminal",
@@ -2671,7 +2498,7 @@ async function startInteractiveCli(opts) {
       }
     );
   };
-  render(/* @__PURE__ */ jsx26(App, {}));
+  render(/* @__PURE__ */ jsx18(App, {}));
 }
 
 // packages/cli-shell/src/index.ts

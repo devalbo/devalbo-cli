@@ -13964,14 +13964,12 @@ var ActivityRowSchema = external_exports.object({
   payload: external_exports.string(),
   timestamp: external_exports.string()
 });
-var PersonaRowStoreSchema = PersonaRowSchema;
 var ContactRowStoreSchema = ContactRowSchema.extend({
   kind: external_exports.string()
 });
 var GroupRowStoreSchema = GroupRowSchema.extend({
   groupType: external_exports.string()
 });
-var MembershipRowStoreSchema = MembershipRowSchema;
 var ActivityRowStoreSchema = ActivityRowSchema.extend({
   subjectType: external_exports.string(),
   activityType: external_exports.string()
@@ -16570,11 +16568,6 @@ export {
   unsafeAsFilePath,
   unsafeAsDirectoryPath,
   BrowserConnectivityService,
-  PersonaRowStoreSchema,
-  ContactRowStoreSchema,
-  GroupRowStoreSchema,
-  MembershipRowStoreSchema,
-  ActivityRowStoreSchema,
   detectPlatform,
   pathArgSchema,
   createCliAppConfig

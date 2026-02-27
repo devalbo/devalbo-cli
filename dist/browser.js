@@ -728,9 +728,9 @@ function floatSafeRemainder(val, step) {
   return valInt % stepInt / 10 ** decCount;
 }
 var EVALUATING = /* @__PURE__ */ Symbol("evaluating");
-function defineLazy(object5, key, getter) {
+function defineLazy(object4, key, getter) {
   let value2 = void 0;
-  Object.defineProperty(object5, key, {
+  Object.defineProperty(object4, key, {
     get() {
       if (value2 === EVALUATING) {
         return void 0;
@@ -742,7 +742,7 @@ function defineLazy(object5, key, getter) {
       return value2;
     },
     set(v) {
-      Object.defineProperty(object5, key, {
+      Object.defineProperty(object4, key, {
         value: v
         // configurable: true,
       });
@@ -1877,8 +1877,8 @@ var $ZodCheckMaxSize = /* @__PURE__ */ $constructor("$ZodCheckMaxSize", (inst, d
   });
   inst._zod.check = (payload) => {
     const input = payload.value;
-    const size6 = input.size;
-    if (size6 <= def.maximum)
+    const size5 = input.size;
+    if (size5 <= def.maximum)
       return;
     payload.issues.push({
       origin: getSizableOrigin(input),
@@ -1905,8 +1905,8 @@ var $ZodCheckMinSize = /* @__PURE__ */ $constructor("$ZodCheckMinSize", (inst, d
   });
   inst._zod.check = (payload) => {
     const input = payload.value;
-    const size6 = input.size;
-    if (size6 >= def.minimum)
+    const size5 = input.size;
+    if (size5 >= def.minimum)
       return;
     payload.issues.push({
       origin: getSizableOrigin(input),
@@ -1934,10 +1934,10 @@ var $ZodCheckSizeEquals = /* @__PURE__ */ $constructor("$ZodCheckSizeEquals", (i
   });
   inst._zod.check = (payload) => {
     const input = payload.value;
-    const size6 = input.size;
-    if (size6 === def.size)
+    const size5 = input.size;
+    if (size5 === def.size)
       return;
-    const tooBig = size6 > def.size;
+    const tooBig = size5 > def.size;
     payload.issues.push({
       origin: getSizableOrigin(input),
       ...tooBig ? { code: "too_big", maximum: def.size } : { code: "too_small", minimum: def.size },
@@ -2986,13 +2986,13 @@ var $ZodObject = /* @__PURE__ */ $constructor("$ZodObject", (inst, def) => {
     }
     return propValues;
   });
-  const isObject5 = isObject;
+  const isObject4 = isObject;
   const catchall = def.catchall;
   let value2;
   inst._zod.parse = (payload, ctx) => {
     value2 ?? (value2 = _normalized.value);
     const input = payload.value;
-    if (!isObject5(input)) {
+    if (!isObject4(input)) {
       payload.issues.push({
         expected: "object",
         code: "invalid_type",
@@ -3090,7 +3090,7 @@ var $ZodObjectJIT = /* @__PURE__ */ $constructor("$ZodObjectJIT", (inst, def) =>
     return (payload, ctx) => fn(shape, payload, ctx);
   };
   let fastpass;
-  const isObject5 = isObject;
+  const isObject4 = isObject;
   const jit = !globalConfig.jitless;
   const allowsEval2 = allowsEval;
   const fastEnabled = jit && allowsEval2.value;
@@ -3099,7 +3099,7 @@ var $ZodObjectJIT = /* @__PURE__ */ $constructor("$ZodObjectJIT", (inst, def) =>
   inst._zod.parse = (payload, ctx) => {
     value2 ?? (value2 = _normalized.value);
     const input = payload.value;
-    if (!isObject5(input)) {
+    if (!isObject4(input)) {
       payload.issues.push({
         expected: "object",
         code: "invalid_type",
@@ -10407,11 +10407,11 @@ function _minSize(minimum, params) {
   });
 }
 // @__NO_SIDE_EFFECTS__
-function _size(size6, params) {
+function _size(size5, params) {
   return new $ZodCheckSizeEquals({
     check: "size_equals",
     ...normalizeParams(params),
-    size: size6
+    size: size5
   });
 }
 // @__NO_SIDE_EFFECTS__
@@ -12934,8 +12934,8 @@ var ZodFile = /* @__PURE__ */ $constructor("ZodFile", (inst, def) => {
   $ZodFile.init(inst, def);
   ZodType.init(inst, def);
   inst._zod.processJSONSchema = (ctx, json2, params) => fileProcessor(inst, ctx, json2, params);
-  inst.min = (size6, params) => inst.check(_minSize(size6, params));
-  inst.max = (size6, params) => inst.check(_maxSize(size6, params));
+  inst.min = (size5, params) => inst.check(_minSize(size5, params));
+  inst.max = (size5, params) => inst.check(_maxSize(size5, params));
   inst.mime = (types, params) => inst.check(_mime(Array.isArray(types) ? types : [types], params));
 });
 function file(params) {
@@ -13947,14 +13947,12 @@ var ActivityRowSchema = external_exports.object({
   payload: external_exports.string(),
   timestamp: external_exports.string()
 });
-var PersonaRowStoreSchema = PersonaRowSchema;
 var ContactRowStoreSchema = ContactRowSchema.extend({
   kind: external_exports.string()
 });
 var GroupRowStoreSchema = GroupRowSchema.extend({
   groupType: external_exports.string()
 });
-var MembershipRowStoreSchema = MembershipRowSchema;
 var ActivityRowStoreSchema = ActivityRowSchema.extend({
   subjectType: external_exports.string(),
   activityType: external_exports.string()
@@ -15090,10 +15088,10 @@ function arraySpliceIn(mutate2, at, v, arr) {
 // node_modules/.pnpm/effect@3.19.18/node_modules/effect/dist/esm/internal/hashMap/node.js
 var EmptyNode = class _EmptyNode {
   _tag = "EmptyNode";
-  modify(edit, _shift, f, hash3, key, size6) {
+  modify(edit, _shift, f, hash3, key, size5) {
     const v = f(none2());
     if (isNone2(v)) return new _EmptyNode();
-    ++size6.value;
+    ++size5.value;
     return new LeafNode(edit, hash3, key, v);
   }
 };
@@ -15118,12 +15116,12 @@ var LeafNode = class _LeafNode {
     this.key = key;
     this.value = value2;
   }
-  modify(edit, shift, f, hash3, key, size6) {
+  modify(edit, shift, f, hash3, key, size5) {
     if (equals(key, this.key)) {
       const v2 = f(this.value);
       if (v2 === this.value) return this;
       else if (isNone2(v2)) {
-        --size6.value;
+        --size5.value;
         return new EmptyNode();
       }
       if (canEditNode(this, edit)) {
@@ -15134,7 +15132,7 @@ var LeafNode = class _LeafNode {
     }
     const v = f(none2());
     if (isNone2(v)) return this;
-    ++size6.value;
+    ++size5.value;
     return mergeLeaves(edit, shift, this.hash, this, hash3, new _LeafNode(edit, hash3, key, v));
   }
 };
@@ -15148,19 +15146,19 @@ var CollisionNode = class _CollisionNode {
     this.hash = hash3;
     this.children = children;
   }
-  modify(edit, shift, f, hash3, key, size6) {
+  modify(edit, shift, f, hash3, key, size5) {
     if (hash3 === this.hash) {
       const canEdit = canEditNode(this, edit);
-      const list = this.updateCollisionList(canEdit, edit, this.hash, this.children, f, key, size6);
+      const list = this.updateCollisionList(canEdit, edit, this.hash, this.children, f, key, size5);
       if (list === this.children) return this;
       return list.length > 1 ? new _CollisionNode(edit, this.hash, list) : list[0];
     }
     const v = f(none2());
     if (isNone2(v)) return this;
-    ++size6.value;
+    ++size5.value;
     return mergeLeaves(edit, shift, this.hash, this, hash3, new LeafNode(edit, hash3, key, v));
   }
-  updateCollisionList(mutate2, edit, hash3, list, f, key, size6) {
+  updateCollisionList(mutate2, edit, hash3, list, f, key, size5) {
     const len = list.length;
     for (let i = 0; i < len; ++i) {
       const child = list[i];
@@ -15169,7 +15167,7 @@ var CollisionNode = class _CollisionNode {
         const newValue2 = f(value2);
         if (newValue2 === value2) return list;
         if (isNone2(newValue2)) {
-          --size6.value;
+          --size5.value;
           return arraySpliceOut(mutate2, i, list);
         }
         return arrayUpdate(mutate2, i, new LeafNode(edit, hash3, key, newValue2), list);
@@ -15177,7 +15175,7 @@ var CollisionNode = class _CollisionNode {
     }
     const newValue = f(none2());
     if (isNone2(newValue)) return list;
-    ++size6.value;
+    ++size5.value;
     return arrayUpdate(mutate2, len, new LeafNode(edit, hash3, key, newValue), list);
   }
 };
@@ -15191,7 +15189,7 @@ var IndexedNode = class _IndexedNode {
     this.mask = mask;
     this.children = children;
   }
-  modify(edit, shift, f, hash3, key, size6) {
+  modify(edit, shift, f, hash3, key, size5) {
     const mask = this.mask;
     const children = this.children;
     const frag = hashFragment(shift, hash3);
@@ -15200,12 +15198,12 @@ var IndexedNode = class _IndexedNode {
     const exists = mask & bit;
     const canEdit = canEditNode(this, edit);
     if (!exists) {
-      const _newChild = new EmptyNode().modify(edit, shift + SIZE, f, hash3, key, size6);
+      const _newChild = new EmptyNode().modify(edit, shift + SIZE, f, hash3, key, size5);
       if (!_newChild) return this;
       return children.length >= MAX_INDEX_NODE ? expand(edit, frag, _newChild, mask, children) : new _IndexedNode(edit, mask | bit, arraySpliceIn(canEdit, indx, _newChild, children));
     }
     const current = children[indx];
-    const child = current.modify(edit, shift + SIZE, f, hash3, key, size6);
+    const child = current.modify(edit, shift + SIZE, f, hash3, key, size5);
     if (current === child) return this;
     let bitmap = mask;
     let newChildren;
@@ -15232,17 +15230,17 @@ var ArrayNode = class _ArrayNode {
   size;
   children;
   _tag = "ArrayNode";
-  constructor(edit, size6, children) {
+  constructor(edit, size5, children) {
     this.edit = edit;
-    this.size = size6;
+    this.size = size5;
     this.children = children;
   }
-  modify(edit, shift, f, hash3, key, size6) {
+  modify(edit, shift, f, hash3, key, size5) {
     let count = this.size;
     const children = this.children;
     const frag = hashFragment(shift, hash3);
     const child = children[frag];
-    const newChild = (child || new EmptyNode()).modify(edit, shift + SIZE, f, hash3, key, size6);
+    const newChild = (child || new EmptyNode()).modify(edit, shift + SIZE, f, hash3, key, size5);
     if (child === newChild) return this;
     const canEdit = canEditNode(this, edit);
     let newChildren;
@@ -15372,12 +15370,12 @@ var HashMapProto = {
     return pipeArguments(this, arguments);
   }
 };
-var makeImpl = (editable, edit, root, size6) => {
+var makeImpl = (editable, edit, root, size5) => {
   const map9 = Object.create(HashMapProto);
   map9._editable = editable;
   map9._edit = edit;
   map9._root = root;
-  map9._size = size6;
+  map9._size = size5;
   return map9;
 };
 var HashMapIterator = class _HashMapIterator {
@@ -15500,11 +15498,11 @@ var size = (self2) => self2._size;
 var beginMutation = (self2) => makeImpl(true, self2._edit + 1, self2._root, self2._size);
 var modifyAt = /* @__PURE__ */ dual(3, (self2, key, f) => modifyHash(self2, key, hash2(key), f));
 var modifyHash = /* @__PURE__ */ dual(4, (self2, key, hash3, f) => {
-  const size6 = {
+  const size5 = {
     value: self2._size
   };
-  const newRoot = self2._root.modify(self2._editable ? self2._edit : NaN, 0, f, hash3, key, size6);
-  return pipe2(self2, setTree(newRoot, size6.value));
+  const newRoot = self2._root.modify(self2._editable ? self2._edit : NaN, 0, f, hash3, key, size5);
+  return pipe2(self2, setTree(newRoot, size5.value));
 });
 var forEach = /* @__PURE__ */ dual(2, (self2, f) => reduce2(self2, void 0, (_, value2, key) => f(value2, key)));
 var reduce2 = /* @__PURE__ */ dual(3, (self2, zero, f) => {
@@ -21698,7 +21696,7 @@ var systemCommandsBrowser = {
 };
 
 // packages/cli-shell/src/components/InteractiveShell.tsx
-import { useMemo as useMemo14, useState as useState12 } from "react";
+import { useMemo as useMemo8, useState as useState11 } from "react";
 import { Box as Box7, Text as Text8 } from "ink";
 
 // packages/ui/src/primitives/text-input.tsx
@@ -21811,169 +21809,29 @@ import { jsx as jsx10, jsxs as jsxs3 } from "react/jsx-runtime";
 // packages/ui/src/hooks/use-keyboard.ts
 import { useInput as useInput3 } from "ink";
 
-// packages/ui/src/social/persona-card.tsx
-import "react";
+// packages/ui/src/file-handlers/image-file-preview.tsx
+import { useEffect as useEffect3, useMemo as useMemo3, useState as useState5 } from "react";
 import { jsx as jsx11, jsxs as jsxs4 } from "react/jsx-runtime";
 
-// packages/ui/src/social/persona-list.tsx
-import "react";
-import { jsx as jsx12 } from "react/jsx-runtime";
-
-// packages/ui/src/social/contact-card.tsx
-import "react";
-import { jsx as jsx13, jsxs as jsxs5 } from "react/jsx-runtime";
-
-// packages/ui/src/social/contact-list.tsx
-import { useMemo as useMemo3, useState as useState5 } from "react";
-import { jsx as jsx14, jsxs as jsxs6 } from "react/jsx-runtime";
-
-// packages/ui/src/social/group-card.tsx
-import "react";
-import { jsx as jsx15, jsxs as jsxs7 } from "react/jsx-runtime";
-
-// packages/ui/src/social/group-list.tsx
-import "react";
-import { jsx as jsx16 } from "react/jsx-runtime";
-
-// packages/ui/src/social/membership-list.tsx
-import "react";
-import { jsx as jsx17, jsxs as jsxs8 } from "react/jsx-runtime";
-
-// packages/ui/src/social/social-entity-badge.tsx
-import "react";
-import { jsx as jsx18, jsxs as jsxs9 } from "react/jsx-runtime";
-
-// packages/ui/src/file-handlers/image-file-preview.tsx
-import { useEffect as useEffect3, useMemo as useMemo4, useState as useState6 } from "react";
-import { jsx as jsx19, jsxs as jsxs10 } from "react/jsx-runtime";
-
 // packages/ui/src/file-handlers/markdown-edit.tsx
-import { useEffect as useEffect4, useMemo as useMemo5, useState as useState7 } from "react";
-import { jsx as jsx20, jsxs as jsxs11 } from "react/jsx-runtime";
+import { useEffect as useEffect4, useMemo as useMemo4, useState as useState6 } from "react";
+import { jsx as jsx12, jsxs as jsxs5 } from "react/jsx-runtime";
 
 // packages/ui/src/file-handlers/markdown-view.tsx
-import { useMemo as useMemo6 } from "react";
-import { jsx as jsx21 } from "react/jsx-runtime";
+import { useMemo as useMemo5 } from "react";
+import { jsx as jsx13 } from "react/jsx-runtime";
 
 // packages/ui/src/file-handlers/markdown-view-edit.tsx
-import { useEffect as useEffect5, useMemo as useMemo7, useState as useState8 } from "react";
-import { jsx as jsx22, jsxs as jsxs12 } from "react/jsx-runtime";
+import { useEffect as useEffect5, useMemo as useMemo6, useState as useState7 } from "react";
+import { jsx as jsx14, jsxs as jsxs6 } from "react/jsx-runtime";
 
 // packages/ui/src/file-handlers/text-file-view-edit.tsx
-import { useEffect as useEffect6, useMemo as useMemo8, useState as useState9 } from "react";
-import { jsx as jsx23, jsxs as jsxs13 } from "react/jsx-runtime";
-
-// node_modules/.pnpm/tinybase@7.3.4_@sqlite.org+sqlite-wasm@3.51.2-build6_effect@3.19.18_react-dom@19.2.4_re_6b17624b1e1b989d6af746770c44149e/node_modules/tinybase/schematizers/schematizer-zod/index.js
-var getTypeOf2 = (thing) => typeof thing;
-var EMPTY_STRING2 = "";
-var STRING2 = getTypeOf2(EMPTY_STRING2);
-var BOOLEAN2 = getTypeOf2(true);
-var NUMBER2 = getTypeOf2(0);
-var TYPE2 = "type";
-var DEFAULT2 = "default";
-var ALLOW_NULL2 = "allowNull";
-var NULLABLE = "nullable";
-var OPTIONAL = "optional";
-var getIfNotFunction2 = (predicate) => (value2, then, otherwise) => predicate(value2) ? otherwise?.() : then(value2);
-var isNullish2 = (thing) => thing == null;
-var isUndefined2 = (thing) => thing === void 0;
-var ifNotNullish2 = getIfNotFunction2(isNullish2);
-var ifNotUndefined2 = getIfNotFunction2(isUndefined2);
-var size5 = (arrayOrString) => arrayOrString.length;
-var arrayForEach2 = (array4, cb) => array4.forEach(cb);
-var object4 = Object;
-var getPrototypeOf2 = (obj) => object4.getPrototypeOf(obj);
-var objEntries2 = object4.entries;
-var isObject4 = (obj) => !isNullish2(obj) && ifNotNullish2(
-  getPrototypeOf2(obj),
-  (objPrototype) => objPrototype == object4.prototype || isNullish2(getPrototypeOf2(objPrototype)),
-  /* istanbul ignore next */
-  () => true
-);
-var objIds2 = object4.keys;
-var objFreeze2 = object4.freeze;
-var objNew2 = (entries = []) => object4.fromEntries(entries);
-var objForEach2 = (obj, cb) => arrayForEach2(objEntries2(obj), ([id2, value2]) => cb(value2, id2));
-var objSize2 = (obj) => size5(objIds2(obj));
-var objIsEmpty2 = (obj) => isObject4(obj) && objSize2(obj) == 0;
-var createCustomSchematizer = (unwrapSchema2, getProperties2) => {
-  const toCellOrValueSchema = (schema) => {
-    const [unwrapped, defaultValue, allowNull] = unwrapSchema2(schema);
-    const type = unwrapped?.type;
-    if (type !== STRING2 && type !== NUMBER2 && type !== BOOLEAN2) {
-      return void 0;
-    }
-    const cellOrValueSchema = { [TYPE2]: type };
-    ifNotUndefined2(defaultValue, (defaultValue2) => {
-      cellOrValueSchema[DEFAULT2] = defaultValue2;
-    });
-    if (allowNull) {
-      cellOrValueSchema[ALLOW_NULL2] = true;
-    }
-    return cellOrValueSchema;
-  };
-  const toTablesSchema = (schemas) => {
-    const tablesSchema = objNew2();
-    objForEach2(schemas, (schema, tableId) => {
-      const tableSchema = objNew2();
-      ifNotUndefined2(
-        getProperties2(schema),
-        (properties) => objForEach2(
-          properties,
-          (cellSchema, cellId) => ifNotUndefined2(toCellOrValueSchema(cellSchema), (cellSchema2) => {
-            tableSchema[cellId] = cellSchema2;
-          })
-        )
-      );
-      if (!objIsEmpty2(tableSchema)) {
-        tablesSchema[tableId] = tableSchema;
-      }
-    });
-    return tablesSchema;
-  };
-  const toValuesSchema = (schemas) => {
-    const valuesSchema = objNew2();
-    objForEach2(
-      schemas,
-      (schema, valueId) => ifNotUndefined2(toCellOrValueSchema(schema), (valueSchema) => {
-        valuesSchema[valueId] = valueSchema;
-      })
-    );
-    return valuesSchema;
-  };
-  return objFreeze2({
-    toTablesSchema,
-    toValuesSchema
-  });
-};
-var unwrapSchema = (schema, defaultValue, allowNull) => {
-  const type = schema?.def?.type;
-  return type === OPTIONAL ? unwrapSchema(schema.def.innerType, defaultValue, allowNull) : type === NULLABLE ? unwrapSchema(schema.def.innerType, defaultValue, true) : type === DEFAULT2 ? unwrapSchema(schema.def.innerType, schema.def.defaultValue, allowNull) : [schema, defaultValue, allowNull ?? false];
-};
-var getProperties = (schema) => schema?.def?.shape;
-var createZodSchematizer = () => createCustomSchematizer(unwrapSchema, getProperties);
-
-// packages/state/src/schemas/social.ts
-var PERSONAS_TABLE = "personas";
-var CONTACTS_TABLE = "contacts";
-var GROUPS_TABLE = "groups";
-var MEMBERSHIPS_TABLE = "memberships";
-var ACTIVITIES_TABLE = "activities";
-var DEFAULT_PERSONA_ID_VALUE = "defaultPersonaId";
-var SCHEMA_VERSION_VALUE = "schemaVersion";
-var CURRENT_SCHEMA_VERSION = 3;
+import { useEffect as useEffect6, useMemo as useMemo7, useState as useState8 } from "react";
+import { jsx as jsx15, jsxs as jsxs7 } from "react/jsx-runtime";
 
 // packages/state/src/store.ts
 var createDevalboStore = () => {
   const store = createStore();
-  const schematizer = createZodSchematizer();
-  const socialTablesSchema = schematizer.toTablesSchema({
-    [PERSONAS_TABLE]: PersonaRowStoreSchema,
-    [CONTACTS_TABLE]: ContactRowStoreSchema,
-    [GROUPS_TABLE]: GroupRowStoreSchema,
-    [MEMBERSHIPS_TABLE]: MembershipRowStoreSchema,
-    [ACTIVITIES_TABLE]: ActivityRowStoreSchema
-  });
   store.setTablesSchema({
     entries: {
       path: { type: "string" },
@@ -22004,21 +21862,8 @@ var createDevalboStore = () => {
       podEtag: { type: "string" },
       contentHash: { type: "string" },
       status: { type: "string" }
-    },
-    ...socialTablesSchema
+    }
   });
-  store.setValuesSchema({
-    [DEFAULT_PERSONA_ID_VALUE]: { type: "string", default: "" },
-    [SCHEMA_VERSION_VALUE]: { type: "number", default: CURRENT_SCHEMA_VERSION }
-  });
-  const schemaVersion = store.getValue(SCHEMA_VERSION_VALUE);
-  if (schemaVersion == null || schemaVersion === 0) {
-    store.setValue(SCHEMA_VERSION_VALUE, CURRENT_SCHEMA_VERSION);
-  } else if (typeof schemaVersion === "number" && schemaVersion > CURRENT_SCHEMA_VERSION) {
-    console.warn(
-      `[devalbo-state] Store schema version (${schemaVersion}) is newer than supported (${CURRENT_SCHEMA_VERSION}). Unknown tables/values may be ignored by this runtime.`
-    );
-  }
   return store;
 };
 
@@ -22027,31 +21872,16 @@ import { createContext as createContext2, useContext as useContext2 } from "reac
 var StoreContext = createContext2(null);
 
 // packages/state/src/hooks/use-table.ts
-import { useEffect as useEffect7, useState as useState10 } from "react";
+import { useEffect as useEffect7, useState as useState9 } from "react";
 
 // packages/state/src/hooks/use-row.ts
-import { useEffect as useEffect8, useState as useState11 } from "react";
-
-// packages/state/src/hooks/use-personas.ts
-import { useMemo as useMemo9 } from "react";
-
-// packages/state/src/hooks/use-contacts.ts
-import { useMemo as useMemo10 } from "react";
-
-// packages/state/src/hooks/use-groups.ts
-import { useMemo as useMemo11 } from "react";
-
-// packages/state/src/hooks/use-memberships.ts
-import { useMemo as useMemo12 } from "react";
-
-// packages/state/src/hooks/use-activities.ts
-import { useMemo as useMemo13 } from "react";
+import { useEffect as useEffect8, useState as useState10 } from "react";
 
 // packages/state/src/hooks/use-app-config.tsx
 import { createContext as createContext3, useContext as useContext3 } from "react";
-import { jsx as jsx24 } from "react/jsx-runtime";
+import { jsx as jsx16 } from "react/jsx-runtime";
 var AppConfigContext = createContext3(null);
-var AppConfigProvider = ({ config: config2, children }) => /* @__PURE__ */ jsx24(AppConfigContext.Provider, { value: config2, children });
+var AppConfigProvider = ({ config: config2, children }) => /* @__PURE__ */ jsx16(AppConfigContext.Provider, { value: config2, children });
 var useAppConfig = () => {
   const ctx = useContext3(AppConfigContext);
   if (!ctx) throw new Error("useAppConfig must be used inside AppConfigProvider");
@@ -22115,7 +21945,7 @@ var executeCommandRaw = async (raw, ctx) => {
 };
 
 // packages/cli-shell/src/components/InteractiveShell.tsx
-import { jsx as jsx25, jsxs as jsxs14 } from "react/jsx-runtime";
+import { jsx as jsx17, jsxs as jsxs8 } from "react/jsx-runtime";
 function ShellContent({
   commands,
   createProgram,
@@ -22128,12 +21958,12 @@ function ShellContent({
   session,
   welcomeMessage
 }) {
-  const [connectivity] = useState12(() => new BrowserConnectivityService());
-  const [input, setInput] = useState12("");
-  const [inputKey, setInputKey] = useState12(0);
-  const [history, setHistory] = useState12([
+  const [connectivity] = useState11(() => new BrowserConnectivityService());
+  const [input, setInput] = useState11("");
+  const [inputKey, setInputKey] = useState11(0);
+  const [history, setHistory] = useState11([
     {
-      component: typeof welcomeMessage === "string" ? /* @__PURE__ */ jsx25(Text8, { color: "cyan", children: welcomeMessage }) : welcomeMessage
+      component: typeof welcomeMessage === "string" ? /* @__PURE__ */ jsx17(Text8, { color: "cyan", children: welcomeMessage }) : welcomeMessage
     }
   ]);
   const executeCommand2 = async (raw) => {
@@ -22163,14 +21993,14 @@ function ShellContent({
     setInput("");
     setInputKey((prev) => prev + 1);
   };
-  return /* @__PURE__ */ jsxs14(Box7, { flexDirection: "column", padding: 1, children: [
-    history.map((item, idx) => /* @__PURE__ */ jsxs14(Box7, { flexDirection: "column", marginBottom: 1, children: [
-      item.command ? /* @__PURE__ */ jsx25(Text8, { dimColor: true, children: item.command }) : null,
-      item.component && /* @__PURE__ */ jsx25(Box7, { marginLeft: 2, children: item.component })
+  return /* @__PURE__ */ jsxs8(Box7, { flexDirection: "column", padding: 1, children: [
+    history.map((item, idx) => /* @__PURE__ */ jsxs8(Box7, { flexDirection: "column", marginBottom: 1, children: [
+      item.command ? /* @__PURE__ */ jsx17(Text8, { dimColor: true, children: item.command }) : null,
+      item.component && /* @__PURE__ */ jsx17(Box7, { marginLeft: 2, children: item.component })
     ] }, idx)),
-    /* @__PURE__ */ jsxs14(Box7, { children: [
-      /* @__PURE__ */ jsx25(Text8, { color: "green", children: "$ " }),
-      /* @__PURE__ */ jsx25(
+    /* @__PURE__ */ jsxs8(Box7, { children: [
+      /* @__PURE__ */ jsx17(Text8, { color: "green", children: "$ " }),
+      /* @__PURE__ */ jsx17(
         TextInput,
         {
           defaultValue: input,
@@ -22195,8 +22025,8 @@ var InteractiveShell = ({
   session,
   welcomeMessage
 }) => {
-  const shellStore = useMemo14(() => store ?? createDevalboStore(), [store]);
-  const fallbackCwd = useMemo14(() => {
+  const shellStore = useMemo8(() => store ?? createDevalboStore(), [store]);
+  const fallbackCwd = useMemo8(() => {
     if (detectPlatform().platform !== "nodejs" /* NodeJS */) return "/";
     const nodeProcess = globalThis.process;
     return nodeProcess?.cwd?.() ?? "/";
@@ -22204,7 +22034,7 @@ var InteractiveShell = ({
   const resolvedCwd = cwd ?? fallbackCwd;
   const resolvedSetCwd = setCwd ?? (() => void 0);
   if (runtime === "terminal") {
-    return /* @__PURE__ */ jsx25(TerminalShellProvider, { children: /* @__PURE__ */ jsx25(
+    return /* @__PURE__ */ jsx17(TerminalShellProvider, { children: /* @__PURE__ */ jsx17(
       ShellContent,
       {
         commands,
@@ -22220,7 +22050,7 @@ var InteractiveShell = ({
       }
     ) });
   }
-  return /* @__PURE__ */ jsx25(BrowserShellProvider, { children: /* @__PURE__ */ jsx25(
+  return /* @__PURE__ */ jsx17(BrowserShellProvider, { children: /* @__PURE__ */ jsx17(
     ShellContent,
     {
       commands,
