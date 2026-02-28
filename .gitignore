@@ -3,6 +3,8 @@ node_modules
 **/dist
 !/dist/
 !/dist/**
+!/packages/*/dist/
+!/packages/*/dist/**
 coverage
 .turbo
 tests/results

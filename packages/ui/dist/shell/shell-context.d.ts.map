@@ -1,0 +1,1 @@
+{"version":3,"file":"shell-context.d.ts","sourceRoot":"","sources":["../../src/shell/shell-context.tsx"],"names":[],"mappings":"AAEA,MAAM,WAAW,iBAAiB;IAChC,gBAAgB,EAAE,OAAO,CAAC;IAC1B,YAAY,EAAE,MAAM,IAAI,CAAC;IACzB,UAAU,EAAE,MAAM,IAAI,CAAC;CACxB;AAED,QAAA,MAAM,YAAY,mDAAgD,CAAC;AAEnE,eAAO,MAAM,QAAQ,QAAO,iBAU3B,CAAC;AAEF,OAAO,EAAE,YAAY,EAAE,CAAC"}

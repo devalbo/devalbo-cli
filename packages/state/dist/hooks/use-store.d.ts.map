@@ -1,0 +1,1 @@
+{"version":3,"file":"use-store.d.ts","sourceRoot":"","sources":["../../src/hooks/use-store.ts"],"names":[],"mappings":"AAAA,OAAO,EAA6B,KAAK,OAAO,EAAE,MAAM,OAAO,CAAC;AAChE,OAAO,KAAK,EAAE,YAAY,EAAE,MAAM,UAAU,CAAC;AAE7C,eAAO,MAAM,YAAY,EAAE,OAAO,CAAC,YAAY,GAAG,IAAI,CAA4C,CAAC;AAEnG,eAAO,MAAM,QAAQ,QAAO,YAM3B,CAAC"}

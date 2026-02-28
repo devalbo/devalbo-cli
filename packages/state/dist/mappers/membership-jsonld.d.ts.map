@@ -1,0 +1,1 @@
+{"version":3,"file":"membership-jsonld.d.ts","sourceRoot":"","sources":["../../src/mappers/membership-jsonld.ts"],"names":[],"mappings":"AAAA,OAAO,EAAO,KAAK,aAAa,EAAE,MAAM,qBAAqB,CAAC;AAE9D,KAAK,YAAY,GAAG,MAAM,CAAC,MAAM,EAAE,OAAO,CAAC,CAAC;AAI5C,eAAO,MAAM,kBAAkB,GAAI,KAAK,aAAa,KAAG,YAiBvD,CAAC;AAEF,eAAO,MAAM,+BAA+B,GAAI,YAAY,YAAY,KAAG,MAY1E,CAAC"}

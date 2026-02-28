@@ -1,0 +1,1 @@
+{"version":3,"file":"console-bridge.d.ts","sourceRoot":"","sources":["../src/console-bridge.ts"],"names":[],"mappings":"AAAA,OAAO,KAAK,EAAE,cAAc,EAAE,MAAM,qBAAqB,CAAC;AAE1D,OAAO,EAAE,eAAe,EAAE,MAAM,YAAY,CAAC;AAkB7C,eAAO,MAAM,mBAAmB,GAAI,oBAAoB,MAAM,CAAC,MAAM,EAAE,cAAc,CAAC,GAAG,eAAe;kBAGjF,MAAM,SAAQ,MAAM,EAAE;;;CAmB5C,CAAC"}

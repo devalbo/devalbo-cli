@@ -1,0 +1,1 @@
+{"version":3,"file":"social.d.ts","sourceRoot":"","sources":["../../src/schemas/social.ts"],"names":[],"mappings":"AAAA,eAAO,MAAM,cAAc,aAAa,CAAC;AACzC,eAAO,MAAM,cAAc,aAAa,CAAC;AACzC,eAAO,MAAM,YAAY,WAAW,CAAC;AACrC,eAAO,MAAM,iBAAiB,gBAAgB,CAAC;AAC/C,eAAO,MAAM,gBAAgB,eAAe,CAAC;AAE7C,eAAO,MAAM,wBAAwB,qBAAqB,CAAC;AAC3D,eAAO,MAAM,oBAAoB,kBAAkB,CAAC;AACpD,eAAO,MAAM,sBAAsB,IAAI,CAAC"}

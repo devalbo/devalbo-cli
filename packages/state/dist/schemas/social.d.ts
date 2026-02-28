@@ -1,0 +1,9 @@
+export declare const PERSONAS_TABLE = "personas";
+export declare const CONTACTS_TABLE = "contacts";
+export declare const GROUPS_TABLE = "groups";
+export declare const MEMBERSHIPS_TABLE = "memberships";
+export declare const ACTIVITIES_TABLE = "activities";
+export declare const DEFAULT_PERSONA_ID_VALUE = "defaultPersonaId";
+export declare const SCHEMA_VERSION_VALUE = "schemaVersion";
+export declare const CURRENT_SCHEMA_VERSION = 3;
+//# sourceMappingURL=social.d.ts.map
