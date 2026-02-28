@@ -42,20 +42,22 @@ myapp/
     program.ts          # commander command definitions
     commands/
       index.ts          # command map
-      hello.ts          # custom command
+      hello.tsx         # custom command (note: .tsx for JSX)
     web/
       main.tsx          # browser entry point
       App.tsx           # browser app component
 ```
 
-Add scripts to `package.json`:
+Add `"type": "module"` and scripts to `package.json`. The `dev:web` / `build:web`
+names leave `dev` and `build` free for Tauri if you add desktop support later:
 
 ```json
+"type": "module",
 "scripts": {
-  "terminal": "node --import tsx src/cli-node.tsx",
-  "dev":      "vite",
-  "build":    "vite build",
-  "preview":  "vite preview"
+  "dev:cli":   "node --import tsx src/cli-node.tsx",
+  "dev:web":   "vite",
+  "build:web": "vite build",
+  "preview:web": "vite preview"
 }
 ```
 
@@ -78,9 +80,10 @@ Add scripts to `package.json`:
 }
 ```
 
-## 5. Custom command — src/commands/hello.ts
+## 5. Custom command — src/commands/hello.tsx
 
-A command handler receives the parsed CLI args and returns an Ink component to render:
+A command handler receives the parsed CLI args and returns an Ink component to render.
+Use `.tsx` extension since the file contains JSX:
 
 ```tsx
 import { Text } from 'ink';
@@ -155,6 +158,25 @@ startInteractiveCli({
 });
 ```
 
+## Running the terminal app
+
+Run in a real terminal (requires TTY for interactive input):
+
+```bash
+npm run dev:cli
+```
+
+This starts an interactive shell. Type commands at the prompt:
+
+```
+$ hello
+$ hello Alice
+$ ls
+$ pwd
+```
+
+---
+
 ## 9. Browser app — src/web/App.tsx
 
 `bindCliRuntimeSource` wires the live app context (store, driver, cwd) to the
@@ -224,7 +246,7 @@ export const App = () => {
 
 ## 10. Browser entry — src/web/main.tsx
 
-Expose `window.cli` in dev mode so it's available in the browser console:
+Expose `window.cli` so it's available in the browser console:
 
 ```tsx
 import React from 'react';
@@ -237,9 +259,7 @@ declare global {
   interface Window { cli: typeof cli; }
 }
 
-if (import.meta.env.DEV) {
-  window.cli = cli;
-}
+window.cli = cli;
 
 const root = document.getElementById('root');
 if (root) createRoot(root).render(<App />);
@@ -295,37 +315,18 @@ export default defineConfig({
 });
 ```
 
----
-
-## Running the app
-
-### Terminal — interactive shell
+## Running the browser app
 
 ```bash
-npm run terminal
-```
-
-### Terminal — single command
-
-```bash
-npm run terminal -- hello
-npm run terminal -- hello Alice
-npm run terminal -- ls
-npm run terminal -- pwd
-```
-
-### Browser
-
-```bash
-npm run dev       # dev server at http://localhost:3000
-npm run build     # production build
-npm run preview   # preview production build
+npm run dev:web      # dev server at http://localhost:3000
+npm run build:web    # production build
+npm run preview:web  # preview the production build locally
 ```
 
 ### Browser dev console
 
-When running `npm run dev`, `window.cli` is available in the browser DevTools
-console. It shares the same live store, driver, and cwd as the terminal UI.
+`window.cli` is available in the browser DevTools console in both dev and
+production builds. It shares the same live store, driver, and cwd as the terminal UI.
 
 ```js
 // Check that the runtime is ready
@@ -355,3 +356,109 @@ Custom commands registered in your app are available the same way:
 ```js
 await cli.exec('hello', ['from the console'])
 ```
+
+---
+
+## Desktop app (Tauri)
+
+The desktop app wraps the same browser `App.tsx` in a native window using Tauri.
+No changes to `App.tsx` are needed.
+
+### Prerequisites
+
+Install the [Rust toolchain](https://rustup.rs) and Tauri CLI:
+
+```bash
+npm install --save-dev @tauri-apps/cli
+npm install @tauri-apps/api
+```
+
+### Initialize Tauri
+
+Run this once from your project root to generate the `src-tauri/` scaffold:
+
+```bash
+npx tauri init
+```
+
+When prompted:
+- **App name**: `myapp`
+- **Window title**: `myapp`
+- **Where are your web assets?**: `../dist`
+- **URL of your dev server**: `http://127.0.0.1:1420`
+- **Frontend dev command**: `npm run dev:web`
+- **Frontend build command**: `npm run build:web`
+
+### Add desktop scripts to package.json
+
+```json
+"scripts": {
+  "dev:cli":       "node --import tsx src/cli-node.tsx",
+  "dev:web":       "vite --port 1420 --strictPort",
+  "build:web":     "vite build",
+  "dev:desktop":   "tauri dev",
+  "build:desktop": "tauri build",
+  "preview:web":   "vite preview"
+}
+```
+
+### Desktop vite.config.ts
+
+The desktop vite config differs from the browser one: it uses port 1420, disables
+`clearScreen`, and adds Tauri-specific HMR settings:
+
+```ts
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import { nodePolyfills } from 'devalbo-cli/vite';
+import { resolve } from 'node:path';
+
+const tauriDevHost = process.env.TAURI_DEV_HOST;
+
+export default defineConfig({
+  plugins: [react(), ...nodePolyfills()],
+  clearScreen: false,
+  server: {
+    host: tauriDevHost || '127.0.0.1',
+    port: 1420,
+    strictPort: true,
+    hmr: tauriDevHost
+      ? { protocol: 'ws', host: tauriDevHost, port: 1421 }
+      : undefined,
+    watch: { ignored: ['**/src-tauri/**'] },
+    headers: {
+      'Cross-Origin-Opener-Policy': 'same-origin',
+      'Cross-Origin-Embedder-Policy': 'require-corp'
+    }
+  },
+  optimizeDeps: {
+    exclude: ['@sqlite.org/sqlite-wasm']
+  },
+  resolve: {
+    alias: [
+      { find: '@', replacement: resolve(__dirname, 'src') },
+      { find: 'ink', replacement: 'ink-web' }
+    ]
+  }
+});
+```
+
+## Running the desktop app
+
+```bash
+npm run dev:desktop    # starts vite dev server + Tauri native window
+npm run build:desktop  # produces a native app bundle in src-tauri/target/release/bundle/
+```
+
+---
+
+## Quick reference — all run commands
+
+| Platform | Command | Description |
+|----------|---------|-------------|
+| Terminal | `npm run dev:cli` | Interactive shell in a real TTY — [details](#running-the-terminal-app) |
+| Browser (dev) | `npm run dev:web` | Vite dev server at http://localhost:3000 — [details](#running-the-browser-app) |
+| Browser (prod) | `npm run build:web && npm run preview:web` | Production build + local preview — [details](#running-the-browser-app) |
+| Browser console | `window.cli` | `cli.exec()`, `cli.ls()`, etc. in DevTools — [details](#browser-dev-console) |
+| Desktop (dev) | `npm run dev:desktop` | Vite + Tauri native window — [details](#running-the-desktop-app) |
+| Desktop (prod) | `npm run build:desktop` | Native app bundle — [details](#running-the-desktop-app) |

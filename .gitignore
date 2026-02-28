@@ -5,6 +5,8 @@ node_modules
 !/dist/**
 !/packages/*/dist/
 !/packages/*/dist/**
+packages/*/dist/**/*.js
+packages/*/dist/**/*.js.map
 coverage
 .turbo
 tests/results

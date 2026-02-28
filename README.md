@@ -40,7 +40,7 @@ allows `/dist/`). Run `build:dist` and commit the output before pushing so that
 
 ```bash
 npm run build:dist
-git add dist/
+git add dist/ packages/*/dist/
 git commit -m "release: build dist for vX.Y.Z"
 git push
 ```
@@ -60,6 +60,11 @@ Then in the consuming project:
 ```bash
 npm install    # automatically builds all @devalbo-cli/* file: dependencies
 ```
+
+## Creating an app
+
+See [`START_NEW_APP.md`](./START_NEW_APP.md) for a step-by-step guide to building
+a new app with terminal, browser, and desktop (Tauri) support.
 
 ## Examples
 
