@@ -1,61 +1,92 @@
-  1. Build the devalbo-cli packages first
+# Verifying naveditor depends on devalbo-cli and works after npm install
 
-  The core packages export from dist/ (compiled output), so they must be built before being
-  consumed:
+Each `@devalbo-cli/*` sub-package has a `prepare` script, so `npm install` in a
+consuming project automatically builds them. No manual build step is needed first.
 
-  cd /Users/ajb/Projects/devalbo-cli
-  pnpm run build  # or build individual packages: pnpm --filter @devalbo-cli/state build
+## 1. Clone and install
 
-  Check that dist/ exists for each package naveditor depends on:
-  ls packages/cli-shell/dist/
-  ls packages/state/dist/
-  ls packages/commands/dist/
-  ls packages/filesystem/dist/
-  ls packages/shared/dist/
-  ls packages/ui/dist/
+```bash
+git clone git@github.com:devalbo/devalbo-cli.git
+cd devalbo-cli/devalbo-editor
+npm install
+```
 
-  2. Run npm install in devalbo-editor
+npm will automatically run `prepare` on each `@devalbo-cli/*` `file:` dependency,
+building them in dependency-graph order.
 
-  cd devalbo-editor
-  npm install
+## 2. Verify symlinks and dist
 
-  3. Verify the symlinks resolved correctly
+```bash
+# Should list @devalbo-cli/* packages
+ls -la node_modules/@devalbo-cli/
 
-  npm workspace file: references become symlinks in node_modules. Check them:
+# Spot-check symlink targets
+readlink node_modules/@devalbo-cli/cli-shell
+# → ../../../packages/cli-shell  (root devalbo-cli package)
 
-  # Should exist and be symlinks
-  ls -la devalbo-editor/node_modules/@devalbo-cli/
+readlink node_modules/@devalbo-cli/editor-lib
+# → ../../packages/editor-lib  (intra-editor package)
 
-  # Spot-check a few — should point to the right source
-  readlink devalbo-editor/node_modules/@devalbo-cli/cli-shell
-  # → ../../../packages/cli-shell  (root devalbo-cli package)
+# Verify dist/ was built
+ls node_modules/@devalbo-cli/cli-shell/dist/
+ls node_modules/@devalbo-cli/state/dist/
+```
 
-  readlink devalbo-editor/node_modules/@devalbo-cli/editor-lib
-  # → ../../packages/editor-lib  (intra-editor package)
+## 3. Type-check
 
-  4. Verify the dist/ is accessible through the symlink
+```bash
+npm run type-check --workspace=naveditor
+```
 
-  ls devalbo-editor/node_modules/@devalbo-cli/cli-shell/dist/
-  ls devalbo-editor/node_modules/@devalbo-cli/state/dist/
+## 4. CLI (terminal)
 
-  If these are empty or missing, the packages weren't built — that's the failure point.
+Build and run naveditor as a CLI tool:
 
-  5. Run the type-check in naveditor
+```bash
+cd apps/naveditor
+npm run build       # vite build --mode node → dist/cli.js
+npm run cli         # node dist/cli.js
+```
 
-  cd devalbo-editor/apps/naveditor
-  npm run type-check
+Or run directly from source without building via naveditor-terminal:
 
-  This exercises all imports end-to-end through TypeScript's resolver. If any file: dep is
-  missing its dist/ or has wrong exports in its package.json, you'll see errors here.
+```bash
+cd apps/naveditor-terminal
+npm run terminal    # node --import tsx ../../packages/editor-lib/src/cli-node.tsx
+npm run interactive # same, with interactive flag
+```
 
-  6. Optionally do a build
+## 5. Browser
 
-  npm run build  # from naveditor dir
+Run the web app in dev mode:
 
-  This confirms the actual bundler (Vite) can also resolve everything at runtime.
+```bash
+cd apps/naveditor-web
+npm run dev         # vite dev server
+```
 
-  ---
-  Common failure modes to watch for:
-  - dist/ missing → package wasn't built yet (fix: build devalbo-cli packages first)
-  - Symlink points to wrong location → mistyped file: path in package.json
-  - Type errors on @devalbo-cli/* imports → dist/index.d.ts missing or types don't match
+Or build and preview:
+
+```bash
+npm run build
+npm run preview     # serves on http://127.0.0.1:4173
+```
+
+## 6. Desktop (Tauri)
+
+Requires Rust and the Tauri CLI to be installed.
+
+```bash
+cd apps/naveditor-desktop
+npm run dev         # tauri dev (starts vite + wraps in native window)
+npm run build       # tauri build (produces native app bundle)
+```
+
+---
+
+## Common failure modes
+
+- `dist/` missing → `prepare` script didn't run or failed; check for tsc errors
+- Symlink points to wrong location → mistyped `file:` path in package.json
+- Type errors on `@devalbo-cli/*` imports → `dist/index.d.ts` missing or types don't match
+- Desktop `dev`/`build` fails → Rust toolchain or Tauri CLI not installed
