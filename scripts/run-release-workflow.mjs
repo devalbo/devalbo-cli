@@ -1011,7 +1011,20 @@ async function main() {
     info(`Running: ${changesetVersionCommand()}`);
     run('pnpm', ['changeset', 'version'], { stdio: 'inherit' });
 
-    const newVersion = run('node', ['-e', "process.stdout.write(require('./package.json').version)"]).stdout.trim();
+    const workspaceVersion = run('node', [
+      '-e',
+      "process.stdout.write(require('./packages/shared/package.json').version)"
+    ]).stdout.trim();
+    if (!workspaceVersion) die('Could not read bumped workspace version.');
+
+    const rootPkg = JSON.parse(readFileSync(path.join(process.cwd(), 'package.json'), 'utf8'));
+    if (rootPkg.version !== workspaceVersion) {
+      info(`Syncing root package.json version: ${rootPkg.version} -> ${workspaceVersion}`);
+      rootPkg.version = workspaceVersion;
+      writeFileSync(path.join(process.cwd(), 'package.json'), JSON.stringify(rootPkg, null, 2) + '\n', 'utf8');
+    }
+
+    const newVersion = workspaceVersion;
     const releaseTag = `v${newVersion}`;
     info(`Versions bumped to ${newVersion}`);
 
