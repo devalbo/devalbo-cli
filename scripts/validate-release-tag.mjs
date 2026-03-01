@@ -23,7 +23,8 @@ function parseArgs(argv) {
 Validates that:
 - tag format is vX.Y.Z (optional pre-release/build suffix)
 - tag equals v<package.json version> at the given git ref
-- optionally, source ref itself is a version-bump commit`);
+- optionally, source ref itself is a version-bump commit
+- workspace package versions are synced with root version at the given ref`);
       process.exit(0);
     } else {
       throw new Error(`Unknown argument: ${arg}`);
@@ -51,6 +52,7 @@ try {
   if (requireBumpCommit) {
     console.log(`[release] version bump commit check passed (${result.changedVersionManifests.length} manifest changes)`);
   }
+  console.log(`[release] workspace version sync check passed`);
 } catch (err) {
   console.error(`ERROR: ${err instanceof Error ? err.message : String(err)}`);
   process.exit(1);

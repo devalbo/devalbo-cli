@@ -99,6 +99,17 @@ npm version <patch|minor|major> --workspaces --include-workspace-root
 git push origin main --follow-tags
 ```
 
+After that, rerun the wizard and choose **tagged release** again to dispatch `release-promote`.
+
+`npm version` requires a clean working tree. If the wizard reports dirty state, commit/stash first (or use the script's dirty override only for non-`npm version` paths).
+
+If `npm version` fails with `Invalid Version` due to stale npm lock metadata in this repo, remove npm lock artifacts and retry:
+
+```bash
+rm -f package-lock.json
+rm -f node_modules/.package-lock.json
+```
+
 It dispatches `.github/workflows/release-promote.yml`, which publishes the `release` branch and creates the source tag when tagging is enabled.
 
 ## Consuming this package

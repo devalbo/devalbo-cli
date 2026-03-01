@@ -97,11 +97,32 @@ export function getChangedVersionManifestsAtRef(ref = 'HEAD', options = {}) {
   return changed;
 }
 
+export function getWorkspaceVersionMismatchesAtRef(ref = 'HEAD', options = {}) {
+  const cwd = options.cwd || process.cwd();
+  const files = listVersionManifestFiles({ cwd });
+  const rootVersion = readVersionAtPathRef('package.json', ref, { cwd });
+  if (!rootVersion) {
+    throw new Error(`package.json version not found at '${ref}'`);
+  }
+
+  const mismatches = [];
+  for (const file of files) {
+    const version = readVersionAtPathRef(file, ref, { cwd });
+    if (!version) continue;
+    if (version !== rootVersion) {
+      mismatches.push({ file, version, expectedVersion: rootVersion });
+    }
+  }
+
+  return { rootVersion, mismatches };
+}
+
 export function validateReleaseTagAgainstRef({
   releaseTag,
   ref = 'HEAD',
   cwd = process.cwd(),
-  requireBumpCommit = false
+  requireBumpCommit = false,
+  requireWorkspaceSync = true
 }) {
   if (!releaseTag) {
     throw new Error('release_tag is required');
@@ -128,5 +149,14 @@ export function validateReleaseTagAgainstRef({
     );
   }
 
-  return { version, expectedTag, changedVersionManifests };
+  const { rootVersion, mismatches } = getWorkspaceVersionMismatchesAtRef(ref, { cwd });
+  if (requireWorkspaceSync && mismatches.length > 0) {
+    const details = mismatches.map((m) => `${m.file}=${m.version}`).join(', ');
+    throw new Error(
+      `workspace package versions are out of sync at '${ref}'. root= ${rootVersion}; mismatches: ${details}. ` +
+        `Run npm version convention: npm version ${rootVersion} --workspaces --include-workspace-root`
+    );
+  }
+
+  return { version, expectedTag, changedVersionManifests, workspaceVersionMismatches: mismatches };
 }
