@@ -237,6 +237,11 @@ function collectHeadReleaseTag() {
   return best?.tag || '';
 }
 
+function isWorkingTreeDirtyNow() {
+  const status = run('git', ['status', '--porcelain'], { allowFailure: true });
+  return Boolean((status.stdout || '').trim());
+}
+
 function collectRepoContext() {
   const inside = run('git', ['rev-parse', '--is-inside-work-tree'], { allowFailure: true });
   if (inside.status !== 0 || inside.stdout.trim() !== 'true') die('Not inside a git repository.');
@@ -468,8 +473,8 @@ function Wizard({ context, onDone, onCancel }) {
       }
       if (key.return) {
         if (confirmItems[selectedIndex] === 'Proceed') {
-          if (result.action === 'prepare_tagged_release' && context.workingTreeDirty) {
-            setErrorMessage('npm version requires a clean working tree. Commit/stash changes first.');
+          if (result.action === 'prepare_tagged_release' && isWorkingTreeDirtyNow()) {
+            setErrorMessage('npm version requires a clean working tree. Clean/stash changes, then press Enter to retry.');
             return;
           }
           if (context.workingTreeDirty && !result.allowDirty) {
