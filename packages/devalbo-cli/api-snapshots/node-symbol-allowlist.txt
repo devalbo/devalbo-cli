@@ -1,6 +1,0 @@
-# One symbol/import pattern per line.
-# Used by packaging artifact checks to validate node-only entry expectations.
-node:fs
-node:path
-node:module
-createRequire
