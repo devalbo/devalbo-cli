@@ -30,7 +30,7 @@
     "prepare": "npm run build"
   },
   "dependencies": {
-    "@devalbo-cli/shared": "file:../shared",
+    "@devalbo-cli/shared": "workspace:*",
     "@tauri-apps/api": "^2.10.1",
     "tinybase": "^7.3.4"
   }

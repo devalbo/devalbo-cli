@@ -30,14 +30,17 @@ importers:
       '@changesets/cli':
         specifier: ^2.29.8
         version: 2.29.8(@types/node@25.2.3)
+      '@devalbo-cli/cli-shell':
+        specifier: workspace:*
+        version: link:packages/cli-shell
       '@devalbo-cli/filesystem':
-        specifier: file:./packages/filesystem
+        specifier: workspace:*
         version: link:packages/filesystem
       '@devalbo-cli/shared':
-        specifier: file:./packages/shared
+        specifier: workspace:*
         version: link:packages/shared
       '@devalbo-cli/state':
-        specifier: file:./packages/state
+        specifier: workspace:*
         version: link:packages/state
       '@types/node':
         specifier: ^25.2.3
@@ -45,9 +48,6 @@ importers:
       '@types/react':
         specifier: ^19.2.14
         version: 19.2.14
-      devalbo-cli-shell:
-        specifier: file:./packages/cli-shell
-        version: link:packages/cli-shell
       tsup:
         specifier: ^8.3.5
         version: 8.5.1(postcss@8.5.6)(tsx@4.21.0)(typescript@5.9.3)(yaml@2.8.2)
@@ -71,19 +71,19 @@ importers:
   packages/cli-shell:
     dependencies:
       '@devalbo-cli/commands':
-        specifier: file:../commands
+        specifier: workspace:*
         version: link:../commands
       '@devalbo-cli/filesystem':
-        specifier: file:../filesystem
+        specifier: workspace:*
         version: link:../filesystem
       '@devalbo-cli/shared':
-        specifier: file:../shared
+        specifier: workspace:*
         version: link:../shared
       '@devalbo-cli/state':
-        specifier: file:../state
+        specifier: workspace:*
         version: link:../state
       '@devalbo-cli/ui':
-        specifier: file:../ui
+        specifier: workspace:*
         version: link:../ui
       '@optique/core':
         specifier: ^0.10.3
@@ -123,7 +123,7 @@ importers:
   packages/commands:
     dependencies:
       '@devalbo-cli/shared':
-        specifier: file:../shared
+        specifier: workspace:*
         version: link:../shared
       effect:
         specifier: ^3.19.18
@@ -135,7 +135,7 @@ importers:
   packages/filesystem:
     dependencies:
       '@devalbo-cli/shared':
-        specifier: file:../shared
+        specifier: workspace:*
         version: link:../shared
       '@tauri-apps/api':
         specifier: ^2.10.1
@@ -147,7 +147,7 @@ importers:
   packages/shared:
     dependencies:
       '@devalbo-cli/branded-types':
-        specifier: file:../branded-types
+        specifier: workspace:*
         version: link:../branded-types
       '@inrupt/vocab-common-rdf':
         specifier: ^1.0.5
@@ -168,7 +168,7 @@ importers:
   packages/state:
     dependencies:
       '@devalbo-cli/shared':
-        specifier: file:../shared
+        specifier: workspace:*
         version: link:../shared
       react:
         specifier: ^19.2.4
@@ -193,7 +193,7 @@ importers:
   packages/ui:
     dependencies:
       '@devalbo-cli/shared':
-        specifier: file:../shared
+        specifier: workspace:*
         version: link:../shared
       ink:
         specifier: ^6.7.0

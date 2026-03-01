@@ -17,7 +17,7 @@
     "prepare": "npm run build"
   },
   "dependencies": {
-    "@devalbo-cli/shared": "file:../shared",
+    "@devalbo-cli/shared": "workspace:*",
     "effect": "^3.19.18"
   },
   "peerDependencies": {

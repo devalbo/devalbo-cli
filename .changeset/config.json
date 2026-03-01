@@ -4,7 +4,6 @@
   "commit": false,
   "fixed": [
     [
-      "devalbo-cli",
       "@devalbo-cli/branded-types",
       "@devalbo-cli/cli-shell",
       "@devalbo-cli/commands",

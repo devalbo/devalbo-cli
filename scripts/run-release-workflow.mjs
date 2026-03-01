@@ -834,7 +834,6 @@ function assertTooling(dryRun) {
 
 function writeChangesetFile(bumpKind) {
   const allPackages = [
-    'devalbo-cli',
     '@devalbo-cli/branded-types',
     '@devalbo-cli/cli-shell',
     '@devalbo-cli/commands',

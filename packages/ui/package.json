@@ -17,7 +17,7 @@
     "prepare": "npm run build"
   },
   "dependencies": {
-    "@devalbo-cli/shared": "file:../shared",
+    "@devalbo-cli/shared": "workspace:*",
     "ink-web": "^0.1.11"
   },
   "devDependencies": {
