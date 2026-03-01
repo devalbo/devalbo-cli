@@ -1,0 +1,23 @@
+{
+  "$schema": "https://unpkg.com/@changesets/config@3.1.2/schema.json",
+  "changelog": "@changesets/cli/changelog",
+  "commit": false,
+  "fixed": [
+    [
+      "devalbo-cli",
+      "@devalbo-cli/branded-types",
+      "@devalbo-cli/cli-shell",
+      "@devalbo-cli/commands",
+      "@devalbo-cli/filesystem",
+      "@devalbo-cli/shared",
+      "@devalbo-cli/state",
+      "@devalbo-cli/ui",
+      "@devalbo-cli/worker-bridge"
+    ]
+  ],
+  "linked": [],
+  "access": "public",
+  "baseBranch": "main",
+  "updateInternalDependencies": "patch",
+  "ignore": []
+}

@@ -34,24 +34,10 @@ pnpm test                # test all packages
 
 ## Publishing a release
 
-### 1. Create bump commit and tag (npm convention)
+This repo uses [Changesets](https://github.com/changesets/changesets) for version
+management. All workspace packages are versioned together (fixed versioning).
 
-Use npm's built-in versioning flow so the version bump and `vX.Y.Z` tag are created together:
-
-```bash
-# patch, minor, or major
-npm version patch --workspaces --include-workspace-root
-```
-
-That command updates `package.json` files, creates the bump commit, and creates a matching tag.
-
-Push commit + tags:
-
-```bash
-git push origin main --follow-tags
-```
-
-### 2. Configure token for release workflow dispatch
+### 1. Configure token for release workflow dispatch
 
 Set a GitHub token with `repo` scope (classic PAT):
 
@@ -62,9 +48,7 @@ GITHUB_TOKEN=<your-token>
 
 The release script auto-loads `.env` from repo root. `GH_TOKEN` is also accepted.
 
-### 3. Run the release workflow script
-
-Use the interactive Ink wizard:
+### 2. Run the release wizard
 
 ```bash
 # Dry run (default)
@@ -76,9 +60,11 @@ bash scripts/run-release-workflow.sh --execute
 
 In the wizard:
 
-- choose **tagged release** (if no `v*` tag is on `HEAD`, the wizard will guide you through `npm version` bump prep first)
-- or choose **non-tagged release** to promote only the `release` branch
+- choose **tagged release** — if no `v*` tag is on `HEAD`, the wizard creates a
+  changeset, runs `pnpm changeset version`, commits, and tags automatically
+- choose **non-tagged release** to promote only the `release` branch
 - use **review commit history** for major/minor/maintenance/all history views
+- select the **source commit** from a paged list of recent `main` commits
 
 Optional dirty-tree override:
 
@@ -86,31 +72,36 @@ Optional dirty-tree override:
 bash scripts/run-release-workflow.sh --execute --allow-dirty
 ```
 
-The script enforces strict tagged-release rules:
+### How the tagged release flow works
+
+1. Wizard detects no `v*` tag on `HEAD`
+2. You pick a bump type (patch / minor / major)
+3. Wizard writes a changeset file, runs `pnpm changeset version`, commits all
+   updated `package.json` files, and creates a `vX.Y.Z` tag
+4. You push: `git push origin main --follow-tags`
+5. Rerun the wizard and choose **tagged release** to dispatch `release-promote`
+
+### Strict tagged-release rules
 
 - `release_tag` must equal `v<package.json version>` at the source commit
 - tagged releases must come from a version-bump commit
+- all workspace package versions must be in sync
 - source commit must be on `origin/main`
 
-If no `v*` tag exists on `HEAD`, the tagged-release path will run/preview:
+### Manual changeset workflow
+
+You can also create changesets outside the wizard:
 
 ```bash
-npm version <patch|minor|major> --workspaces --include-workspace-root
+pnpm changeset              # interactive: describe changes and pick bump type
+pnpm changeset version      # apply: bump versions and consume changesets
+git add . && git commit -m "0.X.Y"
+git tag -a v0.X.Y -m "0.X.Y"
 git push origin main --follow-tags
 ```
 
-After that, rerun the wizard and choose **tagged release** again to dispatch `release-promote`.
-
-`npm version` requires a clean working tree. If the wizard reports dirty state, commit/stash first (or use the script's dirty override only for non-`npm version` paths).
-
-If `npm version` fails with `Invalid Version` due to stale npm lock metadata in this repo, remove npm lock artifacts and retry:
-
-```bash
-rm -f package-lock.json
-rm -f node_modules/.package-lock.json
-```
-
-It dispatches `.github/workflows/release-promote.yml`, which publishes the `release` branch and creates the source tag when tagging is enabled.
+It dispatches `.github/workflows/release-promote.yml`, which publishes the
+`release` branch and creates the source tag when tagging is enabled.
 
 ## Consuming this package
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import { spawnSync } from 'node:child_process';
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import process from 'node:process';
 import React, { useMemo, useState } from 'react';
@@ -125,12 +125,12 @@ function parseSemver(version) {
   return { major: Number(m[1]), minor: Number(m[2]), patch: Number(m[3]) };
 }
 
-function npmVersionConventionCommand() {
-  return 'npm version <patch|minor|major> --workspaces --include-workspace-root --no-workspaces-update';
+function changesetVersionCommand() {
+  return 'pnpm changeset version';
 }
 
-function npmVersionCommandForBump(bumpKind) {
-  return `npm version ${bumpKind} --workspaces --include-workspace-root --no-workspaces-update`;
+function changesetBumpLabel(bumpKind) {
+  return `${bumpKind} (via changesets)`;
 }
 
 function compareSemver(a, b) {
@@ -330,9 +330,9 @@ function Wizard({ context, onDone, onCancel }) {
   const dirtyOverrideItems = useMemo(() => ['Allow dirty and continue', 'Cancel release'], []);
   const bumpMenuItems = useMemo(
     () => [
-      { key: 'patch', label: `patch (${npmVersionCommandForBump('patch')})` },
-      { key: 'minor', label: `minor (${npmVersionCommandForBump('minor')})` },
-      { key: 'major', label: `major (${npmVersionCommandForBump('major')})` }
+      { key: 'patch', label: changesetBumpLabel('patch') },
+      { key: 'minor', label: changesetBumpLabel('minor') },
+      { key: 'major', label: changesetBumpLabel('major') }
     ],
     []
   );
@@ -632,14 +632,14 @@ function Wizard({ context, onDone, onCancel }) {
     `working_tree_dirty: ${String(context.workingTreeDirty)}`,
     `mode: ${context.dryRun ? 'DRY RUN (no GitHub updates)' : 'EXECUTE (will dispatch workflow)'}`,
     `allow_dirty: ${String(result.allowDirty)}`,
-    `action: ${result.action === 'prepare_tagged_release' ? 'prepare tagged release (npm version)' : 'dispatch release workflow'}`,
+    `action: ${result.action === 'prepare_tagged_release' ? 'prepare tagged release (changesets)' : 'dispatch release workflow'}`,
     result.action === 'dispatch' ? `source_ref: ${result.sourceRef}` : null,
     result.action === 'prepare_tagged_release'
-      ? `npm_version_command: ${npmVersionCommandForBump(result.npmVersionBump || 'patch')}`
+      ? `changeset_bump: ${result.npmVersionBump || 'patch'}`
       : null,
     `create_tag: ${String(result.createTag)}`,
     result.createTag ? `release_tag: ${result.releaseTag || '(none yet)'}` : null,
-    `npm_version_convention: ${npmVersionConventionCommand()}`,
+    `version_tool: changesets (${changesetVersionCommand()})`,
     result.createTag ? 'tagged_release_rule: source commit must be a version-bump commit' : null
   ].filter(Boolean);
   const selectedHistory = bumpHistories.find((section) => section.kind === selectedHistoryKind) || null;
@@ -712,8 +712,8 @@ function Wizard({ context, onDone, onCancel }) {
       ? React.createElement(
           Box,
           { flexDirection: 'column' },
-          React.createElement(Text, { bold: true }, 'Prepare tagged release: select npm version bump'),
-          React.createElement(Text, null, 'No v* tag found on HEAD; choose a bump to create commit + tag.'),
+          React.createElement(Text, { bold: true }, 'Prepare tagged release: select version bump'),
+          React.createElement(Text, null, 'No v* tag found on HEAD; choose a bump type (uses changesets).'),
           React.createElement(Text, null, ''),
           ...bumpMenuItems.map((item, idx) =>
             React.createElement(
@@ -831,6 +831,28 @@ function assertTooling(dryRun) {
   }
 }
 
+
+function writeChangesetFile(bumpKind) {
+  const allPackages = [
+    'devalbo-cli',
+    '@devalbo-cli/branded-types',
+    '@devalbo-cli/cli-shell',
+    '@devalbo-cli/commands',
+    '@devalbo-cli/filesystem',
+    '@devalbo-cli/shared',
+    '@devalbo-cli/state',
+    '@devalbo-cli/ui',
+    '@devalbo-cli/worker-bridge'
+  ];
+
+  const header = allPackages.map((pkg) => `'${pkg}': ${bumpKind}`).join('\n');
+  const content = `---\n${header}\n---\n\nRelease ${bumpKind} bump\n`;
+
+  const id = `release-${Date.now()}`;
+  const filePath = path.join(process.cwd(), '.changeset', `${id}.md`);
+  writeFileSync(filePath, content, 'utf8');
+  return filePath;
+}
 
 function verifyRepoState(createTag, releaseTag, options = {}) {
   const allowDirty = options.allowDirty === true;
@@ -974,18 +996,31 @@ async function main() {
 
   if (interview.action === 'prepare_tagged_release') {
     const bump = interview.npmVersionBump || 'patch';
-    const cmd = npmVersionCommandForBump(bump);
     if (dryRun) {
-      info('DRY RUN enabled. Skipping npm version command execution.');
-      console.log(`Would run: ${cmd}`);
-      console.log('Then push tags/commits with: git push origin main --follow-tags');
+      info('DRY RUN enabled. Skipping changeset version bump.');
+      console.log(`Would create changeset for: ${bump}`);
+      console.log(`Would run: ${changesetVersionCommand()}`);
+      console.log('Then commit, tag, and push: git push origin main --follow-tags');
       console.log('Then rerun this wizard and choose tagged release.');
       return;
     }
 
-    info(`Running npm version command: ${cmd}`);
-    run('npm', ['version', bump, '--workspaces', '--include-workspace-root'], { stdio: 'inherit' });
-    info('npm version completed.');
+    info(`Creating changeset for ${bump} bump...`);
+    const changesetFile = writeChangesetFile(bump);
+    info(`Changeset written: ${changesetFile}`);
+
+    info(`Running: ${changesetVersionCommand()}`);
+    run('pnpm', ['changeset', 'version'], { stdio: 'inherit' });
+
+    const newVersion = run('node', ['-e', "process.stdout.write(require('./package.json').version)"]).stdout.trim();
+    const releaseTag = `v${newVersion}`;
+    info(`Versions bumped to ${newVersion}`);
+
+    run('git', ['add', '.']);
+    run('git', ['commit', '-m', newVersion]);
+    run('git', ['tag', '-a', releaseTag, '-m', newVersion, 'HEAD']);
+    info(`Commit and tag ${releaseTag} created.`);
+
     console.log('Next step: push commit + tags, then rerun this wizard and choose tagged release.');
     console.log('git push origin main --follow-tags');
     return;
@@ -1029,7 +1064,7 @@ async function main() {
   console.log(`  create_tag:     ${String(createTag)}`);
   if (createTag) console.log(`  release_tag:    ${releaseTag}`);
   if (createTag) console.log(`  expected_tag:   ${expectedTagForVersion(repo.rootVersion)}`);
-  console.log(`  npm_version:    ${npmVersionConventionCommand()}`);
+  console.log(`  version_tool:   changesets (${changesetVersionCommand()})`);
   console.log(`  allow_dirty:    ${String(effectiveAllowDirty)}`);
   console.log('');
   console.log('Commit history by bump type:');

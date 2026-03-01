@@ -28,7 +28,9 @@
     "prepare": "npm run build:dist",
     "type-check": "pnpm run --recursive --if-present type-check",
     "test": "pnpm run --recursive --if-present test",
-    "test:workspace": "vitest run"
+    "test:workspace": "vitest run",
+    "changeset": "changeset",
+    "version-packages": "changeset version"
   },
   "files": [
     "dist",
@@ -45,13 +47,14 @@
     "react-dom": "^19.2.4"
   },
   "devDependencies": {
-    "tsup": "^8.3.5",
-    "devalbo-cli-shell": "file:./packages/cli-shell",
+    "@changesets/cli": "^2.29.8",
     "@devalbo-cli/filesystem": "file:./packages/filesystem",
     "@devalbo-cli/shared": "file:./packages/shared",
     "@devalbo-cli/state": "file:./packages/state",
     "@types/node": "^25.2.3",
     "@types/react": "^19.2.14",
+    "devalbo-cli-shell": "file:./packages/cli-shell",
+    "tsup": "^8.3.5",
     "typescript": "^5.9.3",
     "vitest": "^4.0.18"
   },

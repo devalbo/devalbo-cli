@@ -36,8 +36,8 @@ export function versionFromReleaseTag(releaseTag) {
   return String(releaseTag || '').replace(/^v/, '');
 }
 
-export function npmVersionCommandForTag(releaseTag) {
-  return `npm version ${versionFromReleaseTag(releaseTag)} --workspaces --include-workspace-root`;
+export function versionBumpCommandHint() {
+  return 'pnpm changeset version (or use the release wizard)';
 }
 
 export function readPackageVersionAtRef(ref = 'HEAD', options = {}) {
@@ -133,19 +133,17 @@ export function validateReleaseTagAgainstRef({
   const version = readPackageVersionAtRef(ref, { cwd });
   const expectedTag = expectedTagForVersion(version);
   if (releaseTag !== expectedTag) {
-    const cmd = npmVersionCommandForTag(expectedTag);
     throw new Error(
       `release_tag must match package.json version at '${ref}': expected '${expectedTag}', got '${releaseTag}'. ` +
-        `Use npm version convention: ${cmd}`
+        `Use: ${versionBumpCommandHint()}`
     );
   }
 
   const changedVersionManifests = getChangedVersionManifestsAtRef(ref, { cwd });
   if (requireBumpCommit && changedVersionManifests.length === 0) {
-    const cmd = npmVersionCommandForTag(releaseTag);
     throw new Error(
       `release tag '${releaseTag}' requires source ref '${ref}' to be a version-bump commit (no package version changes vs ${ref}^). ` +
-        `Use npm version convention: ${cmd}`
+        `Use: ${versionBumpCommandHint()}`
     );
   }
 
@@ -153,8 +151,8 @@ export function validateReleaseTagAgainstRef({
   if (requireWorkspaceSync && mismatches.length > 0) {
     const details = mismatches.map((m) => `${m.file}=${m.version}`).join(', ');
     throw new Error(
-      `workspace package versions are out of sync at '${ref}'. root= ${rootVersion}; mismatches: ${details}. ` +
-        `Run npm version convention: npm version ${rootVersion} --workspaces --include-workspace-root`
+      `workspace package versions are out of sync at '${ref}'. root=${rootVersion}; mismatches: ${details}. ` +
+        `Use: ${versionBumpCommandHint()}`
     );
   }
 
