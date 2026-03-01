@@ -13,6 +13,7 @@ import {
 const MAIN_BRANCH = process.env.MAIN_BRANCH || 'main';
 const RELEASE_BRANCH = process.env.RELEASE_BRANCH || 'release';
 const WORKFLOW_FILE = process.env.WORKFLOW_FILE || 'release-promote.yml';
+const SOURCE_REF_PAGE_SIZE = 6;
 
 function loadDotEnvFromRepo() {
   const envPath = path.join(process.cwd(), '.env');
@@ -237,6 +238,28 @@ function collectHeadReleaseTag() {
   return best?.tag || '';
 }
 
+function collectRecentMainCommits(limit = 20) {
+  const result = run('git', ['log', MAIN_BRANCH, `-n${limit}`, '--pretty=format:%H%x09%h%x09%cI%x09%s'], {
+    allowFailure: true
+  });
+  return (result.stdout || '')
+    .split('\n')
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .map((line) => {
+      const [sha, shortSha, timestamp, ...rest] = line.split('\t');
+      const subject = rest.join('\t');
+      return {
+        sha,
+        shortSha,
+        timestamp,
+        subject,
+        label: `${shortSha}  ${timestamp}  ${subject}`
+      };
+    })
+    .filter((c) => c.sha);
+}
+
 function isWorkingTreeDirtyNow() {
   const status = run('git', ['status', '--porcelain'], { allowFailure: true });
   return Boolean((status.stdout || '').trim());
@@ -253,14 +276,18 @@ function collectRepoContext() {
 
   const rootVersion = run('node', ['-e', "process.stdout.write(require('./package.json').version)"]).stdout.trim();
   if (!rootVersion) die('Could not read version from package.json.');
+  const currentHeadSha = run('git', ['rev-parse', 'HEAD']).stdout.trim();
   const workingTreeStatus = run('git', ['status', '--porcelain']).stdout.trim();
   fetchLatestTags();
   const headReleaseTag = collectHeadReleaseTag();
+  const recentMainCommits = collectRecentMainCommits(200);
   const bumpHistories = collectReleaseBumpHistories();
 
   return {
     ownerRepo,
     rootVersion,
+    currentHeadSha,
+    recentMainCommits,
     workingTreeDirty: Boolean(workingTreeStatus),
     headReleaseTag,
     bumpHistories,
@@ -270,15 +297,18 @@ function collectRepoContext() {
 
 function Wizard({ context, onDone, onCancel }) {
   const bumpHistories = Array.isArray(context.bumpHistories) ? context.bumpHistories : [];
+  const recentMainCommits = Array.isArray(context.recentMainCommits) ? context.recentMainCommits : [];
   const [step, setStep] = useState('releaseType');
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [selectedHistoryKind, setSelectedHistoryKind] = useState(null);
+  const [sourceRefPage, setSourceRefPage] = useState(0);
   const [result, setResult] = useState({
     createTag: false,
     releaseTag: '',
     allowDirty: context.allowDirty === true,
     action: 'dispatch',
-    npmVersionBump: ''
+    npmVersionBump: '',
+    sourceRef: context.currentHeadSha
   });
   const [errorMessage, setErrorMessage] = useState('');
 
@@ -310,6 +340,38 @@ function Wizard({ context, onDone, onCancel }) {
     () => bumpHistories.map((section) => ({ key: section.kind, label: section.label })),
     [bumpHistories]
   );
+  const sourceRefTotalPages = Math.max(1, Math.ceil(recentMainCommits.length / SOURCE_REF_PAGE_SIZE));
+  const sourceRefPageCommits = useMemo(
+    () =>
+      recentMainCommits.slice(
+        sourceRefPage * SOURCE_REF_PAGE_SIZE,
+        sourceRefPage * SOURCE_REF_PAGE_SIZE + SOURCE_REF_PAGE_SIZE
+      ),
+    [recentMainCommits, sourceRefPage]
+  );
+  const sourceRefMenuItems = useMemo(() => {
+    const items = [];
+    if (sourceRefPage > 0) {
+      items.push({ key: 'newer', kind: 'newer', label: '↑ Newer commits' });
+    }
+    for (const commit of sourceRefPageCommits) {
+      items.push({ key: commit.sha, kind: 'commit', commit, label: commit.label });
+    }
+    if (sourceRefPage < sourceRefTotalPages - 1) {
+      items.push({ key: 'older', kind: 'older', label: '↓ Older commits' });
+    }
+    return items;
+  }, [sourceRefPage, sourceRefPageCommits, sourceRefTotalPages]);
+
+  function openSourceRefMenuWithHeadDefault() {
+    const headCommitIndex = recentMainCommits.findIndex((c) => c.sha === context.currentHeadSha);
+    const initialPage = headCommitIndex >= 0 ? Math.floor(headCommitIndex / SOURCE_REF_PAGE_SIZE) : 0;
+    const inPageIndex = headCommitIndex >= 0 ? headCommitIndex % SOURCE_REF_PAGE_SIZE : 0;
+    setStep('sourceRefMenu');
+    setSourceRefPage(initialPage);
+    setSelectedIndex(initialPage > 0 ? inPageIndex + 1 : inPageIndex);
+    setErrorMessage('');
+  }
 
   useInput((input, key) => {
     if (key.escape) {
@@ -327,6 +389,12 @@ function Wizard({ context, onDone, onCancel }) {
       }
       if (step === 'historyDetail') {
         setStep('historyMenu');
+        setSelectedIndex(0);
+        setErrorMessage('');
+        return;
+      }
+      if (step === 'sourceRefMenu') {
+        setStep('confirm');
         setSelectedIndex(0);
         setErrorMessage('');
         return;
@@ -358,11 +426,10 @@ function Wizard({ context, onDone, onCancel }) {
             releaseTag: context.headReleaseTag,
             allowDirty: result.allowDirty,
             action: 'dispatch',
-            npmVersionBump: ''
+            npmVersionBump: '',
+            sourceRef: context.currentHeadSha
           });
-          setStep('confirm');
-          setSelectedIndex(0);
-          setErrorMessage('');
+          openSourceRefMenuWithHeadDefault();
           return;
         }
         if (selected.key === 'none') {
@@ -371,11 +438,10 @@ function Wizard({ context, onDone, onCancel }) {
             releaseTag: '',
             allowDirty: result.allowDirty,
             action: 'dispatch',
-            npmVersionBump: ''
+            npmVersionBump: '',
+            sourceRef: context.currentHeadSha
           });
-          setStep('confirm');
-          setSelectedIndex(0);
-          setErrorMessage('');
+          openSourceRefMenuWithHeadDefault();
           return;
         }
         if (selected.key === 'history') {
@@ -405,7 +471,8 @@ function Wizard({ context, onDone, onCancel }) {
             releaseTag: '',
             allowDirty: result.allowDirty,
             action: 'prepare_tagged_release',
-            npmVersionBump: selected.key
+            npmVersionBump: selected.key,
+            sourceRef: context.currentHeadSha
           });
           setStep('confirm');
           setSelectedIndex(0);
@@ -456,6 +523,52 @@ function Wizard({ context, onDone, onCancel }) {
     if (step === 'historyDetail') {
       if (key.return || input.toLowerCase() === 'b') {
         setStep('historyMenu');
+        setSelectedIndex(0);
+        setErrorMessage('');
+      }
+      return;
+    }
+
+    if (step === 'sourceRefMenu') {
+      if (sourceRefMenuItems.length === 0) {
+        setErrorMessage('No recent commits found on main.');
+        return;
+      }
+      if (key.upArrow) {
+        setSelectedIndex((i) => (i - 1 + sourceRefMenuItems.length) % sourceRefMenuItems.length);
+        return;
+      }
+      if (key.downArrow) {
+        setSelectedIndex((i) => (i + 1) % sourceRefMenuItems.length);
+        return;
+      }
+      if (key.return) {
+        const selected = sourceRefMenuItems[selectedIndex];
+        if (!selected) {
+          setErrorMessage('Unable to select source commit.');
+          return;
+        }
+        if (selected.kind === 'newer') {
+          const nextPage = Math.max(0, sourceRefPage - 1);
+          setSourceRefPage(nextPage);
+          setSelectedIndex(nextPage > 0 ? 1 : 0);
+          setErrorMessage('');
+          return;
+        }
+        if (selected.kind === 'older') {
+          const nextPage = Math.min(sourceRefTotalPages - 1, sourceRefPage + 1);
+          setSourceRefPage(nextPage);
+          setSelectedIndex(nextPage > 0 ? 1 : 0);
+          setErrorMessage('');
+          return;
+        }
+        setResult((r) => ({ ...r, sourceRef: selected.commit.sha }));
+        setStep('confirm');
+        setSelectedIndex(0);
+        setErrorMessage('');
+      }
+      if (input.toLowerCase() === 'b') {
+        setStep('releaseType');
         setSelectedIndex(0);
         setErrorMessage('');
       }
@@ -520,6 +633,7 @@ function Wizard({ context, onDone, onCancel }) {
     `mode: ${context.dryRun ? 'DRY RUN (no GitHub updates)' : 'EXECUTE (will dispatch workflow)'}`,
     `allow_dirty: ${String(result.allowDirty)}`,
     `action: ${result.action === 'prepare_tagged_release' ? 'prepare tagged release (npm version)' : 'dispatch release workflow'}`,
+    result.action === 'dispatch' ? `source_ref: ${result.sourceRef}` : null,
     result.action === 'prepare_tagged_release'
       ? `npm_version_command: ${npmVersionCommandForBump(result.npmVersionBump || 'patch')}`
       : null,
@@ -565,6 +679,33 @@ function Wizard({ context, onDone, onCancel }) {
           ),
           React.createElement(Text, null, ''),
           React.createElement(Text, { color: 'cyan' }, 'Press Enter to open, or b/Esc to go back.')
+        )
+      : null,
+    step === 'sourceRefMenu'
+      ? React.createElement(
+          Box,
+          { flexDirection: 'column' },
+          React.createElement(Text, { bold: true }, 'Choose source commit'),
+          React.createElement(Text, null, 'Select from recent commits on main (6 per page).'),
+          React.createElement(Text, null, `Current HEAD: ${context.currentHeadSha}`),
+          React.createElement(Text, null, `Page ${sourceRefPage + 1} of ${sourceRefTotalPages}`),
+          React.createElement(Text, null, ''),
+          ...sourceRefMenuItems.map((item, idx) =>
+            React.createElement(
+              Text,
+              {
+                key: item.key,
+                color: idx === selectedIndex ? 'cyan' : item.kind === 'commit' ? undefined : 'yellow'
+              },
+              `${idx === selectedIndex ? '›' : ' '} ${item.label}`
+            )
+          ),
+          React.createElement(Text, null, ''),
+          React.createElement(
+            Text,
+            { color: 'cyan' },
+            'Use top/bottom navigation items to move newer/older through history. Press Enter to select, or b/Esc to go back.'
+          )
         )
       : null,
     step === 'bumpMenu'
@@ -693,6 +834,7 @@ function assertTooling(dryRun) {
 
 function verifyRepoState(createTag, releaseTag, options = {}) {
   const allowDirty = options.allowDirty === true;
+  const sourceRef = options.sourceRef || 'HEAD';
   info(`Fetching origin/${MAIN_BRANCH}...`);
   run('git', ['fetch', 'origin', MAIN_BRANCH], { stdio: 'inherit' });
 
@@ -714,13 +856,24 @@ function verifyRepoState(createTag, releaseTag, options = {}) {
   if (headSha !== originMainSha) {
     die(`Local ${MAIN_BRANCH} is not up to date with origin/${MAIN_BRANCH}. Pull/push so they match exactly.`);
   }
+  const sourceShaResult = run('git', ['rev-parse', sourceRef], { allowFailure: true });
+  if (sourceShaResult.status !== 0) {
+    die(`Invalid source commit ref: '${sourceRef}'`);
+  }
+  const sourceSha = (sourceShaResult.stdout || '').trim();
+  const sourceOnMain = run('git', ['merge-base', '--is-ancestor', sourceSha, `origin/${MAIN_BRANCH}`], {
+    allowFailure: true
+  });
+  if (sourceOnMain.status !== 0) {
+    die(`Source ref '${sourceRef}' (${sourceSha}) is not reachable from origin/${MAIN_BRANCH}.`);
+  }
 
   if (createTag) {
     const tagExists = run('git', ['ls-remote', '--tags', 'origin', `refs/tags/${releaseTag}`]).stdout.trim();
     if (tagExists) die(`Tag already exists on origin: ${releaseTag}`);
   }
 
-  return { headSha, baselineStatusPorcelain: statusPorcelain };
+  return { headSha, sourceSha, baselineStatusPorcelain: statusPorcelain };
 }
 
 function verifyBuildIsClean(options = {}) {
@@ -744,11 +897,11 @@ function verifyBuildIsClean(options = {}) {
   }
 }
 
-function createPayload(headSha, createTag, releaseTag) {
+function createPayload(sourceSha, createTag, releaseTag) {
   const body = {
     ref: MAIN_BRANCH,
     inputs: {
-      source_sha: headSha,
+      source_sha: sourceSha,
       release_branch: RELEASE_BRANCH,
       create_tag: String(createTag)
     }
@@ -803,6 +956,8 @@ async function main() {
     mainBranch: MAIN_BRANCH,
     releaseBranch: RELEASE_BRANCH,
     rootVersion: repo.rootVersion,
+    currentHeadSha: repo.currentHeadSha,
+    recentMainCommits: repo.recentMainCommits,
     workingTreeDirty: repo.workingTreeDirty,
     headReleaseTag: repo.headReleaseTag,
     bumpHistories: repo.bumpHistories,
@@ -836,16 +991,17 @@ async function main() {
     return;
   }
 
-  const { createTag, releaseTag } = interview;
+  const { createTag, releaseTag, sourceRef } = interview;
   const effectiveAllowDirty = allowDirty || interview.allowDirty === true;
-  const { headSha, baselineStatusPorcelain } = verifyRepoState(createTag, releaseTag, {
-    allowDirty: effectiveAllowDirty
+  const { headSha, sourceSha, baselineStatusPorcelain } = verifyRepoState(createTag, releaseTag, {
+    allowDirty: effectiveAllowDirty,
+    sourceRef
   });
   if (!dryRun && createTag) {
     try {
       validateReleaseTagAgainstRef({
         releaseTag,
-        ref: headSha,
+        ref: sourceSha,
         cwd: process.cwd(),
         requireBumpCommit: true
       });
@@ -853,16 +1009,22 @@ async function main() {
       die(err instanceof Error ? err.message : String(err));
     }
   }
-  verifyBuildIsClean({ allowDirty: effectiveAllowDirty, baselineStatusPorcelain });
+  if (sourceSha === headSha) {
+    verifyBuildIsClean({ allowDirty: effectiveAllowDirty, baselineStatusPorcelain });
+  } else {
+    info(
+      `Skipping local build verification because selected source ref (${sourceSha}) is not current HEAD (${headSha}).`
+    );
+  }
 
-  const payload = createPayload(headSha, createTag, releaseTag);
+  const payload = createPayload(sourceSha, createTag, releaseTag);
 
   console.log('');
   console.log('Dispatch details:');
   console.log(`  repo:           ${repo.ownerRepo}`);
   console.log(`  workflow:       ${WORKFLOW_FILE}`);
   console.log(`  ref:            ${MAIN_BRANCH}`);
-  console.log(`  source_sha:     ${headSha}`);
+  console.log(`  source_sha:     ${sourceSha}`);
   console.log(`  release_branch: ${RELEASE_BRANCH}`);
   console.log(`  create_tag:     ${String(createTag)}`);
   if (createTag) console.log(`  release_tag:    ${releaseTag}`);
