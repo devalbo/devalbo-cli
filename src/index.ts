@@ -49,9 +49,12 @@ export {
   createDevalboStore,
   AppConfigProvider,
   useAppConfig,
-  StoreContext
+  StoreContext,
+  FILE_TREE_TABLE
 } from '@devalbo-cli/state';
 
 export { createFilesystemDriver } from '@devalbo-cli/filesystem';
 
 export { BrowserConnectivityService } from '@devalbo-cli/shared';
+
+export { Spinner, useKeyboard } from '@devalbo-cli/ui';

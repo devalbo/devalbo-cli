@@ -2021,6 +2021,15 @@ var TextInput = ({
 import { useEffect as useEffect2, useState as useState2 } from "react";
 import { Text as Text3 } from "ink";
 import { jsx as jsx3 } from "react/jsx-runtime";
+var Spinner = ({ type = "dots", label = "Loading..." }) => {
+  const frames = type === "dots" ? [".", "..", "..."] : [".", "..", "..."];
+  const [index, setIndex] = useState2(0);
+  useEffect2(() => {
+    const id = setInterval(() => setIndex((n) => (n + 1) % frames.length), 200);
+    return () => clearInterval(id);
+  }, [frames.length]);
+  return /* @__PURE__ */ jsx3(Text3, { children: `${label} ${frames[index]}` });
+};
 
 // packages/ui/src/primitives/select.tsx
 import React4 from "react";
@@ -2085,6 +2094,15 @@ import { jsx as jsx10, jsxs as jsxs3 } from "react/jsx-runtime";
 
 // packages/ui/src/hooks/use-keyboard.ts
 import { useInput as useInput3 } from "ink";
+var useKeyboard = (handler) => {
+  useInput3((input, key) => {
+    handler(input, {
+      upArrow: Boolean(key.upArrow),
+      downArrow: Boolean(key.downArrow),
+      return: Boolean(key.return)
+    });
+  });
+};
 
 // packages/ui/src/file-handlers/registry.ts
 var exactHandlers = /* @__PURE__ */ new Map();
@@ -2161,6 +2179,9 @@ var createDevalboStore = () => {
   });
   return store;
 };
+
+// packages/state/src/schemas/file-tree.ts
+var FILE_TREE_TABLE = "entries";
 
 // packages/state/src/hooks/use-store.ts
 import { createContext as createContext2, useContext as useContext2 } from "react";
@@ -2721,8 +2742,10 @@ var builtinCommands = { ...filesystemCommands, ...systemCommands, ...appCommands
 export {
   AppConfigProvider,
   BrowserConnectivityService,
+  FILE_TREE_TABLE,
   InteractiveShell,
   ShellRuntimeProvider,
+  Spinner,
   StoreContext,
   bindCliRuntimeSource,
   builtinCommands,
@@ -2743,6 +2766,7 @@ export {
   startInteractiveCli,
   unbindCliRuntimeSource,
   useAppConfig,
+  useKeyboard,
   useShellRuntime,
   useValidParse,
   validateEditArgs,

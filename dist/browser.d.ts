@@ -79,6 +79,8 @@ type AppConfig = {
         fileSync: boolean;
         fileSharing: boolean;
     };
+    /** Allow consuming apps to attach custom fields without losing the base type. */
+    [key: string]: unknown;
 };
 type AppIdentity = {
     appId: string;
@@ -90,6 +92,8 @@ declare const createCliAppConfig: (identity: AppIdentity) => AppConfig;
 
 declare const createDevalboStore: () => Store;
 type DevalboStore = Store;
+
+declare const FILE_TREE_TABLE = "entries";
 
 declare const StoreContext: Context<DevalboStore | null>;
 
@@ -183,6 +187,18 @@ declare const InteractiveShell: React$1.FC<{
     session?: unknown | null;
     welcomeMessage: string | ReactNode;
 }>;
+
+interface SpinnerProps {
+    type?: 'dots';
+    label?: string;
+}
+declare const Spinner: React$1.FC<SpinnerProps>;
+
+declare const useKeyboard: (handler: (input: string, key: {
+    upArrow: boolean;
+    downArrow: boolean;
+    return: boolean;
+}) => void) => void;
 
 type FileContent = string | Uint8Array;
 interface FileHandlerBaseProps {
@@ -406,4 +422,4 @@ declare const builtinCommands: {
     readonly rm: AsyncCommandHandler;
 };
 
-export { AppConfigProvider, type AsyncCommandHandler, BrowserConnectivityService, type CliRuntimeSource, type CommandHandler, type CommandMeta, type CommandRegistry, type CommandRegistryEntry, type CreateAppOptions, type CreateAppResult, type EditArgs, type FileEditProps as EditProps, type ExtendedCommandOptions, type ExtendedCommandOptionsWithStore, InteractiveShell, type MimeTypeHandler, type NavigateArgs, type FilePreviewProps as PreviewProps, ShellRuntimeProvider, type StoreCommandHandler, StoreContext, appCommands, bindCliRuntimeSource, builtinCommands, cli, createApp, createCliAppConfig, createCommandRegistry, createDevalboStore, createFilesystemDriver, defaultWelcomeMessage, filesystemCommands, getCliRuntimeStatus, makeError, makeOutput, makeResult, makeResultError, mergeCommands, registerBuiltinCommands, registerBuiltinCommandsToRegistry, unbindCliRuntimeSource, useAppConfig, useShellRuntime, useValidParse, validateEditArgs, validateNavigateArgs, withValidation };
+export { AppConfigProvider, type AsyncCommandHandler, BrowserConnectivityService, type CliRuntimeSource, type CommandHandler, type CommandMeta, type CommandRegistry, type CommandRegistryEntry, type CreateAppOptions, type CreateAppResult, type EditArgs, type FileEditProps as EditProps, type ExtendedCommandOptions, type ExtendedCommandOptionsWithStore, FILE_TREE_TABLE, InteractiveShell, type MimeTypeHandler, type NavigateArgs, type FilePreviewProps as PreviewProps, ShellRuntimeProvider, Spinner, type StoreCommandHandler, StoreContext, appCommands, bindCliRuntimeSource, builtinCommands, cli, createApp, createCliAppConfig, createCommandRegistry, createDevalboStore, createFilesystemDriver, defaultWelcomeMessage, filesystemCommands, getCliRuntimeStatus, makeError, makeOutput, makeResult, makeResultError, mergeCommands, registerBuiltinCommands, registerBuiltinCommandsToRegistry, unbindCliRuntimeSource, useAppConfig, useKeyboard, useShellRuntime, useValidParse, validateEditArgs, validateNavigateArgs, withValidation };

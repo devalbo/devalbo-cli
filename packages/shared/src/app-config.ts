@@ -22,6 +22,8 @@ export type AppConfig = {
     fileSync: boolean;
     fileSharing: boolean;
   };
+  /** Allow consuming apps to attach custom fields without losing the base type. */
+  [key: string]: unknown;
 };
 
 type AppIdentity = {
