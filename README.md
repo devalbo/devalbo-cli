@@ -1,0 +1,135 @@
+# devalbo-core-v2
+
+Monorepo for the foundational `@devalbo-cli/*` packages.
+
+## Workspace Packages
+
+- `@devalbo-cli/branded-types`: branded primitive types
+- `@devalbo-cli/shared`: shared types, environment detection, validation errors
+- `@devalbo-cli/filesystem`: filesystem drivers and watcher services
+- `@devalbo-cli/state`: TinyBase-backed state and persister wrappers (core only)
+- `@devalbo-cli/ui`: isomorphic UI primitives and shell providers
+- `@devalbo-cli/commands`: command registry, parsing, validation, console bridge
+- `@devalbo-cli/worker-bridge`: worker messaging and shared-buffer helpers
+- `@devalbo-cli/cli-shell`: Ink-based interactive shell
+
+## Quick Start
+
+```bash
+pnpm install
+npm run build:dist
+```
+
+`build:dist` builds all `@devalbo-cli/*` sub-packages in dependency order, then
+builds the root bundle.
+
+## Release Build
+
+```bash
+npm run build:packages   # build sub-packages only (skips root bundle)
+npm run build:dist       # build sub-packages + root bundle
+pnpm type-check          # type-check all packages
+pnpm test                # test all packages
+```
+
+## Publishing a release
+
+### 1. Create bump commit and tag (npm convention)
+
+Use npm's built-in versioning flow so the version bump and `vX.Y.Z` tag are created together:
+
+```bash
+# patch, minor, or major
+npm version patch --workspaces --include-workspace-root
+```
+
+That command updates `package.json` files, creates the bump commit, and creates a matching tag.
+
+Push commit + tags:
+
+```bash
+git push origin main --follow-tags
+```
+
+### 2. Configure token for release workflow dispatch
+
+Set a GitHub token with `repo` scope (classic PAT):
+
+```bash
+# .env (recommended)
+GITHUB_TOKEN=<your-token>
+```
+
+The release script auto-loads `.env` from repo root. `GH_TOKEN` is also accepted.
+
+### 3. Run the release workflow script
+
+Use the interactive Ink wizard:
+
+```bash
+# Dry run (default)
+bash scripts/run-release-workflow.sh
+
+# Execute (actually dispatches the workflow)
+bash scripts/run-release-workflow.sh --execute
+```
+
+In the wizard:
+
+- choose **tagged release** (if no `v*` tag is on `HEAD`, the wizard will guide you through `npm version` bump prep first)
+- or choose **non-tagged release** to promote only the `release` branch
+- use **review commit history** for major/minor/maintenance/all history views
+
+Optional dirty-tree override:
+
+```bash
+bash scripts/run-release-workflow.sh --execute --allow-dirty
+```
+
+The script enforces strict tagged-release rules:
+
+- `release_tag` must equal `v<package.json version>` at the source commit
+- tagged releases must come from a version-bump commit
+- source commit must be on `origin/main`
+
+If no `v*` tag exists on `HEAD`, the tagged-release path will run/preview:
+
+```bash
+npm version <patch|minor|major> --workspaces --include-workspace-root
+git push origin main --follow-tags
+```
+
+After that, rerun the wizard and choose **tagged release** again to dispatch `release-promote`.
+
+`npm version` requires a clean working tree. If the wizard reports dirty state, commit/stash first (or use the script's dirty override only for non-`npm version` paths).
+
+If `npm version` fails with `Invalid Version` due to stale npm lock metadata in this repo, remove npm lock artifacts and retry:
+
+```bash
+rm -f package-lock.json
+rm -f node_modules/.package-lock.json
+```
+
+It dispatches `.github/workflows/release-promote.yml`, which publishes the `release` branch and creates the source tag when tagging is enabled.
+
+## Consuming this package
+
+Projects that depend on `@devalbo-cli/*` packages via `file:` references will have
+them built automatically. Each sub-package has a `prepare` script, which npm runs
+automatically for `file:` dependencies during `npm install`.
+
+```bash
+git clone git@github.com:devalbo/devalbo-cli.git
+```
+
+Then in the consuming project:
+
+```bash
+npm install    # automatically builds all @devalbo-cli/* file: dependencies
+```
+
+## Creating an app
+
+See [`CREATE_AN_APP.md`](./CREATE_AN_APP.md) for a step-by-step guide to building
+a new app with terminal, browser, and desktop (Tauri) support.
+
