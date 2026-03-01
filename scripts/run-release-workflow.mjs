@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 import { spawnSync } from 'node:child_process';
+import { existsSync, readFileSync } from 'node:fs';
+import path from 'node:path';
 import process from 'node:process';
 import React, { useMemo, useState } from 'react';
 import { Box, Text, render, useInput } from 'ink';
@@ -12,6 +14,36 @@ import {
 const MAIN_BRANCH = process.env.MAIN_BRANCH || 'main';
 const RELEASE_BRANCH = process.env.RELEASE_BRANCH || 'release';
 const WORKFLOW_FILE = process.env.WORKFLOW_FILE || 'release-promote.yml';
+
+function loadDotEnvFromRepo() {
+  const envPath = path.join(process.cwd(), '.env');
+  if (!existsSync(envPath)) return;
+
+  const raw = readFileSync(envPath, 'utf8');
+  const lines = raw.split(/\r?\n/);
+  for (const line of lines) {
+    const trimmed = line.trim();
+    if (!trimmed || trimmed.startsWith('#')) continue;
+    const m = trimmed.match(/^([A-Za-z_][A-Za-z0-9_]*)\s*=\s*(.*)$/);
+    if (!m) continue;
+    const key = m[1];
+    let value = m[2] ?? '';
+    if (
+      (value.startsWith('"') && value.endsWith('"')) ||
+      (value.startsWith("'") && value.endsWith("'"))
+    ) {
+      value = value.slice(1, -1);
+    }
+    if (process.env[key] === undefined) {
+      process.env[key] = value;
+    }
+  }
+
+  // Allow either variable name in local env files.
+  if (!process.env.GITHUB_TOKEN && process.env.GH_TOKEN) {
+    process.env.GITHUB_TOKEN = process.env.GH_TOKEN;
+  }
+}
 
 function die(message) {
   console.error(`ERROR: ${message}`);
@@ -42,6 +74,9 @@ Options:
   --allow-dirty   Override clean-working-tree guard (still fails if build introduces additional changes).`);
       process.exit(0);
     } else {
+      if (arg === '--dirty-tree') {
+        die("Unknown argument: --dirty-tree. Use --allow-dirty.");
+      }
       die(`Unknown argument: ${arg}`);
     }
   }
@@ -269,7 +304,7 @@ function Wizard({ context, onDone, onCancel }) {
         setErrorMessage('');
         return;
       }
-      onCancel();
+      onCancel('user_cancelled');
       return;
     }
 
@@ -407,7 +442,7 @@ function Wizard({ context, onDone, onCancel }) {
           }
           onDone(result);
         } else {
-          onCancel();
+          onCancel('user_cancelled');
         }
       }
     }
@@ -427,7 +462,7 @@ function Wizard({ context, onDone, onCancel }) {
           setResult(nextResult);
           onDone(nextResult);
         } else {
-          onCancel();
+          onCancel('dirty_override_required');
         }
       }
     }
@@ -580,11 +615,11 @@ async function runInterview(context) {
           app.unmount();
           resolve({ cancelled: false, ...payload });
         },
-        onCancel: () => {
+        onCancel: (reason = 'user_cancelled') => {
           if (settled) return;
           settled = true;
           app.unmount();
-          resolve({ cancelled: true });
+          resolve({ cancelled: true, reason });
         }
       })
     );
@@ -703,6 +738,7 @@ function dispatchWorkflow(apiUrl, payload) {
 }
 
 async function main() {
+  loadDotEnvFromRepo();
   const { dryRun, allowDirty } = parseArgs(process.argv.slice(2));
   assertTooling(dryRun);
 
@@ -719,7 +755,12 @@ async function main() {
     allowDirty
   });
 
-  if (interview.cancelled) die('Aborted.');
+  if (interview.cancelled) {
+    if (interview.reason === 'dirty_override_required') {
+      die('Aborted: working tree is dirty. Re-run with --allow-dirty or choose "Allow dirty and continue".');
+    }
+    die('Aborted.');
+  }
 
   const { createTag, releaseTag } = interview;
   const effectiveAllowDirty = allowDirty || interview.allowDirty === true;

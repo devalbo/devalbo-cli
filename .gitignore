@@ -15,3 +15,4 @@ tests/results
 .claude/
 *.tgz
 /package-lock.json
+.env
