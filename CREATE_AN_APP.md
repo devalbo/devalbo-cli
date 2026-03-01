@@ -7,7 +7,7 @@ devalbo-cli is a shell framework that provides:
 - A **filesystem abstraction** that works in Node.js, browser, and Tauri
 - **Ink-based UI rendering** for command output
 
-This guide walks through creating a CLI app from scratch — picking up dependencies from GitHub, writing commands, and running the shell.
+This guide walks through creating an app from scratch — writing commands and running the shell in the terminal and browser.
 
 ---
 
@@ -26,16 +26,12 @@ npm init -y
 mkdir -p src/commands
 ```
 
-`npm init -y` creates a baseline `package.json`. You'll update it in the next step.
-
 ---
 
 ## Step 2 — Install dependencies
 
-Install `devalbo-cli` directly from GitHub, plus the other required packages:
-
 ```sh
-npm install git+https://github.com/devalbo/devalbo-cli.git#release
+npm install github:devalbo/devalbo-cli#v0.2.0
 npm install commander react
 npm install --save-dev typescript tsx @types/node @types/react
 ```
@@ -51,19 +47,19 @@ Then edit `package.json` to add `"type": "module"` and the `scripts` block:
   "version": "0.1.0",
   "type": "module",
   "scripts": {
-    "start": "node --import tsx src/cli.ts",
+    "dev:cli":  "node --import tsx src/cli.ts",
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "devalbo-cli": "git+https://github.com/devalbo/devalbo-cli.git#release",
+    "devalbo-cli": "github:devalbo/devalbo-cli#v0.2.0",
     "commander": "^14.0.0",
     "react": "^19.1.1"
   },
   "devDependencies": {
-    "@types/node": "^24.3.0",
-    "@types/react": "^19.1.10",
-    "tsx": "^4.20.4",
-    "typescript": "^5.9.2"
+    "@types/node": "^24.0.0",
+    "@types/react": "^19.0.0",
+    "tsx": "^4.0.0",
+    "typescript": "^5.0.0"
   }
 }
 ```
@@ -71,8 +67,6 @@ Then edit `package.json` to add `"type": "module"` and the `scripts` block:
 ---
 
 ## Step 3 — `tsconfig.json`
-
-Create `tsconfig.json`:
 
 ```json
 {
@@ -92,31 +86,38 @@ Create `tsconfig.json`:
 
 ---
 
-## Step 4 — Write commands
+## Step 4 — Write a command
+
+Commands contain JSX, so use `.tsx`:
+
+**`src/commands/hello.tsx`**
+
+```tsx
+import { Text } from 'ink';
+import type { CommandHandler } from 'devalbo-cli';
+
+export const helloCommand: CommandHandler = async (args) => {
+  const name = args[0] ?? 'world';
+  return {
+    component: <Text color="green">Hello, {name}!</Text>
+  };
+};
+```
 
 **`src/commands/index.ts`**
 
 ```ts
-import type { AsyncCommandHandler, CommandHandler } from 'devalbo-cli';
-import { builtinCommands, makeOutput } from 'devalbo-cli';
-
-const hello: AsyncCommandHandler = async (args) => {
-  const name = args[0] ?? 'world';
-  return makeOutput(`Hello, ${name}!`);
-};
-
-const echo: AsyncCommandHandler = async (args) => {
-  return makeOutput(args.join(' '));
-};
+import type { CommandHandler } from 'devalbo-cli';
+import { builtinCommands } from 'devalbo-cli';
+import { helloCommand } from './hello';
 
 export const commands: Record<string, CommandHandler> = {
   ...builtinCommands,
-  hello,
-  echo,
+  hello: helloCommand,
 };
 ```
 
-`builtinCommands` is a single-import aggregate that includes: `pwd`, `cd`, `ls`, `tree`, `cat`, `touch`, `mkdir`, `cp`, `mv`, `rm`, `stat`, `clear`, `backend`, `exit`, `help`, and `app-config`. Spread it into your registry to get all of them.
+`builtinCommands` includes: `pwd`, `cd`, `ls`, `tree`, `cat`, `touch`, `mkdir`, `cp`, `mv`, `rm`, `stat`, `clear`, `backend`, `exit`, `help`, and `app-config`.
 
 ---
 
@@ -133,92 +134,65 @@ export const createProgram = (): Command => {
     .description('A minimal devalbo CLI app')
     .version('0.1.0');
 
-  // App-specific commands — register these first
   program.command('hello [name]').description('Say hello');
-  program.command('echo <words...>').description('Echo arguments back');
 
-  // Built-in commands (pwd, ls, cd, help, app-config, etc.)
   registerBuiltinCommands(program);
 
   return program;
 };
 ```
 
-`createProgram` is only used by the `help` command to display usage text. Register your app commands first, then call `registerBuiltinCommands`.
-
 ---
 
-## Step 6 — Shared config
-
-**`src/config.ts`**
-
-```ts
-import { createCliAppConfig } from 'devalbo-cli';
-
-export const appConfig = createCliAppConfig({
-  appId: 'my-app',
-  appName: 'My App',
-  storageKey: 'my-app-store',
-});
-
-export const welcomeMessage = 'Welcome to My App. Type "help" for available commands.';
-```
-
-This config is shared by both the CLI and browser entry points.
-
----
-
-## Step 7 — Wire up the CLI entry point
+## Step 6 — Wire up the CLI entry point
 
 **`src/cli.ts`**
 
 ```ts
-import { startInteractiveCli } from 'devalbo-cli';
+import { startInteractiveCli, createCliAppConfig } from 'devalbo-cli';
 import { commands } from './commands/index';
 import { createProgram } from './program';
-import { appConfig, welcomeMessage } from './config';
 
 await startInteractiveCli({
   commands,
   createProgram,
-  config: appConfig,
-  welcomeMessage,
+  config: createCliAppConfig({ appId: 'my-app', appName: 'My App', storageKey: 'my-app-store' }),
+  welcomeMessage: 'Welcome to My App. Type "help" for available commands.',
 });
 ```
 
-`startInteractiveCli` starts the Ink-based interactive shell in the terminal.
-
 ---
 
-## Step 8 — Run the CLI
+## Step 7 — Run the CLI
 
 ```sh
-npm run start
+npm run dev:cli
 ```
 
 You'll see: `Welcome to My App. Type "help" for available commands.`
 
-Try: `hello Alice`, `echo foo bar`, `help`, `pwd`, `ls`, `app-config`.
+Try: `hello`, `hello Alice`, `help`, `pwd`, `ls`.
 
-> `npm run start` requires a real TTY (interactive terminal). It will not work in CI or piped shells.
+> `npm run dev:cli` requires a real TTY (interactive terminal). It will not work in CI or piped shells.
 
 ---
 
-## Step 9 — Install browser dependencies
+## Step 8 — Install browser dependencies
 
 ```sh
 npm install react@19.2.4 react-dom@19.2.4 ink-web@0.1.11 @xterm/xterm@5.5.0
 npm install --save-dev vite@7.3.1 @vitejs/plugin-react@5.0.0 @types/react-dom@19
 ```
 
-Then add browser scripts to `package.json`:
+Add browser scripts to `package.json`:
 
 ```json
-"start:browser": "vite",
-"build:browser": "vite build"
+"dev:web":     "vite",
+"build:web":   "vite build",
+"preview:web": "vite preview"
 ```
 
-Also add this `overrides` block to `package.json` to keep a single React/runtime graph:
+Also add this `overrides` block to keep a single React runtime across the dep graph:
 
 ```json
 "overrides": {
@@ -230,127 +204,54 @@ Also add this `overrides` block to `package.json` to keep a single React/runtime
 
 ---
 
-## Step 10 — Create browser files
+## Step 9 — Browser entry point
 
-**`src/App.tsx`**
+`createApp()` sets up the store, filesystem driver, command registry, and an `App` component with all providers. Register commands in `onReady` — the framework builds the Commander program from the registry, so `help` stays in sync automatically.
 
-```tsx
-import React, { useEffect, useRef, useState } from 'react';
-import { InkTerminalBox } from 'ink-web';
-import {
-  AppConfigProvider,
-  BrowserConnectivityService,
-  InteractiveShell,
-  bindCliRuntimeSource,
-  cli,
-  createDevalboStore,
-  createFilesystemDriver,
-  unbindCliRuntimeSource,
-  useAppConfig
-} from 'devalbo-cli';
-import { commands } from './commands/index';
-import { createProgram } from './program';
-import { appConfig, welcomeMessage } from './config';
-
-type StoreInstance = ReturnType<typeof createDevalboStore>;
-type DriverInstance = Awaited<ReturnType<typeof createFilesystemDriver>>;
-
-declare global {
-  interface Window {
-    cli?: typeof cli;
-  }
-}
-
-const AppContent: React.FC<{ store: StoreInstance }> = ({ store }) => {
-  const [driver, setDriver] = useState<DriverInstance | null>(null);
-  const [cwd, setCwd] = useState('/');
-  const [connectivity] = useState(() => new BrowserConnectivityService());
-  const config = useAppConfig();
-
-  const cwdRef = useRef(cwd);
-  const driverRef = useRef(driver);
-  const configRef = useRef(config);
-  cwdRef.current = cwd;
-  driverRef.current = driver;
-  configRef.current = config;
-
-  useEffect(() => {
-    let cancelled = false;
-    void createFilesystemDriver().then((d) => {
-      if (!cancelled) setDriver(d);
-    });
-    return () => { cancelled = true; };
-  }, []);
-
-  useEffect(() => {
-    bindCliRuntimeSource({
-      getContext: () => {
-        if (!driverRef.current) return null;
-        return {
-          commands,
-          createProgram,
-          store,
-          config: configRef.current,
-          driver: driverRef.current,
-          connectivity,
-          cwd: cwdRef.current,
-          setCwd
-        };
-      }
-    });
-
-    // Expose helper API in browser devtools console: window.cli
-    window.cli = cli;
-
-    return () => {
-      unbindCliRuntimeSource();
-      delete window.cli;
-    };
-  }, [store, connectivity]);
-
-  return (
-    <div style={{ maxWidth: '960px', margin: '24px auto', padding: '0 16px' }}>
-      <h1>My App</h1>
-      <InkTerminalBox rows={24} focus>
-        <InteractiveShell
-          commands={commands}
-          createProgram={createProgram}
-          store={store}
-          config={config}
-          driver={driver}
-          cwd={cwd}
-          setCwd={setCwd}
-          welcomeMessage={welcomeMessage}
-        />
-      </InkTerminalBox>
-    </div>
-  );
-};
-
-export const App: React.FC = () => {
-  const [store] = useState(() => createDevalboStore());
-
-  return (
-    <AppConfigProvider config={appConfig}>
-      <AppContent store={store} />
-    </AppConfigProvider>
-  );
-};
-```
-
-**`src/main.tsx`**
+**`src/web/main.tsx`**
 
 ```tsx
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import 'ink-web/css';
 import '@xterm/xterm/css/xterm.css';
-import { App } from './App';
+import { createApp, cli } from 'devalbo-cli';
+import { helloCommand } from '../commands/hello';
 
-const root = document.getElementById('root');
-if (root) {
-  createRoot(root).render(<App />);
+declare global {
+  interface Window { cli: typeof cli; }
 }
+window.cli = cli;
+
+async function main() {
+  const { App } = await createApp({
+    appId: 'my-app',
+    appName: 'My App',
+    storageKey: 'my-app-store',
+    version: '0.1.0',
+    onReady: ({ registerCommand }) => {
+      registerCommand('hello', helloCommand, {
+        description: 'Say hello',
+        args: [{ name: 'name', required: false }],
+      });
+    },
+  });
+
+  const root = document.getElementById('root');
+  if (root) {
+    const { InkTerminalBox } = await import('ink-web');
+    createRoot(root).render(
+      <div style={{ maxWidth: '960px', margin: '24px auto', padding: '0 16px' }}>
+        <h1>My App</h1>
+        <InkTerminalBox rows={24} focus>
+          <App welcomeMessage='Welcome to My App. Type "help" for available commands.' />
+        </InkTerminalBox>
+      </div>
+    );
+  }
+}
+
+main();
 ```
 
 **`index.html`** (project root)
@@ -361,11 +262,11 @@ if (root) {
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>my-app</title>
+    <title>My App</title>
   </head>
   <body>
     <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
+    <script type="module" src="/src/web/main.tsx"></script>
   </body>
 </html>
 ```
@@ -378,105 +279,90 @@ import react from '@vitejs/plugin-react';
 import { nodePolyfills } from 'devalbo-cli/vite';
 
 export default defineConfig({
-  plugins: [react(), nodePolyfills()],
+  plugins: [react(), ...nodePolyfills()],
   resolve: {
     alias: { ink: 'ink-web' },
     dedupe: ['react', 'react-dom'],
   },
   optimizeDeps: {
-    exclude: [
-      'devalbo-cli',
-      'react-devtools-core',
-      'is-in-ci',
-    ],
+    exclude: ['devalbo-cli', 'react-devtools-core', 'is-in-ci'],
   },
 });
 ```
 
-Use this config as-is. `nodePolyfills()` is required because the browser shell depends on Node builtin shims during bundling. `alias: { ink: 'ink-web' }` is required for browser runtime compatibility, and the `optimizeDeps.exclude` list avoids dependency optimizer rewrites that can break `node:process` handling.
+`nodePolyfills()` is required for Node builtin shims in the browser. `alias: { ink: 'ink-web' }` is required for browser runtime compatibility.
 
 ---
 
-## Step 11 — Run the browser app
+## Step 10 — Run the browser app
 
 ```sh
-npm run start:browser
+npm run dev:web
 ```
 
-Open `http://localhost:5173` in your browser. You'll see the same interactive shell running in the browser with xterm.js rendering.
-
-To create a production build:
+Open `http://localhost:5173`. You'll see the same interactive shell running in the browser.
 
 ```sh
-npm run build:browser
+npm run build:web    # production build
+npm run preview:web  # preview production build locally
+```
+
+### Browser developer console
+
+`window.cli` is available in DevTools in both dev and production builds:
+
+```js
+await cli.exec('hello', ['Alice'])     // run any registered command
+await cli.execRaw('hello Bob')         // parse a raw command string
+const { text } = await cli.execText('hello', ['world'])
+console.log(text)
 ```
 
 ---
 
 ## Adding more commands
 
-To add a new command, define a handler and register it in the commands map:
+Define a handler and register it:
 
-**`src/commands/greet.ts`**
+**`src/commands/greet.tsx`**
 
-```ts
+```tsx
+import { Text } from 'ink';
 import type { AsyncCommandHandler } from 'devalbo-cli';
-import { makeOutput, makeError } from 'devalbo-cli';
+import { makeError } from 'devalbo-cli';
 
 export const greet: AsyncCommandHandler = async (args) => {
   const name = args[0];
   if (!name) return makeError('Usage: greet <name>');
-  return makeOutput(`Greetings, ${name}! Welcome aboard.`);
+  return { component: <Text color="cyan">Greetings, {name}!</Text> };
 };
 ```
 
-Then add it to **`src/commands/index.ts`**:
+Register it in `src/commands/index.ts`:
 
 ```ts
 import { greet } from './greet';
 
 export const commands: Record<string, CommandHandler> = {
   ...builtinCommands,
-  hello,
-  echo,
-  greet,           // ← add here
+  hello: helloCommand,
+  greet,
 };
 ```
 
-And add it to **`src/program.ts`** so it shows in `help`:
+For the browser, add it in `onReady`:
+
+```ts
+registerCommand('greet', greet, {
+  description: 'Greet someone',
+  args: [{ name: 'name', required: true }],
+});
+```
+
+For the terminal, add it to `src/program.ts`:
 
 ```ts
 program.command('greet <name>').description('Greet someone');
-```
-
-Restart (`npm run start`) and try `greet Alice`.
-
-### Grouping commands into modules
-
-For apps with many commands, split them into separate files and compose:
-
-**`src/commands/myCommands.ts`**
-
-```ts
-import type { AsyncCommandHandler } from 'devalbo-cli';
-import { makeOutput } from 'devalbo-cli';
-
-const greet: AsyncCommandHandler = async (args) => { /* ... */ };
-const farewell: AsyncCommandHandler = async (args) => { /* ... */ };
-
-export const myCommands = { greet, farewell };
-```
-
-**`src/commands/index.ts`**
-
-```ts
-import { builtinCommands } from 'devalbo-cli';
-import { myCommands } from './myCommands';
-
-export const commands = {
-  ...builtinCommands,
-  ...myCommands,
-};
 ```
 
 ---
@@ -517,13 +403,13 @@ makeResultError('Failed', { reason: 'x' })   // error + structured data
 
 ### Rich output (Ink components)
 
-```ts
+```tsx
 import { createElement } from 'react';
 import { MyOutputComponent } from '../components/MyOutputComponent';
 
 return {
   ...makeResult('Loaded item', data),
-  component: createElement(MyOutputComponent, { item: data })
+  component: createElement(MyOutputComponent, { item: data }),
 };
 ```
 
@@ -531,25 +417,11 @@ return {
 
 ```ts
 import type { StoreCommandHandler } from 'devalbo-cli';
-import { makeOutput } from 'devalbo-cli';
 
 const myStoreCommand: StoreCommandHandler = async (args, options) => {
   // options.store is guaranteed — no null check needed
   const count = options.store.getCell('my-table', 'stats', 'count') ?? 0;
   return makeOutput(`Count: ${count}`);
-};
-```
-
-Use `StoreCommandHandler` when your command reads or writes TinyBase data and should not run without a store.
-
-### Reading from the store
-
-```ts
-const myList: AsyncCommandHandler = async (_args, options) => {
-  if (!options?.store) return makeError('No store');
-  const rows = options.store.getTable('my-items');
-  const lines = Object.entries(rows).map(([id, row]) => `${id}: ${row.name}`);
-  return makeOutput(lines.join('\n') || '(empty)');
 };
 ```
 
@@ -571,39 +443,166 @@ const myRead: AsyncCommandHandler = async (args, options) => {
 
 ---
 
-## Going further
+## Types and utilities
 
-### Browser app
-
-Steps 9–11 above walk through adding a browser shell alongside the CLI. The `InteractiveShell` component and `bindCliRuntimeSource` (for `window.cli` devtools access) are both exported from `devalbo-cli`.
-
-### Desktop app (Tauri)
-
-Same structure as the browser app. `createFilesystemDriver()` automatically selects the Tauri FS backend when running inside a Tauri window.
-
-### Store integration
-
-The store is a TinyBase `Store`. In a React app, create it once with a lazy initializer:
+| Export | Purpose |
+|--------|---------|
+| `PreviewProps`, `EditProps` | Prop types for MIME preview/edit components |
+| `MimeTypeHandler` | Shape for registering handlers via `registerMimeTypeHandler` |
+| `useValidParse(source, parseFn)` | Tracks last valid parse result + current error |
+| `withValidation` | Wraps a command handler with Effect-based arg validation |
+| `validateEditArgs`, `validateNavigateArgs` | Built-in validators for file/path args |
+| `CommandHandler`, `AsyncCommandHandler` | Handler function types |
+| `makeOutput(text)`, `makeError(msg)` | Helpers to build `CommandResult` objects |
 
 ```ts
-import { createDevalboStore } from 'devalbo-cli';
-
-const [store] = useState(() => createDevalboStore());
+import type { PreviewProps, EditProps, MimeTypeHandler } from 'devalbo-cli';
+import { useValidParse, withValidation, makeOutput } from 'devalbo-cli';
 ```
 
-Apps can define custom tables alongside built-in ones:
+---
+
+## Desktop app (Tauri)
+
+The desktop app wraps the same browser entry point in a native window using Tauri. No changes to app code are needed — `createFilesystemDriver()` automatically selects the Tauri FS backend when running inside a Tauri window.
+
+### Prerequisites
+
+Install the [Rust toolchain](https://rustup.rs) and Tauri CLI:
+
+```sh
+npm install --save-dev @tauri-apps/cli
+npm install @tauri-apps/api
+```
+
+### Initialize Tauri
+
+Run once from your project root:
+
+```sh
+npx tauri init
+```
+
+When prompted:
+- **App name**: `my-app`
+- **Window title**: `My App`
+- **Where are your web assets?**: `../dist`
+- **URL of your dev server**: `http://127.0.0.1:1420`
+- **Frontend dev command**: `npm run dev:desktop-web`
+- **Frontend build command**: `npm run build:web`
+
+### Add desktop scripts to `package.json`
+
+```json
+"dev:desktop-web": "vite --port 1420 --strictPort",
+"dev:desktop":     "tauri dev",
+"build:desktop":   "tauri build"
+```
+
+### Desktop `vite.config.ts`
+
+The desktop config uses port 1420, disables `clearScreen`, and adds Tauri HMR settings:
 
 ```ts
-const [store] = useState(() => {
-  const s = createDevalboStore();
-  s.setTablesSchema({
-    'my-items': {
-      name: { type: 'string' },
-      count: { type: 'number', default: 0 }
-    }
-  });
-  return s;
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import { nodePolyfills } from 'devalbo-cli/vite';
+
+const tauriDevHost = process.env.TAURI_DEV_HOST;
+
+export default defineConfig({
+  plugins: [react(), ...nodePolyfills()],
+  clearScreen: false,
+  server: {
+    host: tauriDevHost || '127.0.0.1',
+    port: 1420,
+    strictPort: true,
+    hmr: tauriDevHost
+      ? { protocol: 'ws', host: tauriDevHost, port: 1421 }
+      : undefined,
+    watch: { ignored: ['**/src-tauri/**'] },
+  },
+  resolve: {
+    alias: { ink: 'ink-web' },
+    dedupe: ['react', 'react-dom'],
+  },
+  optimizeDeps: {
+    exclude: ['devalbo-cli', 'react-devtools-core', 'is-in-ci'],
+  },
 });
+```
+
+### Running the desktop app
+
+```sh
+npm run dev:desktop    # starts vite dev server + Tauri native window
+npm run build:desktop  # produces a native app bundle
+```
+
+---
+
+## Advanced: manual browser setup
+
+If you need full control over the store, driver, and shell lifecycle — for example to integrate with an existing React app — you can skip `createApp()` and wire `InteractiveShell` with props directly. Call `bindCliRuntimeSource` with refs so `window.cli` shares the live context:
+
+```tsx
+import { useState, useEffect, useRef } from 'react';
+import { InkTerminalBox } from 'ink-web';
+import {
+  InteractiveShell, AppConfigProvider,
+  createDevalboStore, createFilesystemDriver, createCliAppConfig,
+  bindCliRuntimeSource, unbindCliRuntimeSource,
+  BrowserConnectivityService, cli,
+} from 'devalbo-cli';
+import { commands } from './commands/index';
+import { createProgram } from './program';
+
+const appConfig = createCliAppConfig({ appId: 'my-app', appName: 'My App', storageKey: 'my-app-store' });
+
+const AppContent = ({ store }) => {
+  const [driver, setDriver] = useState(null);
+  const [cwd, setCwd] = useState('/');
+  const [connectivity] = useState(() => new BrowserConnectivityService());
+  const driverRef = useRef(driver);
+  const cwdRef = useRef(cwd);
+  driverRef.current = driver;
+  cwdRef.current = cwd;
+
+  useEffect(() => {
+    createFilesystemDriver().then(setDriver);
+  }, []);
+
+  useEffect(() => {
+    bindCliRuntimeSource({
+      getContext: () => {
+        if (!driverRef.current) return null;
+        return { commands, createProgram, store, config: appConfig, driver: driverRef.current, connectivity, cwd: cwdRef.current, setCwd };
+      }
+    });
+    window.cli = cli;
+    return () => { unbindCliRuntimeSource(); delete window.cli; };
+  }, [store, connectivity]);
+
+  return (
+    <InkTerminalBox rows={24} focus>
+      <InteractiveShell
+        commands={commands} createProgram={createProgram}
+        store={store} config={appConfig}
+        driver={driver} cwd={cwd} setCwd={setCwd}
+        welcomeMessage='Welcome to My App.'
+      />
+    </InkTerminalBox>
+  );
+};
+
+export const App = () => {
+  const [store] = useState(() => createDevalboStore());
+  return (
+    <AppConfigProvider config={appConfig}>
+      <AppContent store={store} />
+    </AppConfigProvider>
+  );
+};
 ```
 
 ---
@@ -613,35 +612,20 @@ const [store] = useState(() => {
 | Package | What it provides | Direct use? |
 |---------|-----------------|-------------|
 | `devalbo-cli` | Shell framework, built-in commands, entry points | Yes — primary dependency |
-| `@devalbo/shared` | Core types (`AppConfig`, `CommandResult`) | No — re-exported via `devalbo-cli` |
-| `@devalbo/state` | TinyBase store, schemas, persisters | Re-exported via `devalbo-cli` |
-| `@devalbo/filesystem` | Filesystem driver abstraction | Re-exported via `devalbo-cli` |
-| `@devalbo/ui` | Ink primitives (TextInput, Spinner, etc.) | Advanced custom UI only |
-| `@devalbo/solid-client` | Solid pod auth and sync | Optional, explicit opt-in |
+| `@devalbo-cli/shared` | Core types (`AppConfig`, `CommandResult`) | No — re-exported via `devalbo-cli` |
+| `@devalbo-cli/state` | TinyBase store, schemas, persisters | Re-exported via `devalbo-cli` |
+| `@devalbo-cli/filesystem` | Filesystem driver abstraction | Re-exported via `devalbo-cli` |
+| `@devalbo-cli/ui` | Ink primitives (TextInput, Spinner, etc.) | Advanced custom UI only |
 
 ---
 
-## Browser app — reference
+## Quick reference — run commands
 
-The browser files created in Steps 9–10 are the complete pattern. Key points:
-
-- **`src/config.ts`** — shared config between CLI and browser entry points (Step 6)
-- **`src/App.tsx`** — uses `InteractiveShell` inside an `InkTerminalBox` from `ink-web`
-- **`src/main.tsx`** — React DOM entry point; imports CSS from `ink-web` and `@xterm/xterm`
-- **`vite.config.ts`** — must include `nodePolyfills()` from `devalbo-cli/vite` so Node builtins work in the browser
-
-### Browser developer console (`window.cli`)
-
-Once `bindCliRuntimeSource` is wired up (it is, in the `App.tsx` above), use the browser devtools console:
-
-```ts
-await cli.exec('hello', ['Alice'])   // run any registered command
-await cli.ls('/')                     // filesystem shortcut
-await cli.helpText()                  // get help as string
-```
-
-| API | Throws? |
-|-----|---------|
-| `cli.exec(name, args)` | Yes, on error |
-| `cli.execRaw(raw)` | Yes, on error |
-| `cli.execText(name, args)` | Never — returns `{ text, error }` |
+| Platform | Command | Description |
+|----------|---------|-------------|
+| Terminal | `npm run dev:cli` | Interactive shell in a real TTY |
+| Browser (dev) | `npm run dev:web` | Vite dev server at http://localhost:5173 |
+| Browser (prod) | `npm run build:web && npm run preview:web` | Production build + local preview |
+| Browser console | `window.cli` | `cli.exec()`, `cli.execRaw()`, etc. in DevTools |
+| Desktop (dev) | `npm run dev:desktop` | Vite + Tauri native window |
+| Desktop (prod) | `npm run build:desktop` | Native app bundle |

@@ -63,7 +63,7 @@ npm install    # automatically builds all @devalbo-cli/* file: dependencies
 
 ## Creating an app
 
-See [`START_NEW_APP.md`](./START_NEW_APP.md) for a step-by-step guide to building
+See [`CREATE_AN_APP.md`](./CREATE_AN_APP.md) for a step-by-step guide to building
 a new app with terminal, browser, and desktop (Tauri) support.
 
 ## Examples
