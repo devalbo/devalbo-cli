@@ -34,54 +34,72 @@ pnpm test                # test all packages
 
 ## Publishing a release
 
-### 1. Bump versions and rebuild
+### 1. Create bump commit and tag (npm convention)
 
-Update the version in `package.json` and all `packages/*/package.json`, then rebuild:
-
-```bash
-npm run build:dist
-```
-
-Commit and push to `main`:
+Use npm's built-in versioning flow so the version bump and `vX.Y.Z` tag are created together:
 
 ```bash
-git add dist/ packages/*/dist/ package.json packages/*/package.json pnpm-lock.yaml
-git commit -m "chore(release): bump to vX.Y.Z"
-git push
+# patch, minor, or major
+npm version patch --workspaces --include-workspace-root
 ```
 
-### 2. Trigger the release workflow
+That command updates `package.json` files, creates the bump commit, and creates a matching tag.
 
-The `release-promote` workflow runs packaging gates, prepares the release tree, force-pushes it to the `release` branch, and optionally creates a version tag. Trigger it via the GitHub API using a [personal access token](https://github.com/settings/tokens) with `repo` scope:
+Push commit + tags:
 
 ```bash
-export GITHUB_TOKEN=<your-token>
-
-curl -X POST \
-  -H "Authorization: Bearer $GITHUB_TOKEN" \
-  -H "Accept: application/vnd.github.v3+json" \
-  https://api.github.com/repos/devalbo/devalbo-cli/actions/workflows/release-promote.yml/dispatches \
-  -d '{
-    "ref": "main",
-    "inputs": {
-      "source_sha": "'$(git rev-parse HEAD)'",
-      "release_branch": "release",
-      "create_tag": "true",
-      "release_tag": "vX.Y.Z"
-    }
-  }'
+git push origin main --follow-tags
 ```
 
-Set `"create_tag": "false"` to promote to the `release` branch without creating a tag (e.g. for a patch that doesn't warrant a new version).
+### 2. Configure token for release workflow dispatch
 
-Monitor the run:
+Set a GitHub token with `repo` scope (classic PAT):
 
 ```bash
-curl -H "Authorization: Bearer $GITHUB_TOKEN" \
-  -H "Accept: application/vnd.github.v3+json" \
-  "https://api.github.com/repos/devalbo/devalbo-cli/actions/runs?branch=main&per_page=5" \
-  | node -e "const d=require('fs').readFileSync('/dev/stdin','utf8'); JSON.parse(d).workflow_runs.forEach(r => console.log(r.status, r.conclusion ?? '(running)', r.name, r.html_url))"
+# .env (recommended)
+GITHUB_TOKEN=<your-token>
 ```
+
+The release script auto-loads `.env` from repo root. `GH_TOKEN` is also accepted.
+
+### 3. Run the release workflow script
+
+Use the interactive Ink wizard:
+
+```bash
+# Dry run (default)
+bash scripts/run-release-workflow.sh
+
+# Execute (actually dispatches the workflow)
+bash scripts/run-release-workflow.sh --execute
+```
+
+In the wizard:
+
+- choose **tagged release** (if no `v*` tag is on `HEAD`, the wizard will guide you through `npm version` bump prep first)
+- or choose **non-tagged release** to promote only the `release` branch
+- use **review commit history** for major/minor/maintenance/all history views
+
+Optional dirty-tree override:
+
+```bash
+bash scripts/run-release-workflow.sh --execute --allow-dirty
+```
+
+The script enforces strict tagged-release rules:
+
+- `release_tag` must equal `v<package.json version>` at the source commit
+- tagged releases must come from a version-bump commit
+- source commit must be on `origin/main`
+
+If no `v*` tag exists on `HEAD`, the tagged-release path will run/preview:
+
+```bash
+npm version <patch|minor|major> --workspaces --include-workspace-root
+git push origin main --follow-tags
+```
+
+It dispatches `.github/workflows/release-promote.yml`, which publishes the `release` branch and creates the source tag when tagging is enabled.
 
 ## Consuming this package
 

@@ -7,8 +7,6 @@ import React, { useMemo, useState } from 'react';
 import { Box, Text, render, useInput } from 'ink';
 import {
   expectedTagForVersion,
-  isValidReleaseTag,
-  versionFromReleaseTag,
   validateReleaseTagAgainstRef
 } from './release-tag-shared.mjs';
 
@@ -126,32 +124,12 @@ function parseSemver(version) {
   return { major: Number(m[1]), minor: Number(m[2]), patch: Number(m[3]) };
 }
 
-function nextTag(version, bump) {
-  const parsed = parseSemver(version);
-  if (!parsed) return null;
-  let { major, minor, patch } = parsed;
-  if (bump === 'patch') patch += 1;
-  else if (bump === 'minor') {
-    minor += 1;
-    patch = 0;
-  } else if (bump === 'major') {
-    major += 1;
-    minor = 0;
-    patch = 0;
-  } else {
-    return null;
-  }
-  return `v${major}.${minor}.${patch}`;
+function npmVersionConventionCommand() {
+  return 'npm version <patch|minor|major> --workspaces --include-workspace-root';
 }
 
-function npmVersionCommandForSelection(selectedBumpKind, releaseTag) {
-  if (selectedBumpKind === 'patch' || selectedBumpKind === 'minor' || selectedBumpKind === 'major') {
-    return `npm version ${selectedBumpKind} --workspaces --include-workspace-root`;
-  }
-  if (selectedBumpKind === 'custom' && releaseTag) {
-    return `npm version ${versionFromReleaseTag(releaseTag)} --workspaces --include-workspace-root`;
-  }
-  return '';
+function npmVersionCommandForBump(bumpKind) {
+  return `npm version ${bumpKind} --workspaces --include-workspace-root`;
 }
 
 function compareSemver(a, b) {
@@ -239,6 +217,26 @@ function fetchLatestTags() {
   return true;
 }
 
+function collectHeadReleaseTag() {
+  const result = run('git', ['tag', '--points-at', 'HEAD', '--list', 'v*'], { allowFailure: true });
+  const tags = (result.stdout || '')
+    .split('\n')
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .map((tag) => {
+      const parsed = parseSemver(tag.replace(/^v/, ''));
+      if (!parsed) return null;
+      return { tag, ...parsed };
+    })
+    .filter(Boolean);
+
+  let best = null;
+  for (const t of tags) {
+    if (!best || compareSemver(t, best) > 0) best = t;
+  }
+  return best?.tag || '';
+}
+
 function collectRepoContext() {
   const inside = run('git', ['rev-parse', '--is-inside-work-tree'], { allowFailure: true });
   if (inside.status !== 0 || inside.stdout.trim() !== 'true') die('Not inside a git repository.');
@@ -252,12 +250,14 @@ function collectRepoContext() {
   if (!rootVersion) die('Could not read version from package.json.');
   const workingTreeStatus = run('git', ['status', '--porcelain']).stdout.trim();
   fetchLatestTags();
+  const headReleaseTag = collectHeadReleaseTag();
   const bumpHistories = collectReleaseBumpHistories();
 
   return {
     ownerRepo,
     rootVersion,
     workingTreeDirty: Boolean(workingTreeStatus),
+    headReleaseTag,
     bumpHistories,
     apiUrl: `https://api.github.com/repos/${ownerRepo}/actions/workflows/${WORKFLOW_FILE}/dispatches`
   };
@@ -268,35 +268,39 @@ function Wizard({ context, onDone, onCancel }) {
   const [step, setStep] = useState('releaseType');
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [selectedHistoryKind, setSelectedHistoryKind] = useState(null);
-  const [inputValue, setInputValue] = useState('');
   const [result, setResult] = useState({
     createTag: false,
     releaseTag: '',
-    expectedTag: '',
     allowDirty: context.allowDirty === true,
-    selectedBumpKind: 'none'
+    action: 'dispatch',
+    npmVersionBump: ''
   });
   const [errorMessage, setErrorMessage] = useState('');
 
   const releaseTypeItems = useMemo(
-    () => {
-      const patchTag = nextTag(context.rootVersion, 'patch') || '(unavailable)';
-      const minorTag = nextTag(context.rootVersion, 'minor') || '(unavailable)';
-      const majorTag = nextTag(context.rootVersion, 'major') || '(unavailable)';
-      return [
-        { key: 'none', label: 'non-tagged release' },
-        { key: 'patch', label: `maintenance bump (patch -> ${patchTag})` },
-        { key: 'minor', label: `minor bump (-> ${minorTag})` },
-        { key: 'major', label: `major bump (-> ${majorTag})` },
-        { key: 'history', label: 'review commit history by bump type' },
-        { key: 'custom', label: 'custom tag' }
-      ];
-    },
-    [context.rootVersion]
+    () => [
+      {
+        key: 'tagged',
+        label: context.headReleaseTag
+          ? `tagged release (use HEAD tag ${context.headReleaseTag})`
+          : 'tagged release (requires HEAD tag from npm version)'
+      },
+      { key: 'none', label: 'non-tagged release' },
+      { key: 'history', label: 'review commit history by bump type' }
+    ],
+    [context.headReleaseTag]
   );
 
   const confirmItems = useMemo(() => ['Proceed', 'Cancel'], []);
   const dirtyOverrideItems = useMemo(() => ['Allow dirty and continue', 'Cancel release'], []);
+  const bumpMenuItems = useMemo(
+    () => [
+      { key: 'patch', label: `patch (${npmVersionCommandForBump('patch')})` },
+      { key: 'minor', label: `minor (${npmVersionCommandForBump('minor')})` },
+      { key: 'major', label: `major (${npmVersionCommandForBump('major')})` }
+    ],
+    []
+  );
   const historyMenuItems = useMemo(
     () => bumpHistories.map((section) => ({ key: section.kind, label: section.label })),
     [bumpHistories]
@@ -304,6 +308,12 @@ function Wizard({ context, onDone, onCancel }) {
 
   useInput((input, key) => {
     if (key.escape) {
+      if (step === 'bumpMenu') {
+        setStep('releaseType');
+        setSelectedIndex(0);
+        setErrorMessage('');
+        return;
+      }
       if (step === 'historyMenu') {
         setStep('releaseType');
         setSelectedIndex(0);
@@ -331,29 +341,35 @@ function Wizard({ context, onDone, onCancel }) {
       }
       if (key.return) {
         const selected = releaseTypeItems[selectedIndex];
-        if (selected.key === 'none') {
+        if (selected.key === 'tagged') {
+          if (!context.headReleaseTag) {
+            setStep('bumpMenu');
+            setSelectedIndex(0);
+            setErrorMessage('');
+            return;
+          }
           setResult({
-            createTag: false,
-            releaseTag: '',
-            expectedTag: '',
+            createTag: true,
+            releaseTag: context.headReleaseTag,
             allowDirty: result.allowDirty,
-            selectedBumpKind: 'none'
+            action: 'dispatch',
+            npmVersionBump: ''
           });
           setStep('confirm');
           setSelectedIndex(0);
           setErrorMessage('');
           return;
         }
-        if (selected.key === 'custom') {
+        if (selected.key === 'none') {
           setResult({
-            createTag: true,
+            createTag: false,
             releaseTag: '',
-            expectedTag: '',
             allowDirty: result.allowDirty,
-            selectedBumpKind: 'custom'
+            action: 'dispatch',
+            npmVersionBump: ''
           });
-          setInputValue('');
-          setStep('tagInput');
+          setStep('confirm');
+          setSelectedIndex(0);
           setErrorMessage('');
           return;
         }
@@ -363,23 +379,38 @@ function Wizard({ context, onDone, onCancel }) {
           setErrorMessage('');
           return;
         }
+      }
+      return;
+    }
 
-        const suggested = nextTag(context.rootVersion, selected.key);
-        if (!suggested) {
-          setErrorMessage(`Could not compute tag from version '${context.rootVersion}'.`);
-          return;
-        }
-        setResult({
-          createTag: true,
-          releaseTag: suggested,
-          expectedTag: suggested,
-          allowDirty: result.allowDirty,
-          selectedBumpKind: selected.key
-        });
-        setInputValue(suggested);
-        setStep('tagInput');
-        setErrorMessage('');
+    if (step === 'bumpMenu') {
+      if (key.upArrow) {
+        setSelectedIndex((i) => (i - 1 + bumpMenuItems.length) % bumpMenuItems.length);
         return;
+      }
+      if (key.downArrow) {
+        setSelectedIndex((i) => (i + 1) % bumpMenuItems.length);
+        return;
+      }
+      if (key.return) {
+        const selected = bumpMenuItems[selectedIndex];
+        if (selected) {
+          setResult({
+            createTag: false,
+            releaseTag: '',
+            allowDirty: result.allowDirty,
+            action: 'prepare_tagged_release',
+            npmVersionBump: selected.key
+          });
+          setStep('confirm');
+          setSelectedIndex(0);
+          setErrorMessage('');
+        }
+      }
+      if (input.toLowerCase() === 'b') {
+        setStep('releaseType');
+        setSelectedIndex(0);
+        setErrorMessage('');
       }
       return;
     }
@@ -426,33 +457,6 @@ function Wizard({ context, onDone, onCancel }) {
       return;
     }
 
-    if (step === 'tagInput') {
-      if (key.return) {
-        const normalized = inputValue.trim();
-        if (!normalized) {
-          setErrorMessage('Tag is required for tagged releases.');
-          return;
-        }
-        if (!isValidReleaseTag(normalized)) {
-          setErrorMessage(`Invalid tag format: '${normalized}' (expected vX.Y.Z[...]).`);
-          return;
-        }
-        setResult((r) => ({ ...r, releaseTag: normalized }));
-        setStep('confirm');
-        setSelectedIndex(0);
-        setErrorMessage('');
-        return;
-      }
-      if (key.backspace || key.delete) {
-        setInputValue((s) => s.slice(0, -1));
-        return;
-      }
-      if (!key.ctrl && !key.meta && input) {
-        setInputValue((s) => s + input);
-      }
-      return;
-    }
-
     if (step === 'confirm') {
       if (key.upArrow || key.leftArrow) {
         setSelectedIndex((i) => (i - 1 + confirmItems.length) % confirmItems.length);
@@ -464,6 +468,10 @@ function Wizard({ context, onDone, onCancel }) {
       }
       if (key.return) {
         if (confirmItems[selectedIndex] === 'Proceed') {
+          if (result.action === 'prepare_tagged_release' && context.workingTreeDirty) {
+            setErrorMessage('npm version requires a clean working tree. Commit/stash changes first.');
+            return;
+          }
           if (context.workingTreeDirty && !result.allowDirty) {
             setStep('dirtyOverride');
             setSelectedIndex(0);
@@ -506,11 +514,13 @@ function Wizard({ context, onDone, onCancel }) {
     `working_tree_dirty: ${String(context.workingTreeDirty)}`,
     `mode: ${context.dryRun ? 'DRY RUN (no GitHub updates)' : 'EXECUTE (will dispatch workflow)'}`,
     `allow_dirty: ${String(result.allowDirty)}`,
+    `action: ${result.action === 'prepare_tagged_release' ? 'prepare tagged release (npm version)' : 'dispatch release workflow'}`,
+    result.action === 'prepare_tagged_release'
+      ? `npm_version_command: ${npmVersionCommandForBump(result.npmVersionBump || 'patch')}`
+      : null,
     `create_tag: ${String(result.createTag)}`,
     result.createTag ? `release_tag: ${result.releaseTag || '(none yet)'}` : null,
-    result.createTag
-      ? `npm_version_command: ${npmVersionCommandForSelection(result.selectedBumpKind, result.releaseTag)}`
-      : null,
+    `npm_version_convention: ${npmVersionConventionCommand()}`,
     result.createTag ? 'tagged_release_rule: source commit must be a version-bump commit' : null
   ].filter(Boolean);
   const selectedHistory = bumpHistories.find((section) => section.kind === selectedHistoryKind) || null;
@@ -536,18 +546,6 @@ function Wizard({ context, onDone, onCancel }) {
           )
         )
       : null,
-    step === 'tagInput'
-      ? React.createElement(
-          Box,
-          { flexDirection: 'column' },
-          React.createElement(Text, { bold: true }, 'Enter release tag'),
-          result.expectedTag
-            ? React.createElement(Text, null, `Suggested tag: ${result.expectedTag}`)
-            : React.createElement(Text, null, 'Custom tag (example: v1.2.3)'),
-          React.createElement(Text, { color: 'cyan' }, `> ${inputValue || ''}`),
-          React.createElement(Text, null, 'Press Enter to continue.')
-        )
-      : null,
     step === 'historyMenu'
       ? React.createElement(
           Box,
@@ -562,6 +560,24 @@ function Wizard({ context, onDone, onCancel }) {
           ),
           React.createElement(Text, null, ''),
           React.createElement(Text, { color: 'cyan' }, 'Press Enter to open, or b/Esc to go back.')
+        )
+      : null,
+    step === 'bumpMenu'
+      ? React.createElement(
+          Box,
+          { flexDirection: 'column' },
+          React.createElement(Text, { bold: true }, 'Prepare tagged release: select npm version bump'),
+          React.createElement(Text, null, 'No v* tag found on HEAD; choose a bump to create commit + tag.'),
+          React.createElement(Text, null, ''),
+          ...bumpMenuItems.map((item, idx) =>
+            React.createElement(
+              Text,
+              { key: item.key, color: idx === selectedIndex ? 'cyan' : undefined },
+              `${idx === selectedIndex ? '›' : ' '} ${item.label}`
+            )
+          ),
+          React.createElement(Text, null, ''),
+          React.createElement(Text, { color: 'cyan' }, 'Press Enter to select, or b/Esc to go back.')
         )
       : null,
     step === 'historyDetail'
@@ -783,6 +799,7 @@ async function main() {
     releaseBranch: RELEASE_BRANCH,
     rootVersion: repo.rootVersion,
     workingTreeDirty: repo.workingTreeDirty,
+    headReleaseTag: repo.headReleaseTag,
     bumpHistories: repo.bumpHistories,
     dryRun,
     allowDirty
@@ -793,6 +810,25 @@ async function main() {
       die('Aborted: working tree is dirty. Re-run with --allow-dirty or choose "Allow dirty and continue".');
     }
     die('Aborted.');
+  }
+
+  if (interview.action === 'prepare_tagged_release') {
+    const bump = interview.npmVersionBump || 'patch';
+    const cmd = npmVersionCommandForBump(bump);
+    if (dryRun) {
+      info('DRY RUN enabled. Skipping npm version command execution.');
+      console.log(`Would run: ${cmd}`);
+      console.log('Then push tags/commits with: git push origin main --follow-tags');
+      console.log('Then rerun this wizard and choose tagged release.');
+      return;
+    }
+
+    info(`Running npm version command: ${cmd}`);
+    run('npm', ['version', bump, '--workspaces', '--include-workspace-root'], { stdio: 'inherit' });
+    info('npm version completed.');
+    console.log('Next step: push commit + tags, then rerun this wizard and choose tagged release.');
+    console.log('git push origin main --follow-tags');
+    return;
   }
 
   const { createTag, releaseTag } = interview;
@@ -826,11 +862,7 @@ async function main() {
   console.log(`  create_tag:     ${String(createTag)}`);
   if (createTag) console.log(`  release_tag:    ${releaseTag}`);
   if (createTag) console.log(`  expected_tag:   ${expectedTagForVersion(repo.rootVersion)}`);
-  if (createTag) {
-    console.log(
-      `  npm_version:    ${npmVersionCommandForSelection(interview.selectedBumpKind, releaseTag)}`
-    );
-  }
+  console.log(`  npm_version:    ${npmVersionConventionCommand()}`);
   console.log(`  allow_dirty:    ${String(effectiveAllowDirty)}`);
   console.log('');
   console.log('Commit history by bump type:');
