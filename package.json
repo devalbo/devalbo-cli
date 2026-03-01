@@ -1,0 +1,23 @@
+{
+  "name": "devalbo-cli",
+  "private": false,
+  "version": "0.1.0",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": { "types": "./dist/index.d.ts", "browser": "./dist/browser.js", "import": "./dist/index.js" },
+    "./vite": { "types": "./dist/vite.d.ts", "import": "./dist/vite.js" },
+    "./node": { "types": "./dist/node.d.ts", "browser": "./dist/node.browser.js", "import": "./dist/node.js" }
+  },
+  "files": ["dist", "README.md"],
+  "dependencies": {
+    "vite-plugin-node-polyfills": "^0.25.0"
+  },
+  "peerDependencies": {
+    "ink": "^6.7.0",
+    "ink-web": "^0.1.11",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4"
+  }
+}
