@@ -890,8 +890,18 @@ function verifyRepoState(createTag, releaseTag, options = {}) {
   }
 
   if (createTag) {
-    const tagExists = run('git', ['ls-remote', '--tags', 'origin', `refs/tags/${releaseTag}`]).stdout.trim();
-    if (tagExists) die(`Tag already exists on origin: ${releaseTag}`);
+    const tagExistsLine = run('git', ['ls-remote', '--tags', 'origin', `refs/tags/${releaseTag}`]).stdout.trim();
+    if (tagExistsLine) {
+      const remoteTagSha = tagExistsLine.split(/\s+/)[0] || '';
+      if (remoteTagSha === sourceSha) {
+        info(`Tag ${releaseTag} already exists on origin and points to selected source commit. Skipping tag creation.`);
+        createTag = false;
+      } else {
+        die(
+          `Tag already exists on origin: ${releaseTag} (points to ${remoteTagSha.slice(0, 12)}, not selected source ${sourceSha.slice(0, 12)}).`
+        );
+      }
+    }
   }
 
   return { headSha, sourceSha, baselineStatusPorcelain: statusPorcelain };
@@ -1038,7 +1048,7 @@ async function main() {
     return;
   }
 
-  const { createTag, releaseTag, sourceRef } = interview;
+  let { createTag, releaseTag, sourceRef } = interview;
   const effectiveAllowDirty = allowDirty || interview.allowDirty === true;
   const { headSha, sourceSha, baselineStatusPorcelain } = verifyRepoState(createTag, releaseTag, {
     allowDirty: effectiveAllowDirty,
