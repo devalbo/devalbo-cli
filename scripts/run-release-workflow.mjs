@@ -126,11 +126,11 @@ function parseSemver(version) {
 }
 
 function npmVersionConventionCommand() {
-  return 'npm version <patch|minor|major> --workspaces --include-workspace-root';
+  return 'npm version <patch|minor|major> --workspaces --include-workspace-root --no-workspaces-update';
 }
 
 function npmVersionCommandForBump(bumpKind) {
-  return `npm version ${bumpKind} --workspaces --include-workspace-root`;
+  return `npm version ${bumpKind} --workspaces --include-workspace-root --no-workspaces-update`;
 }
 
 function compareSemver(a, b) {
