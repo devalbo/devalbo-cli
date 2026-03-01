@@ -1,5 +1,13 @@
 # @devalbo-cli/shared
 
+## 0.2.8
+
+### Patch Changes
+
+- Release patch bump
+- Updated dependencies
+  - @devalbo-cli/branded-types@0.2.8
+
 ## 0.2.7
 
 ### Patch Changes
