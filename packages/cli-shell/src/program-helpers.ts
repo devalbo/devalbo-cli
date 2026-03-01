@@ -1,5 +1,43 @@
 import type { AppConfig } from '@devalbo-cli/shared';
 import type { ProgramLike } from './types/program';
+import type { CommandRegistry } from './lib/command-registry';
+import { filesystemCommands } from './commands/filesystem';
+import { systemCommands } from './commands/system';
+import { appCommands } from './commands/app';
+
+const BUILTIN_META: Record<string, { description: string; args?: Array<{ name: string; description: string; required?: boolean }> }> = {
+  pwd: { description: 'Print working directory' },
+  cd: { description: 'Change directory', args: [{ name: 'path', description: 'Directory path', required: true }] },
+  ls: { description: 'List directory contents', args: [{ name: 'path', description: 'Path', required: false }] },
+  tree: { description: 'Show directory tree', args: [{ name: 'path', description: 'Path', required: false }] },
+  cat: { description: 'Display file contents', args: [{ name: 'file', description: 'File path', required: true }] },
+  touch: { description: 'Create empty file', args: [{ name: 'file', description: 'File path', required: true }] },
+  mkdir: { description: 'Create directory', args: [{ name: 'dir', description: 'Directory path', required: true }] },
+  cp: { description: 'Copy file or directory', args: [{ name: 'src', description: 'Source', required: true }, { name: 'dest', description: 'Destination', required: true }] },
+  mv: { description: 'Move/rename file or directory', args: [{ name: 'src', description: 'Source', required: true }, { name: 'dest', description: 'Destination', required: true }] },
+  rm: { description: 'Remove file or directory', args: [{ name: 'path', description: 'Path', required: true }] },
+  stat: { description: 'Show file/directory info', args: [{ name: 'path', description: 'Path', required: true }] },
+  clear: { description: 'Clear terminal' },
+  backend: { description: 'Show filesystem backend info' },
+  exit: { description: 'Exit the shell' },
+  help: { description: 'Show available commands' },
+  'app-config': { description: 'Show current app configuration' }
+};
+
+/**
+ * Register all built-in commands into a command registry.
+ * When `skipExisting` is true (default), commands already in the registry are
+ * not overwritten — this lets app commands registered in `onReady` take
+ * precedence over builtins.
+ */
+export function registerBuiltinCommandsToRegistry(registry: CommandRegistry, skipExisting = true): void {
+  const all = { ...filesystemCommands, ...systemCommands, ...appCommands };
+  for (const [name, handler] of Object.entries(all)) {
+    if (skipExisting && registry.has(name)) continue;
+    const meta = BUILTIN_META[name];
+    registry.register(name, handler, meta);
+  }
+}
 
 /**
  * Register all built-in cli-shell commands on a commander program.

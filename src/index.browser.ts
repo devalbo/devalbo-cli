@@ -29,7 +29,30 @@ export {
 
 export { filesystemCommands };
 export { appCommands };
-export { registerBuiltinCommands, defaultWelcomeMessage } from '@devalbo-cli/cli-shell/program-helpers';
+export { registerBuiltinCommands, defaultWelcomeMessage, registerBuiltinCommandsToRegistry } from '@devalbo-cli/cli-shell/program-helpers';
+export {
+  createApp,
+  ShellRuntimeProvider,
+  useShellRuntime,
+  createCommandRegistry,
+  withValidation,
+  validateEditArgs,
+  validateNavigateArgs,
+  useValidParse
+} from '@devalbo-cli/cli-shell';
+
+export type {
+  CreateAppOptions,
+  CreateAppResult,
+  CommandRegistry,
+  CommandMeta,
+  CommandRegistryEntry,
+  PreviewProps,
+  EditProps,
+  MimeTypeHandler,
+  EditArgs,
+  NavigateArgs
+} from '@devalbo-cli/cli-shell';
 
 /** Browser-safe built-ins avoid the Node-backed backend command source. */
 export const builtinCommands = { ...filesystemCommands, ...systemCommandsBrowser, ...appCommands } as const;

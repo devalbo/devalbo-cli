@@ -43,6 +43,24 @@ export {
 
 export { startInteractiveCli, type CliEntryOptions } from './cli-entry';
 
+export { createApp, type CreateAppOptions, type CreateAppResult } from './create-app';
+export { ShellRuntimeProvider, useShellRuntime, ShellRuntimeContext } from './context/ShellRuntimeContext';
+export { createCommandRegistry, type CommandRegistry, type CommandMeta, type CommandRegistryEntry } from './lib/command-registry';
+export { registerBuiltinCommandsToRegistry } from './program-helpers';
+
+export { withValidation } from './commands/with-validation';
+export { validateEditArgs, validateNavigateArgs } from './lib/validate-args';
+export type { EditArgs, NavigateArgs } from './lib/validate-args';
+
+/** Handler prop types for MIME type preview/edit components. Re-exported from @devalbo-cli/ui. */
+export type {
+  FilePreviewProps as PreviewProps,
+  FileEditProps as EditProps,
+  MimeTypeHandler
+} from '@devalbo-cli/ui';
+
+export { useValidParse } from './hooks/use-valid-parse';
+
 export { createCliAppConfig } from '@devalbo-cli/shared';
 
 export {

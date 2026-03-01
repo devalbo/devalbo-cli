@@ -1,16 +1,18 @@
 import { createRequire } from 'node:module'; const require = createRequire(import.meta.url);
 import {
   createStore
-} from "./chunk-EG6SR2WZ.js";
+} from "./chunk-B6HT3W4I.js";
 import {
   BrowserConnectivityService,
+  Effect_exports,
+  MissingArgument,
   createCliAppConfig,
   detectPlatform,
   external_exports,
   pathArgSchema,
   unsafeAsDirectoryPath,
   unsafeAsFilePath
-} from "./chunk-C334HCXJ.js";
+} from "./chunk-UU3L6ZIJ.js";
 import "./chunk-TWWXOWDW.js";
 
 // packages/cli-shell/src/lib/filesystem-actions.ts
@@ -28,15 +30,15 @@ var createFilesystemDriver = async () => {
     if (env.platform === "nodejs" /* NodeJS */) {
       const { NativeFSDriver } = await import(
         /* @vite-ignore */
-        "./node-6ONHZHKL.js"
+        "./node-VNOECGHW.js"
       );
       return new NativeFSDriver();
     }
     if (env.platform === "tauri" /* Tauri */) {
-      const { TauriFSDriver } = await import("./tauri-B6BNUQJ2.js");
+      const { TauriFSDriver } = await import("./tauri-PAHQDJOI.js");
       return new TauriFSDriver();
     }
-    const { BrowserStoreFSDriver } = await import("./browser-store-IFRDMCZC.js");
+    const { BrowserStoreFSDriver } = await import("./browser-store-Z53PTR4W.js");
     return new BrowserStoreFSDriver();
   })();
   return driverPromise;
@@ -2084,6 +2086,24 @@ import { jsx as jsx10, jsxs as jsxs3 } from "react/jsx-runtime";
 // packages/ui/src/hooks/use-keyboard.ts
 import { useInput as useInput3 } from "ink";
 
+// packages/ui/src/file-handlers/registry.ts
+var exactHandlers = /* @__PURE__ */ new Map();
+var wildcardHandlers = /* @__PURE__ */ new Map();
+var normalizePattern = (pattern) => pattern.trim().toLowerCase();
+var isWildcardPattern = (pattern) => pattern.endsWith("/*");
+var wildcardPrefix = (pattern) => pattern.slice(0, pattern.length - 2);
+var registerMimeTypeHandler = (pattern, handler) => {
+  const normalized = normalizePattern(pattern);
+  if (!normalized.includes("/")) {
+    throw new Error(`Invalid MIME type pattern: ${pattern}`);
+  }
+  if (isWildcardPattern(normalized)) {
+    wildcardHandlers.set(wildcardPrefix(normalized), handler);
+    return;
+  }
+  exactHandlers.set(normalized, handler);
+};
+
 // packages/ui/src/file-handlers/image-file-preview.tsx
 import { useEffect as useEffect3, useMemo as useMemo3, useState as useState5 } from "react";
 import { jsx as jsx11, jsxs as jsxs4 } from "react/jsx-runtime";
@@ -2181,6 +2201,16 @@ var parseCommand = (input) => {
   };
 };
 
+// packages/commands/src/validation.ts
+var withValidation = (validate, onSuccess, onMissingArg) => {
+  return Effect_exports.runSync(
+    Effect_exports.matchEffect(validate, {
+      onFailure: (error) => Effect_exports.succeed({ component: onMissingArg(error), error: error.message }),
+      onSuccess: (value2) => Effect_exports.succeed({ component: onSuccess(value2) })
+    })
+  );
+};
+
 // packages/cli-shell/src/lib/command-runtime.ts
 var parseCommandLine = (raw) => {
   const { name, args } = parseCommand(raw);
@@ -2219,152 +2249,8 @@ var executeCommandRaw = async (raw, ctx) => {
   return executeCommand(commandName, args, ctx);
 };
 
-// packages/cli-shell/src/components/InteractiveShell.tsx
-import { jsx as jsx17, jsxs as jsxs8 } from "react/jsx-runtime";
-function ShellContent({
-  commands,
-  createProgram,
-  runtime,
-  store,
-  config,
-  driver,
-  cwd,
-  setCwd,
-  session,
-  welcomeMessage
-}) {
-  const [connectivity] = useState11(() => new BrowserConnectivityService());
-  const [input, setInput] = useState11("");
-  const [inputKey, setInputKey] = useState11(0);
-  const [history, setHistory] = useState11([
-    {
-      component: typeof welcomeMessage === "string" ? /* @__PURE__ */ jsx17(Text8, { color: "cyan", children: welcomeMessage }) : welcomeMessage
-    }
-  ]);
-  const executeCommand2 = async (raw) => {
-    const { commandName } = parseCommandLine(raw);
-    if (!commandName) return;
-    const result = await executeCommandRaw(raw, {
-      commands,
-      store,
-      cwd,
-      setCwd,
-      ...createProgram ? { createProgram } : {},
-      ...session !== void 0 ? { session } : {},
-      ...config !== void 0 ? { config } : {},
-      ...driver ? { driver } : {},
-      ...connectivity ? { connectivity } : {},
-      clearScreen: () => setHistory([]),
-      ...runtime === "terminal" ? {
-        exit: () => {
-          const nodeProcess = globalThis.process;
-          nodeProcess?.exit?.(0);
-        }
-      } : {}
-    });
-    if (commandName !== "clear") {
-      setHistory((prev) => [...prev, { command: `$ ${raw}`, component: result.component }]);
-    }
-    setInput("");
-    setInputKey((prev) => prev + 1);
-  };
-  return /* @__PURE__ */ jsxs8(Box7, { flexDirection: "column", padding: 1, children: [
-    history.map((item, idx) => /* @__PURE__ */ jsxs8(Box7, { flexDirection: "column", marginBottom: 1, children: [
-      item.command ? /* @__PURE__ */ jsx17(Text8, { dimColor: true, children: item.command }) : null,
-      item.component && /* @__PURE__ */ jsx17(Box7, { marginLeft: 2, children: item.component })
-    ] }, idx)),
-    /* @__PURE__ */ jsxs8(Box7, { children: [
-      /* @__PURE__ */ jsx17(Text8, { color: "green", children: "$ " }),
-      /* @__PURE__ */ jsx17(
-        TextInput,
-        {
-          defaultValue: input,
-          onChange: setInput,
-          onSubmit: executeCommand2,
-          placeholder: "Type command"
-        },
-        inputKey
-      )
-    ] })
-  ] });
-}
-var InteractiveShell = ({
-  commands,
-  createProgram,
-  runtime = "browser",
-  store,
-  config,
-  driver = null,
-  cwd,
-  setCwd,
-  session,
-  welcomeMessage
-}) => {
-  const shellStore = useMemo8(() => store ?? createDevalboStore(), [store]);
-  const fallbackCwd = useMemo8(() => {
-    if (detectPlatform().platform !== "nodejs" /* NodeJS */) return "/";
-    const nodeProcess = globalThis.process;
-    return nodeProcess?.cwd?.() ?? "/";
-  }, []);
-  const resolvedCwd = cwd ?? fallbackCwd;
-  const resolvedSetCwd = setCwd ?? (() => void 0);
-  if (runtime === "terminal") {
-    return /* @__PURE__ */ jsx17(TerminalShellProvider, { children: /* @__PURE__ */ jsx17(
-      ShellContent,
-      {
-        commands,
-        ...createProgram ? { createProgram } : {},
-        runtime: "terminal",
-        store: shellStore,
-        ...config ? { config } : {},
-        driver,
-        cwd: resolvedCwd,
-        setCwd: resolvedSetCwd,
-        ...session !== void 0 ? { session } : {},
-        welcomeMessage
-      }
-    ) });
-  }
-  return /* @__PURE__ */ jsx17(BrowserShellProvider, { children: /* @__PURE__ */ jsx17(
-    ShellContent,
-    {
-      commands,
-      ...createProgram ? { createProgram } : {},
-      runtime: "browser",
-      store: shellStore,
-      ...config ? { config } : {},
-      driver,
-      cwd: resolvedCwd,
-      setCwd: resolvedSetCwd,
-      ...session !== void 0 ? { session } : {},
-      welcomeMessage
-    }
-  ) });
-};
-
-// packages/cli-shell/src/program-helpers.ts
-var registerBuiltinCommands = (program) => {
-  program.command("pwd").description("Print working directory");
-  program.command("cd <path>").description("Change directory");
-  program.command("ls [path]").description("List directory contents");
-  program.command("tree [path]").description("Show directory tree");
-  program.command("cat <file>").description("Display file contents");
-  program.command("touch <file>").description("Create empty file");
-  program.command("mkdir <dir>").description("Create directory");
-  program.command("cp <src> <dest>").description("Copy file or directory");
-  program.command("mv <src> <dest>").description("Move/rename file or directory");
-  program.command("rm <path>").description("Remove file or directory");
-  program.command("stat <path>").description("Show file/directory info");
-  program.command("clear").description("Clear terminal");
-  program.command("backend").description("Show filesystem backend info");
-  program.command("exit").description("Exit the shell");
-  program.command("help").description("Show available commands");
-  program.command("app-config").description("Show current app configuration");
-};
-var defaultWelcomeMessage = (config) => {
-  const name = config?.appName ?? config?.appId ?? "CLI shell";
-  return `Welcome to ${name}. Type "help" for available commands.`;
-};
+// packages/cli-shell/src/context/ShellRuntimeContext.tsx
+import { createContext as createContext4, useContext as useContext4, useEffect as useEffect9, useRef } from "react";
 
 // packages/cli-shell/src/web/console-helpers.ts
 var runtimeSource = null;
@@ -2472,18 +2358,214 @@ var cli = {
   helpText: async () => (await execText("help")).text
 };
 
+// packages/cli-shell/src/context/ShellRuntimeContext.tsx
+import { jsx as jsx17 } from "react/jsx-runtime";
+var ShellRuntimeContext = createContext4(null);
+function useShellRuntime() {
+  return useContext4(ShellRuntimeContext);
+}
+function ShellRuntimeProvider({
+  value: value2,
+  bindToCli = true,
+  children
+}) {
+  const valueRef = useRef(value2);
+  valueRef.current = value2;
+  useEffect9(() => {
+    if (!bindToCli) return;
+    bindCliRuntimeSource({
+      getContext: () => valueRef.current
+    });
+    return () => unbindCliRuntimeSource();
+  }, [bindToCli]);
+  return /* @__PURE__ */ jsx17(ShellRuntimeContext.Provider, { value: value2, children });
+}
+
+// packages/cli-shell/src/components/InteractiveShell.tsx
+import { jsx as jsx18, jsxs as jsxs8 } from "react/jsx-runtime";
+function ShellContent({
+  commands,
+  createProgram,
+  runtime,
+  store,
+  config,
+  driver,
+  cwd,
+  setCwd,
+  session,
+  connectivity: connectivityProp,
+  welcomeMessage
+}) {
+  const [connectivityFallback] = useState11(() => new BrowserConnectivityService());
+  const connectivity = connectivityProp ?? connectivityFallback;
+  const [input, setInput] = useState11("");
+  const [inputKey, setInputKey] = useState11(0);
+  const [history, setHistory] = useState11([
+    {
+      component: typeof welcomeMessage === "string" ? /* @__PURE__ */ jsx18(Text8, { color: "cyan", children: welcomeMessage }) : welcomeMessage
+    }
+  ]);
+  const executeCommand2 = async (raw) => {
+    const { commandName } = parseCommandLine(raw);
+    if (!commandName) return;
+    const result = await executeCommandRaw(raw, {
+      commands,
+      store,
+      cwd,
+      setCwd,
+      ...createProgram ? { createProgram } : {},
+      ...session !== void 0 ? { session } : {},
+      ...config !== void 0 ? { config } : {},
+      ...driver ? { driver } : {},
+      ...connectivity ? { connectivity } : {},
+      clearScreen: () => setHistory([]),
+      ...runtime === "terminal" ? {
+        exit: () => {
+          const nodeProcess = globalThis.process;
+          nodeProcess?.exit?.(0);
+        }
+      } : {}
+    });
+    if (commandName !== "clear") {
+      setHistory((prev) => [...prev, { command: `$ ${raw}`, component: result.component }]);
+    }
+    setInput("");
+    setInputKey((prev) => prev + 1);
+  };
+  return /* @__PURE__ */ jsxs8(Box7, { flexDirection: "column", padding: 1, children: [
+    history.map((item, idx) => /* @__PURE__ */ jsxs8(Box7, { flexDirection: "column", marginBottom: 1, children: [
+      item.command ? /* @__PURE__ */ jsx18(Text8, { dimColor: true, children: item.command }) : null,
+      item.component && /* @__PURE__ */ jsx18(Box7, { marginLeft: 2, children: item.component })
+    ] }, idx)),
+    /* @__PURE__ */ jsxs8(Box7, { children: [
+      /* @__PURE__ */ jsx18(Text8, { color: "green", children: "$ " }),
+      /* @__PURE__ */ jsx18(
+        TextInput,
+        {
+          defaultValue: input,
+          onChange: setInput,
+          onSubmit: executeCommand2,
+          placeholder: "Type command"
+        },
+        inputKey
+      )
+    ] })
+  ] });
+}
+var InteractiveShell = ({
+  commands: commandsProp,
+  createProgram: createProgramProp,
+  runtime = "browser",
+  store: storeProp,
+  config: configProp,
+  driver: driverProp = null,
+  cwd: cwdProp,
+  setCwd: setCwdProp,
+  session: sessionProp,
+  welcomeMessage
+}) => {
+  const runtimeContext = useShellRuntime();
+  const fromContext = runtimeContext ?? void 0;
+  const commands = commandsProp ?? fromContext?.commands;
+  const createProgram = createProgramProp ?? (fromContext?.createProgram ? () => fromContext.createProgram() : void 0);
+  const store = storeProp ?? fromContext?.store;
+  const config = configProp ?? fromContext?.config;
+  const driver = driverProp ?? fromContext?.driver ?? null;
+  const cwd = cwdProp ?? fromContext?.cwd;
+  const setCwd = setCwdProp ?? fromContext?.setCwd;
+  const session = sessionProp !== void 0 ? sessionProp : fromContext?.session;
+  const connectivity = fromContext?.connectivity ?? null;
+  const shellStore = useMemo8(() => store ?? createDevalboStore(), [store]);
+  const fallbackCwd = useMemo8(() => {
+    if (detectPlatform().platform !== "nodejs" /* NodeJS */) return "/";
+    const nodeProcess = globalThis.process;
+    return nodeProcess?.cwd?.() ?? "/";
+  }, []);
+  const resolvedCwd = cwd ?? fallbackCwd;
+  const resolvedSetCwd = setCwd ?? (() => void 0);
+  if (commands == null) {
+    throw new Error("InteractiveShell: commands are required. Pass commands as a prop or render inside ShellRuntimeProvider (e.g. createApp().App).");
+  }
+  const shellContentProps = {
+    commands,
+    ...createProgram ? { createProgram } : {},
+    store: shellStore,
+    ...config ? { config } : {},
+    driver,
+    cwd: resolvedCwd,
+    setCwd: resolvedSetCwd,
+    ...session !== void 0 ? { session } : {},
+    ...connectivity ? { connectivity } : {},
+    welcomeMessage
+  };
+  if (runtime === "terminal") {
+    return /* @__PURE__ */ jsx18(TerminalShellProvider, { children: /* @__PURE__ */ jsx18(ShellContent, { ...shellContentProps, runtime: "terminal" }) });
+  }
+  return /* @__PURE__ */ jsx18(BrowserShellProvider, { children: /* @__PURE__ */ jsx18(ShellContent, { ...shellContentProps, runtime: "browser" }) });
+};
+
+// packages/cli-shell/src/program-helpers.ts
+var BUILTIN_META = {
+  pwd: { description: "Print working directory" },
+  cd: { description: "Change directory", args: [{ name: "path", description: "Directory path", required: true }] },
+  ls: { description: "List directory contents", args: [{ name: "path", description: "Path", required: false }] },
+  tree: { description: "Show directory tree", args: [{ name: "path", description: "Path", required: false }] },
+  cat: { description: "Display file contents", args: [{ name: "file", description: "File path", required: true }] },
+  touch: { description: "Create empty file", args: [{ name: "file", description: "File path", required: true }] },
+  mkdir: { description: "Create directory", args: [{ name: "dir", description: "Directory path", required: true }] },
+  cp: { description: "Copy file or directory", args: [{ name: "src", description: "Source", required: true }, { name: "dest", description: "Destination", required: true }] },
+  mv: { description: "Move/rename file or directory", args: [{ name: "src", description: "Source", required: true }, { name: "dest", description: "Destination", required: true }] },
+  rm: { description: "Remove file or directory", args: [{ name: "path", description: "Path", required: true }] },
+  stat: { description: "Show file/directory info", args: [{ name: "path", description: "Path", required: true }] },
+  clear: { description: "Clear terminal" },
+  backend: { description: "Show filesystem backend info" },
+  exit: { description: "Exit the shell" },
+  help: { description: "Show available commands" },
+  "app-config": { description: "Show current app configuration" }
+};
+function registerBuiltinCommandsToRegistry(registry, skipExisting = true) {
+  const all = { ...filesystemCommands, ...systemCommands, ...appCommands };
+  for (const [name, handler] of Object.entries(all)) {
+    if (skipExisting && registry.has(name)) continue;
+    const meta = BUILTIN_META[name];
+    registry.register(name, handler, meta);
+  }
+}
+var registerBuiltinCommands = (program) => {
+  program.command("pwd").description("Print working directory");
+  program.command("cd <path>").description("Change directory");
+  program.command("ls [path]").description("List directory contents");
+  program.command("tree [path]").description("Show directory tree");
+  program.command("cat <file>").description("Display file contents");
+  program.command("touch <file>").description("Create empty file");
+  program.command("mkdir <dir>").description("Create directory");
+  program.command("cp <src> <dest>").description("Copy file or directory");
+  program.command("mv <src> <dest>").description("Move/rename file or directory");
+  program.command("rm <path>").description("Remove file or directory");
+  program.command("stat <path>").description("Show file/directory info");
+  program.command("clear").description("Clear terminal");
+  program.command("backend").description("Show filesystem backend info");
+  program.command("exit").description("Exit the shell");
+  program.command("help").description("Show available commands");
+  program.command("app-config").description("Show current app configuration");
+};
+var defaultWelcomeMessage = (config) => {
+  const name = config?.appName ?? config?.appId ?? "CLI shell";
+  return `Welcome to ${name}. Type "help" for available commands.`;
+};
+
 // packages/cli-shell/src/cli-entry.tsx
 import { render } from "ink";
 import { useState as useState12 } from "react";
 import "react";
-import { jsx as jsx18 } from "react/jsx-runtime";
+import { jsx as jsx19 } from "react/jsx-runtime";
 async function startInteractiveCli(opts) {
   const store = createDevalboStore();
   const driver = await createFilesystemDriver();
   const initialCwd = globalThis.process?.cwd?.() ?? "/";
   const App = () => {
     const [cwd, setCwd] = useState12(initialCwd);
-    return /* @__PURE__ */ jsx18(
+    return /* @__PURE__ */ jsx19(
       InteractiveShell,
       {
         runtime: "terminal",
@@ -2498,7 +2580,140 @@ async function startInteractiveCli(opts) {
       }
     );
   };
-  render(/* @__PURE__ */ jsx18(App, {}));
+  render(/* @__PURE__ */ jsx19(App, {}));
+}
+
+// packages/cli-shell/src/create-app.tsx
+import { useMemo as useMemo9, useState as useState13 } from "react";
+
+// packages/cli-shell/src/lib/command-registry.ts
+import { Command } from "commander";
+function createCommandRegistry() {
+  const entries = /* @__PURE__ */ new Map();
+  let frozen = false;
+  return {
+    has(name) {
+      return entries.has(name);
+    },
+    register(name, handler, meta) {
+      if (frozen) {
+        throw new Error(`Cannot register command "${name}": registry is frozen. Register commands in onReady before createApp() resolves.`);
+      }
+      if (entries.has(name)) {
+        throw new Error(`Command already registered: ${name}`);
+      }
+      const entry = { name, handler };
+      if (meta !== void 0) entry.meta = meta;
+      entries.set(name, entry);
+    },
+    freeze() {
+      frozen = true;
+    },
+    getCommandMap() {
+      const map2 = {};
+      for (const [name, { handler }] of entries) {
+        map2[name] = handler;
+      }
+      return map2;
+    },
+    createProgram(appName, version = "0.0.0", description = "") {
+      const program = new Command(appName).version(version);
+      if (description) program.description(description);
+      for (const [, { name, meta }] of entries) {
+        const spec = meta?.args?.length ? `${name} ${meta.args.map((a) => a.required ? `<${a.name}>` : `[${a.name}]`).join(" ")}` : name;
+        const cmd = program.command(spec);
+        if (meta?.description) cmd.description(meta.description);
+      }
+      return program;
+    }
+  };
+}
+
+// packages/cli-shell/src/create-app.tsx
+import { jsx as jsx20 } from "react/jsx-runtime";
+async function createApp(options) {
+  const {
+    appId,
+    appName = appId,
+    storageKey,
+    version = "0.0.0",
+    description = "",
+    onReady
+  } = options;
+  const store = createDevalboStore();
+  const config = createCliAppConfig({ appId, appName, storageKey });
+  const registry = createCommandRegistry();
+  const registerCommand = (name, handler, meta) => {
+    registry.register(name, handler, meta);
+  };
+  onReady?.({ registerCommand, registerMimeTypeHandler });
+  registerBuiltinCommandsToRegistry(registry);
+  registry.freeze();
+  const driver = await createFilesystemDriver();
+  const createProgram = () => registry.createProgram(appId, version, description);
+  const commands = registry.getCommandMap();
+  function App({
+    welcomeMessage = defaultWelcomeMessage(config),
+    children
+  } = {}) {
+    const [cwd, setCwd] = useState13("/");
+    const [connectivity] = useState13(() => new BrowserConnectivityService());
+    const runtimeValue = useMemo9(
+      () => ({ commands, createProgram, store, config, driver, cwd, setCwd, connectivity }),
+      [cwd, setCwd, connectivity]
+    );
+    return /* @__PURE__ */ jsx20(StoreContext.Provider, { value: store, children: /* @__PURE__ */ jsx20(AppConfigProvider, { config, children: /* @__PURE__ */ jsx20(ShellRuntimeProvider, { value: runtimeValue, bindToCli: true, children: children ?? /* @__PURE__ */ jsx20(InteractiveShell, { welcomeMessage }) }) }) });
+  }
+  return { store, driver, App };
+}
+
+// packages/cli-shell/src/lib/validate-args.ts
+var validateNavigateArgs = (args) => Effect_exports.gen(function* () {
+  const requested = args[0] || ".";
+  return { path: requested };
+});
+var validateEditArgs = (args) => Effect_exports.gen(function* () {
+  const requested = args[0]?.trim();
+  if (!requested) {
+    return yield* Effect_exports.fail(
+      new MissingArgument({
+        argName: "file",
+        message: "File path is required"
+      })
+    );
+  }
+  return { file: requested };
+});
+
+// packages/cli-shell/src/hooks/use-valid-parse.ts
+import { useState as useState14, useEffect as useEffect10, useRef as useRef2 } from "react";
+function useValidParse(source, parse2) {
+  const [validDoc, setValidDoc] = useState14(null);
+  const [parseError, setParseError] = useState14(null);
+  const parseRef = useRef2(parse2);
+  parseRef.current = parse2;
+  useEffect10(() => {
+    let cancelled = false;
+    const run = async () => {
+      try {
+        const result = await Promise.resolve(parseRef.current(source));
+        if (!cancelled) {
+          setValidDoc(result);
+          setParseError(null);
+        }
+      } catch (err) {
+        if (!cancelled) {
+          const message2 = err instanceof Error ? err.message : String(err);
+          setParseError(message2);
+        }
+      }
+    };
+    void run();
+    return () => {
+      cancelled = true;
+    };
+  }, [source]);
+  return { validDoc, parseError };
 }
 
 // packages/cli-shell/src/index.ts
@@ -2507,11 +2722,14 @@ export {
   AppConfigProvider,
   BrowserConnectivityService,
   InteractiveShell,
+  ShellRuntimeProvider,
   StoreContext,
   bindCliRuntimeSource,
   builtinCommands,
   cli,
+  createApp,
   createCliAppConfig,
+  createCommandRegistry,
   createDevalboStore,
   createFilesystemDriver,
   defaultWelcomeMessage,
@@ -2521,7 +2739,13 @@ export {
   makeResultError,
   mergeCommands,
   registerBuiltinCommands,
+  registerBuiltinCommandsToRegistry,
   startInteractiveCli,
   unbindCliRuntimeSource,
-  useAppConfig
+  useAppConfig,
+  useShellRuntime,
+  useValidParse,
+  validateEditArgs,
+  validateNavigateArgs,
+  withValidation
 };

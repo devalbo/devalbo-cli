@@ -5,8 +5,8 @@ import {
   subscribeBrowserFsEvents,
   toDirectoryPath,
   toFilePath
-} from "./chunk-EG6SR2WZ.js";
-import "./chunk-C334HCXJ.js";
+} from "./chunk-B6HT3W4I.js";
+import "./chunk-UU3L6ZIJ.js";
 import "./chunk-TWWXOWDW.js";
 export {
   BrowserStoreFSDriver,

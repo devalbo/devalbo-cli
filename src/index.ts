@@ -8,7 +8,16 @@ export {
   registerBuiltinCommands,
   mergeCommands,
   createCliAppConfig,
-  defaultWelcomeMessage
+  defaultWelcomeMessage,
+  createApp,
+  ShellRuntimeProvider,
+  useShellRuntime,
+  createCommandRegistry,
+  registerBuiltinCommandsToRegistry,
+  withValidation,
+  validateEditArgs,
+  validateNavigateArgs,
+  useValidParse
 } from '@devalbo-cli/cli-shell';
 
 export type {
@@ -16,7 +25,17 @@ export type {
   AsyncCommandHandler,
   StoreCommandHandler,
   ExtendedCommandOptions,
-  ExtendedCommandOptionsWithStore
+  ExtendedCommandOptionsWithStore,
+  CreateAppOptions,
+  CreateAppResult,
+  CommandRegistry,
+  CommandMeta,
+  CommandRegistryEntry,
+  PreviewProps,
+  EditProps,
+  MimeTypeHandler,
+  EditArgs,
+  NavigateArgs
 } from '@devalbo-cli/cli-shell';
 
 export {

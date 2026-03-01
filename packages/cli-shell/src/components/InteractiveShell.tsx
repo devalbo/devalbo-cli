@@ -15,6 +15,7 @@ import type { IFilesystemDriver } from '@devalbo-cli/filesystem';
 import type { CommandHandler } from '../commands/_util';
 import { executeCommandRaw, parseCommandLine } from '../lib/command-runtime';
 import type { ProgramLike } from '../types/program';
+import { useShellRuntime } from '../context/ShellRuntimeContext';
 
 interface CommandOutput {
   command?: string;
@@ -31,6 +32,7 @@ function ShellContent({
   cwd,
   setCwd,
   session,
+  connectivity: connectivityProp,
   welcomeMessage
 }: {
   commands: Record<string, CommandHandler>;
@@ -42,9 +44,11 @@ function ShellContent({
   cwd: string;
   setCwd: (next: string) => void;
   session?: unknown | null;
+  connectivity?: IConnectivityService | null;
   welcomeMessage: string | ReactNode;
 }) {
-  const [connectivity] = useState<IConnectivityService>(() => new BrowserConnectivityService());
+  const [connectivityFallback] = useState<IConnectivityService>(() => new BrowserConnectivityService());
+  const connectivity = connectivityProp ?? connectivityFallback;
   const [input, setInput] = useState('');
   const [inputKey, setInputKey] = useState(0);
   const [history, setHistory] = useState<CommandOutput[]>([
@@ -111,7 +115,7 @@ function ShellContent({
 }
 
 export const InteractiveShell: React.FC<{
-  commands: Record<string, CommandHandler>;
+  commands?: Record<string, CommandHandler>;
   createProgram?: () => ProgramLike;
   runtime?: 'browser' | 'terminal';
   store?: DevalboStore;
@@ -122,17 +126,30 @@ export const InteractiveShell: React.FC<{
   session?: unknown | null;
   welcomeMessage: string | ReactNode;
 }> = ({
-  commands,
-  createProgram,
+  commands: commandsProp,
+  createProgram: createProgramProp,
   runtime = 'browser',
-  store,
-  config,
-  driver = null,
-  cwd,
-  setCwd,
-  session,
+  store: storeProp,
+  config: configProp,
+  driver: driverProp = null,
+  cwd: cwdProp,
+  setCwd: setCwdProp,
+  session: sessionProp,
   welcomeMessage
 }) => {
+  const runtimeContext = useShellRuntime();
+  const fromContext = runtimeContext ?? undefined;
+
+  const commands = commandsProp ?? fromContext?.commands;
+  const createProgram = createProgramProp ?? (fromContext?.createProgram ? () => fromContext.createProgram!() : undefined);
+  const store = storeProp ?? fromContext?.store;
+  const config = configProp ?? fromContext?.config;
+  const driver = driverProp ?? fromContext?.driver ?? null;
+  const cwd = cwdProp ?? fromContext?.cwd;
+  const setCwd = setCwdProp ?? fromContext?.setCwd;
+  const session = sessionProp !== undefined ? sessionProp : fromContext?.session;
+  const connectivity = fromContext?.connectivity ?? null;
+
   const shellStore = useMemo(() => store ?? createDevalboStore(), [store]);
   const fallbackCwd = useMemo(() => {
     if (detectPlatform().platform !== RuntimePlatform.NodeJS) return '/';
@@ -142,39 +159,34 @@ export const InteractiveShell: React.FC<{
   const resolvedCwd = cwd ?? fallbackCwd;
   const resolvedSetCwd = setCwd ?? (() => undefined);
 
+  if (commands == null) {
+    throw new Error('InteractiveShell: commands are required. Pass commands as a prop or render inside ShellRuntimeProvider (e.g. createApp().App).');
+  }
+
+  const shellContentProps = {
+    commands,
+    ...(createProgram ? { createProgram } : {}),
+    store: shellStore,
+    ...(config ? { config } : {}),
+    driver,
+    cwd: resolvedCwd,
+    setCwd: resolvedSetCwd,
+    ...(session !== undefined ? { session } : {}),
+    ...(connectivity ? { connectivity } : {}),
+    welcomeMessage
+  };
+
   if (runtime === 'terminal') {
     return (
       <TerminalShellProvider>
-        <ShellContent
-          commands={commands}
-          {...(createProgram ? { createProgram } : {})}
-          runtime="terminal"
-          store={shellStore}
-          {...(config ? { config } : {})}
-          driver={driver}
-          cwd={resolvedCwd}
-          setCwd={resolvedSetCwd}
-          {...(session !== undefined ? { session } : {})}
-          welcomeMessage={welcomeMessage}
-        />
+        <ShellContent {...shellContentProps} runtime="terminal" />
       </TerminalShellProvider>
     );
   }
 
   return (
     <BrowserShellProvider>
-      <ShellContent
-        commands={commands}
-        {...(createProgram ? { createProgram } : {})}
-        runtime="browser"
-        store={shellStore}
-        {...(config ? { config } : {})}
-        driver={driver}
-        cwd={resolvedCwd}
-        setCwd={resolvedSetCwd}
-        {...(session !== undefined ? { session } : {})}
-        welcomeMessage={welcomeMessage}
-      />
+      <ShellContent {...shellContentProps} runtime="browser" />
     </BrowserShellProvider>
   );
 };

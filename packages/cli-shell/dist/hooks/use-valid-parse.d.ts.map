@@ -1,0 +1,1 @@
+{"version":3,"file":"use-valid-parse.d.ts","sourceRoot":"","sources":["../../src/hooks/use-valid-parse.ts"],"names":[],"mappings":"AAEA;;;;;;;;;;;GAWG;AACH,wBAAgB,aAAa,CAAC,CAAC,EAC7B,MAAM,EAAE,MAAM,GAAG,UAAU,EAC3B,KAAK,EAAE,CAAC,GAAG,EAAE,MAAM,GAAG,UAAU,KAAK,CAAC,GAAG,OAAO,CAAC,CAAC,CAAC,GAClD;IAAE,QAAQ,EAAE,CAAC,GAAG,IAAI,CAAC;IAAC,UAAU,EAAE,MAAM,GAAG,IAAI,CAAA;CAAE,CA6BnD"}

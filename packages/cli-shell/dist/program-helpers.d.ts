@@ -1,5 +1,13 @@
 import type { AppConfig } from '@devalbo-cli/shared';
 import type { ProgramLike } from './types/program';
+import type { CommandRegistry } from './lib/command-registry';
+/**
+ * Register all built-in commands into a command registry.
+ * When `skipExisting` is true (default), commands already in the registry are
+ * not overwritten — this lets app commands registered in `onReady` take
+ * precedence over builtins.
+ */
+export declare function registerBuiltinCommandsToRegistry(registry: CommandRegistry, skipExisting?: boolean): void;
 /**
  * Register all built-in cli-shell commands on a commander program.
  *

@@ -1,5 +1,8 @@
-import React$1, { Context, ReactNode } from 'react';
+import React$1, { ReactNode, Context } from 'react';
 import { Store } from 'tinybase';
+import { Effect } from 'effect';
+import * as effect_Cause from 'effect/Cause';
+import * as effect_Types from 'effect/Types';
 
 declare const __brand: unique symbol;
 type Brand<B> = {
@@ -42,6 +45,18 @@ interface CommandOptions {
     onComplete?: () => void;
 }
 
+declare const MissingArgument_base: new <A extends Record<string, any> = {}>(args: effect_Types.Equals<A, {}> extends true ? void : { readonly [P in keyof A as P extends "_tag" ? never : P]: A[P]; }) => effect_Cause.YieldableError & {
+    readonly _tag: "MissingArgument";
+} & Readonly<A>;
+declare class MissingArgument extends MissingArgument_base<{
+    argName: string;
+    message: string;
+    defaultValue?: string;
+}> {
+}
+
+declare const withValidation: <A>(validate: Effect.Effect<A, MissingArgument>, onSuccess: (value: A) => ReactNode, onMissingArg: (error: MissingArgument) => ReactNode) => CommandResult;
+
 type AppConfig = {
     appId: string;
     appName: string;
@@ -72,6 +87,17 @@ type AppIdentity = {
 };
 /** CLI-only app: all sync and social features disabled. */
 declare const createCliAppConfig: (identity: AppIdentity) => AppConfig;
+
+declare const createDevalboStore: () => Store;
+type DevalboStore = Store;
+
+declare const StoreContext: Context<DevalboStore | null>;
+
+declare const AppConfigProvider: React.FC<{
+    config: AppConfig;
+    children: ReactNode;
+}>;
+declare const useAppConfig: () => AppConfig;
 
 interface IFilesystemDriver {
     readFile(path: FilePath): Promise<Uint8Array>;
@@ -145,23 +171,8 @@ declare const makeResultError: (message: string, data?: unknown) => CommandResul
  */
 declare const mergeCommands: (...groups: Record<string, CommandHandler>[]) => Record<string, CommandHandler>;
 
-declare const filesystemCommands: Record<'pwd' | 'cd' | 'ls' | 'tree' | 'stat' | 'cat' | 'touch' | 'mkdir' | 'cp' | 'mv' | 'rm', AsyncCommandHandler>;
-
-declare const appCommands: Record<'app-config', AsyncCommandHandler>;
-
-declare const createDevalboStore: () => Store;
-type DevalboStore = Store;
-
-declare const StoreContext: Context<DevalboStore | null>;
-
-declare const AppConfigProvider: React.FC<{
-    config: AppConfig;
-    children: ReactNode;
-}>;
-declare const useAppConfig: () => AppConfig;
-
 declare const InteractiveShell: React$1.FC<{
-    commands: Record<string, CommandHandler>;
+    commands?: Record<string, CommandHandler>;
     createProgram?: () => ProgramLike;
     runtime?: 'browser' | 'terminal';
     store?: DevalboStore;
@@ -172,6 +183,83 @@ declare const InteractiveShell: React$1.FC<{
     session?: unknown | null;
     welcomeMessage: string | ReactNode;
 }>;
+
+type FileContent = string | Uint8Array;
+interface FileHandlerBaseProps {
+    path: string;
+    mimeType: string;
+}
+interface FilePreviewProps extends FileHandlerBaseProps {
+    content: FileContent;
+}
+interface FileEditProps extends FileHandlerBaseProps {
+    content: FileContent;
+    onSave: (nextContent: FileContent) => Promise<void> | void;
+    onChange?: (nextContent: FileContent) => void;
+}
+type FilePreviewHandler = React$1.ComponentType<FilePreviewProps>;
+type FileEditHandler = React$1.ComponentType<FileEditProps>;
+interface MimeTypeHandler {
+    preview?: FilePreviewHandler;
+    edit?: FileEditHandler;
+    viewEdit?: FileEditHandler;
+}
+
+declare const registerMimeTypeHandler: (pattern: string, handler: MimeTypeHandler) => void;
+
+declare const filesystemCommands: Record<'pwd' | 'cd' | 'ls' | 'tree' | 'stat' | 'cat' | 'touch' | 'mkdir' | 'cp' | 'mv' | 'rm', AsyncCommandHandler>;
+
+declare const appCommands: Record<'app-config', AsyncCommandHandler>;
+
+type CommandMeta = {
+    description?: string;
+    args?: Array<{
+        name: string;
+        description?: string;
+        required?: boolean;
+    }>;
+};
+type CommandRegistryEntry = {
+    name: string;
+    handler: CommandHandler;
+    meta?: CommandMeta;
+};
+type CommandRegistry = {
+    /** Check whether a command name is already registered. */
+    has: (name: string) => boolean;
+    register: (name: string, handler: CommandHandler, meta?: CommandMeta) => void;
+    getCommandMap: () => Record<string, CommandHandler>;
+    createProgram: (appName: string, version?: string, description?: string) => ProgramLike;
+    /** Prevent further registrations. Subsequent register() calls throw. */
+    freeze: () => void;
+};
+/**
+ * Creates a command registry. Use register() to add commands, getCommandMap() for
+ * the shell, and createProgram() to build a Commander program for help output.
+ */
+declare function createCommandRegistry(): CommandRegistry;
+
+/**
+ * Register all built-in commands into a command registry.
+ * When `skipExisting` is true (default), commands already in the registry are
+ * not overwritten — this lets app commands registered in `onReady` take
+ * precedence over builtins.
+ */
+declare function registerBuiltinCommandsToRegistry(registry: CommandRegistry, skipExisting?: boolean): void;
+/**
+ * Register all built-in cli-shell commands on a commander program.
+ *
+ * Call this after registering your own app-specific commands so that
+ * `help` displays everything. Built-in commands include filesystem
+ * operations, system commands, and app-config.
+ */
+declare const registerBuiltinCommands: (program: ProgramLike) => void;
+/**
+ * Generate a default shell welcome message from AppConfig.
+ *
+ * Output format: `Welcome to <name>. Type "help" for available commands.`
+ */
+declare const defaultWelcomeMessage: (config?: Pick<AppConfig, "appName" | "appId">) => string;
 
 type CommandRuntimeContext = {
     commands: Record<string, CommandHandler>;
@@ -230,20 +318,73 @@ declare const cli: {
     helpText: () => Promise<string>;
 };
 
+type CreateAppOptions = {
+    appId: string;
+    appName?: string;
+    storageKey: string;
+    version?: string;
+    description?: string;
+    onReady?: (api: {
+        registerCommand: (name: string, handler: CommandHandler, meta?: CommandMeta) => void;
+        registerMimeTypeHandler: typeof registerMimeTypeHandler;
+    }) => void;
+};
+type CreateAppResult = {
+    store: ReturnType<typeof createDevalboStore>;
+    driver: Awaited<ReturnType<typeof createFilesystemDriver>>;
+    App: React$1.FC<{
+        welcomeMessage?: string | ReactNode;
+        children?: ReactNode;
+    }>;
+};
 /**
- * Register all built-in cli-shell commands on a commander program.
- *
- * Call this after registering your own app-specific commands so that
- * `help` displays everything. Built-in commands include filesystem
- * operations, system commands, and app-config.
+ * One-step bootstrap for a devalbo-cli app: creates store, driver, command registry,
+ * and an App component that wraps InteractiveShell with all providers. InteractiveShell
+ * reads runtime from context, so you don't need to pass commands/store/driver/cwd or
+ * call bindCliRuntimeSource. window.cli is bound automatically for dev console.
  */
-declare const registerBuiltinCommands: (program: ProgramLike) => void;
+declare function createApp(options: CreateAppOptions): Promise<CreateAppResult>;
+
+type ShellRuntimeContextValue = CommandRuntimeContext | null;
+declare function useShellRuntime(): ShellRuntimeContextValue;
+type ShellRuntimeProviderProps = {
+    value: CommandRuntimeContext | null;
+    /** When true, also bind this context to window.cli (dev console). Default true in browser. */
+    bindToCli?: boolean;
+    children: ReactNode;
+};
 /**
- * Generate a default shell welcome message from AppConfig.
- *
- * Output format: `Welcome to <name>. Type "help" for available commands.`
+ * Provides shell runtime (commands, store, driver, cwd, etc.) to InteractiveShell
+ * and optionally to window.cli for dev console. Use this when using createApp() or
+ * when you want InteractiveShell to read from context instead of props.
  */
-declare const defaultWelcomeMessage: (config?: Pick<AppConfig, "appName" | "appId">) => string;
+declare function ShellRuntimeProvider({ value, bindToCli, children }: ShellRuntimeProviderProps): React$1.ReactElement;
+
+interface NavigateArgs {
+    path: string;
+}
+interface EditArgs {
+    file: string;
+}
+declare const validateNavigateArgs: (args: string[]) => Effect.Effect<NavigateArgs, MissingArgument>;
+declare const validateEditArgs: (args: string[]) => Effect.Effect<EditArgs, MissingArgument>;
+
+/**
+ * Tracks the last successful parse result and the current parse error.
+ * Use in viewEdit handlers: parse source with your parser; validDoc updates only
+ * when parsing succeeds, parseError is set when it fails.
+ *
+ * The parse function can be an inline arrow — it is captured by ref and does not
+ * trigger re-parsing. Only changes to `source` trigger re-parsing.
+ *
+ * @param source - Raw input (e.g. file content string)
+ * @param parse - Parser function. Return the parsed value; throw or reject on invalid input.
+ * @returns { validDoc, parseError } - validDoc is the last successful result; parseError is the current error message or null.
+ */
+declare function useValidParse<T>(source: string | Uint8Array, parse: (src: string | Uint8Array) => T | Promise<T>): {
+    validDoc: T | null;
+    parseError: string | null;
+};
 
 /** Browser-safe built-ins avoid the Node-backed backend command source. */
 declare const builtinCommands: {
@@ -265,4 +406,4 @@ declare const builtinCommands: {
     readonly rm: AsyncCommandHandler;
 };
 
-export { AppConfigProvider, type AsyncCommandHandler, BrowserConnectivityService, type CliRuntimeSource, type CommandHandler, type ExtendedCommandOptions, type ExtendedCommandOptionsWithStore, InteractiveShell, type StoreCommandHandler, StoreContext, appCommands, bindCliRuntimeSource, builtinCommands, cli, createCliAppConfig, createDevalboStore, createFilesystemDriver, defaultWelcomeMessage, filesystemCommands, getCliRuntimeStatus, makeError, makeOutput, makeResult, makeResultError, mergeCommands, registerBuiltinCommands, unbindCliRuntimeSource, useAppConfig };
+export { AppConfigProvider, type AsyncCommandHandler, BrowserConnectivityService, type CliRuntimeSource, type CommandHandler, type CommandMeta, type CommandRegistry, type CommandRegistryEntry, type CreateAppOptions, type CreateAppResult, type EditArgs, type FileEditProps as EditProps, type ExtendedCommandOptions, type ExtendedCommandOptionsWithStore, InteractiveShell, type MimeTypeHandler, type NavigateArgs, type FilePreviewProps as PreviewProps, ShellRuntimeProvider, type StoreCommandHandler, StoreContext, appCommands, bindCliRuntimeSource, builtinCommands, cli, createApp, createCliAppConfig, createCommandRegistry, createDevalboStore, createFilesystemDriver, defaultWelcomeMessage, filesystemCommands, getCliRuntimeStatus, makeError, makeOutput, makeResult, makeResultError, mergeCommands, registerBuiltinCommands, registerBuiltinCommandsToRegistry, unbindCliRuntimeSource, useAppConfig, useShellRuntime, useValidParse, validateEditArgs, validateNavigateArgs, withValidation };

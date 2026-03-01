@@ -5,7 +5,7 @@ import type { IFilesystemDriver } from '@devalbo-cli/filesystem';
 import type { CommandHandler } from '../commands/_util';
 import type { ProgramLike } from '../types/program';
 export declare const InteractiveShell: React.FC<{
-    commands: Record<string, CommandHandler>;
+    commands?: Record<string, CommandHandler>;
     createProgram?: () => ProgramLike;
     runtime?: 'browser' | 'terminal';
     store?: DevalboStore;
