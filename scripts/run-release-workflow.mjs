@@ -8,6 +8,7 @@ import { Box, Text, render, useInput } from 'ink';
 import {
   expectedTagForVersion,
   isValidReleaseTag,
+  versionFromReleaseTag,
   validateReleaseTagAgainstRef
 } from './release-tag-shared.mjs';
 
@@ -143,6 +144,16 @@ function nextTag(version, bump) {
   return `v${major}.${minor}.${patch}`;
 }
 
+function npmVersionCommandForSelection(selectedBumpKind, releaseTag) {
+  if (selectedBumpKind === 'patch' || selectedBumpKind === 'minor' || selectedBumpKind === 'major') {
+    return `npm version ${selectedBumpKind} --workspaces --include-workspace-root`;
+  }
+  if (selectedBumpKind === 'custom' && releaseTag) {
+    return `npm version ${versionFromReleaseTag(releaseTag)} --workspaces --include-workspace-root`;
+  }
+  return '';
+}
+
 function compareSemver(a, b) {
   if (a.major !== b.major) return a.major - b.major;
   if (a.minor !== b.minor) return a.minor - b.minor;
@@ -262,7 +273,8 @@ function Wizard({ context, onDone, onCancel }) {
     createTag: false,
     releaseTag: '',
     expectedTag: '',
-    allowDirty: context.allowDirty === true
+    allowDirty: context.allowDirty === true,
+    selectedBumpKind: 'none'
   });
   const [errorMessage, setErrorMessage] = useState('');
 
@@ -320,14 +332,26 @@ function Wizard({ context, onDone, onCancel }) {
       if (key.return) {
         const selected = releaseTypeItems[selectedIndex];
         if (selected.key === 'none') {
-          setResult({ createTag: false, releaseTag: '', expectedTag: '', allowDirty: result.allowDirty });
+          setResult({
+            createTag: false,
+            releaseTag: '',
+            expectedTag: '',
+            allowDirty: result.allowDirty,
+            selectedBumpKind: 'none'
+          });
           setStep('confirm');
           setSelectedIndex(0);
           setErrorMessage('');
           return;
         }
         if (selected.key === 'custom') {
-          setResult({ createTag: true, releaseTag: '', expectedTag: '', allowDirty: result.allowDirty });
+          setResult({
+            createTag: true,
+            releaseTag: '',
+            expectedTag: '',
+            allowDirty: result.allowDirty,
+            selectedBumpKind: 'custom'
+          });
           setInputValue('');
           setStep('tagInput');
           setErrorMessage('');
@@ -345,7 +369,13 @@ function Wizard({ context, onDone, onCancel }) {
           setErrorMessage(`Could not compute tag from version '${context.rootVersion}'.`);
           return;
         }
-        setResult({ createTag: true, releaseTag: suggested, expectedTag: suggested, allowDirty: result.allowDirty });
+        setResult({
+          createTag: true,
+          releaseTag: suggested,
+          expectedTag: suggested,
+          allowDirty: result.allowDirty,
+          selectedBumpKind: selected.key
+        });
         setInputValue(suggested);
         setStep('tagInput');
         setErrorMessage('');
@@ -478,6 +508,9 @@ function Wizard({ context, onDone, onCancel }) {
     `allow_dirty: ${String(result.allowDirty)}`,
     `create_tag: ${String(result.createTag)}`,
     result.createTag ? `release_tag: ${result.releaseTag || '(none yet)'}` : null,
+    result.createTag
+      ? `npm_version_command: ${npmVersionCommandForSelection(result.selectedBumpKind, result.releaseTag)}`
+      : null,
     result.createTag ? 'tagged_release_rule: source commit must be a version-bump commit' : null
   ].filter(Boolean);
   const selectedHistory = bumpHistories.find((section) => section.kind === selectedHistoryKind) || null;
@@ -793,6 +826,11 @@ async function main() {
   console.log(`  create_tag:     ${String(createTag)}`);
   if (createTag) console.log(`  release_tag:    ${releaseTag}`);
   if (createTag) console.log(`  expected_tag:   ${expectedTagForVersion(repo.rootVersion)}`);
+  if (createTag) {
+    console.log(
+      `  npm_version:    ${npmVersionCommandForSelection(interview.selectedBumpKind, releaseTag)}`
+    );
+  }
   console.log(`  allow_dirty:    ${String(effectiveAllowDirty)}`);
   console.log('');
   console.log('Commit history by bump type:');

@@ -32,6 +32,14 @@ export function expectedTagForVersion(version) {
   return `v${String(version || '').trim()}`;
 }
 
+export function versionFromReleaseTag(releaseTag) {
+  return String(releaseTag || '').replace(/^v/, '');
+}
+
+export function npmVersionCommandForTag(releaseTag) {
+  return `npm version ${versionFromReleaseTag(releaseTag)} --workspaces --include-workspace-root`;
+}
+
 export function readPackageVersionAtRef(ref = 'HEAD', options = {}) {
   const result = runGit(['show', `${ref}:package.json`], options);
   const raw = (result.stdout || '').trim();
@@ -104,15 +112,19 @@ export function validateReleaseTagAgainstRef({
   const version = readPackageVersionAtRef(ref, { cwd });
   const expectedTag = expectedTagForVersion(version);
   if (releaseTag !== expectedTag) {
+    const cmd = npmVersionCommandForTag(expectedTag);
     throw new Error(
-      `release_tag must match package.json version at '${ref}': expected '${expectedTag}', got '${releaseTag}'`
+      `release_tag must match package.json version at '${ref}': expected '${expectedTag}', got '${releaseTag}'. ` +
+        `Use npm version convention: ${cmd}`
     );
   }
 
   const changedVersionManifests = getChangedVersionManifestsAtRef(ref, { cwd });
   if (requireBumpCommit && changedVersionManifests.length === 0) {
+    const cmd = npmVersionCommandForTag(releaseTag);
     throw new Error(
-      `release tag '${releaseTag}' requires source ref '${ref}' to be a version-bump commit (no package version changes vs ${ref}^).`
+      `release tag '${releaseTag}' requires source ref '${ref}' to be a version-bump commit (no package version changes vs ${ref}^). ` +
+        `Use npm version convention: ${cmd}`
     );
   }
 
