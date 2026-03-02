@@ -1,6 +1,6 @@
 {
   "name": "@devalbo-cli/commands",
-  "version": "0.2.12-next",
+  "version": "0.2.12",
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -17,7 +17,7 @@
     "prepare": "npm run build"
   },
   "dependencies": {
-    "@devalbo-cli/shared": "workspace:*",
+    "@devalbo-cli/shared": "0.2.12",
     "effect": "^3.19.18"
   },
   "peerDependencies": {

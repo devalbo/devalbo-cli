@@ -1,5 +1,11 @@
 # @devalbo-cli/branded-types
 
+## 0.2.12
+
+### Patch Changes
+
+- Release patch bump
+
 ## 0.2.11
 
 ### Patch Changes

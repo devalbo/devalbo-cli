@@ -1,6 +1,6 @@
 {
   "name": "@devalbo-cli/worker-bridge",
-  "version": "0.2.12-next",
+  "version": "0.2.12",
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

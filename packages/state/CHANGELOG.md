@@ -1,5 +1,13 @@
 # @devalbo-cli/state
 
+## 0.2.12
+
+### Patch Changes
+
+- Release patch bump
+- Updated dependencies
+  - @devalbo-cli/shared@0.2.12
+
 ## 0.2.11
 
 ### Patch Changes
