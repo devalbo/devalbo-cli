@@ -877,6 +877,19 @@ function bumpToNextDev(releasedVersion) {
   info(`Development version bump: ${releasedVersion} -> ${nextDev} (committed, no tag).`);
 }
 
+const CREATE_AN_APP_PATH = 'CREATE_AN_APP.md';
+const CREATE_AN_APP_TAG_REGEX = /(github:devalbo\/devalbo-cli#)v\d+\.\d+\.\d+/g;
+
+function updateCreateAnAppDoc(releaseTag) {
+  const fullPath = path.join(process.cwd(), CREATE_AN_APP_PATH);
+  if (!existsSync(fullPath)) return;
+  const content = readFileSync(fullPath, 'utf8');
+  const updated = content.replace(CREATE_AN_APP_TAG_REGEX, `$1${releaseTag}`);
+  if (updated === content) return;
+  writeFileSync(fullPath, updated, 'utf8');
+  info(`${CREATE_AN_APP_PATH} updated to reference ${releaseTag}.`);
+}
+
 function verifyRepoState(createTag, releaseTag, options = {}) {
   const allowDirty = options.allowDirty === true;
   const sourceRef = options.sourceRef || 'HEAD';
@@ -1061,6 +1074,8 @@ async function main() {
     const newVersion = workspaceVersion;
     const releaseTag = `v${newVersion}`;
     info(`Versions bumped to ${newVersion}`);
+
+    updateCreateAnAppDoc(releaseTag);
 
     run('git', ['add', '.']);
     run('git', ['commit', '-m', newVersion]);

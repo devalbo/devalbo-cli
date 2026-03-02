@@ -31,7 +31,7 @@ mkdir -p src/commands
 ## Step 2 — Install dependencies
 
 ```sh
-npm install github:devalbo/devalbo-cli#v0.2.0
+npm install github:devalbo/devalbo-cli#v0.2.10
 npm install commander react
 npm install --save-dev typescript tsx @types/node @types/react
 ```
@@ -51,7 +51,7 @@ Then edit `package.json` to add `"type": "module"` and the `scripts` block:
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "devalbo-cli": "github:devalbo/devalbo-cli#v0.2.0",
+    "devalbo-cli": "github:devalbo/devalbo-cli#v0.2.10",
     "commander": "^14.0.0",
     "react": "^19.1.1"
   },
