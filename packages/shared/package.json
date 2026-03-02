@@ -1,6 +1,6 @@
 {
   "name": "@devalbo-cli/shared",
-  "version": "0.2.13-next",
+  "version": "0.2.13",
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -21,7 +21,7 @@
     "prepare": "npm run build"
   },
   "dependencies": {
-    "@devalbo-cli/branded-types": "0.2.13-next",
+    "@devalbo-cli/branded-types": "0.2.13",
     "@inrupt/vocab-common-rdf": "^1.0.5",
     "@inrupt/vocab-solid-common": "^0.7.5",
     "effect": "^3.19.18",
