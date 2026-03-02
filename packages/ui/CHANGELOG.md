@@ -1,5 +1,13 @@
 # @devalbo-cli/ui
 
+## 0.2.11
+
+### Patch Changes
+
+- Release patch bump
+- Updated dependencies
+  - @devalbo-cli/shared@0.2.11
+
 ## 0.2.10
 
 ### Patch Changes
