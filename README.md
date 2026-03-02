@@ -116,19 +116,15 @@ It dispatches `.github/workflows/release-promote.yml`, which publishes the
 
 ## Consuming this package
 
-Projects that depend on `@devalbo-cli/*` packages via `file:` references will have
-them built automatically. Each sub-package has a `prepare` script, which npm runs
-automatically for `file:` dependencies during `npm install`.
+**From GitHub (npm-only):** Install by tag so you get a single installable tree with no `workspace:*` resolution. Plain `npm install` works.
 
 ```bash
-git clone git@github.com:devalbo/devalbo-cli.git
+npm install github:devalbo/devalbo-cli#v0.2.11
 ```
 
-Then in the consuming project:
+The tagged commit uses version refs instead of `workspace:*`, so npm installs and builds correctly. See [CREATE_AN_APP.md](./CREATE_AN_APP.md) for a full app setup.
 
-```bash
-npm install    # automatically builds all @devalbo-cli/* file: dependencies
-```
+**From the repo (file: or clone):** Projects that depend on `@devalbo-cli/*` via `file:` or a clone can run `npm install` at repo root; the root `prepare` script builds when `packages/` is present.
 
 ## Creating an app
 

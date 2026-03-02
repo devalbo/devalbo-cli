@@ -23,6 +23,18 @@ rm -rf "$OUT_DIR"
 mkdir -p "$OUT_DIR"
 
 cp "$REPO_ROOT/scripts/package.release.json" "$OUT_DIR/package.json"
+# Sync version from repo so release branch / npm publish has correct version
+ROOT_VERSION="$(node -e "const p=require('$REPO_ROOT/package.json'); process.stdout.write(p.version||'')")"
+if [[ -n "$ROOT_VERSION" ]]; then
+  node -e "
+    const fs = require('fs');
+    const outPkg = process.argv[1];
+    const version = process.argv[2];
+    const p = JSON.parse(fs.readFileSync(outPkg, 'utf8'));
+    p.version = version;
+    fs.writeFileSync(outPkg, JSON.stringify(p, null, 2) + '\n', 'utf8');
+  " "$OUT_DIR/package.json" "$ROOT_VERSION"
+fi
 cp "$REPO_ROOT/README.md" "$OUT_DIR/README.md"
 cp -R "$REPO_ROOT/dist" "$OUT_DIR/dist"
 

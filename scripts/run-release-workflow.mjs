@@ -869,12 +869,56 @@ function bumpToNextDev(releasedVersion) {
     if (!existsSync(fullPath)) continue;
     const pkg = JSON.parse(readFileSync(fullPath, 'utf8'));
     pkg.version = nextDev;
+    for (const key of ['dependencies', 'devDependencies']) {
+      if (!pkg[key] || typeof pkg[key] !== 'object') continue;
+      for (const dep of Object.keys(pkg[key])) {
+        if (dep.startsWith('@devalbo-cli/') && pkg[key][dep] === releasedVersion) {
+          pkg[key][dep] = nextDev;
+        }
+      }
+    }
     writeFileSync(fullPath, JSON.stringify(pkg, null, 2) + '\n', 'utf8');
   }
 
   run('git', ['add', ...manifestList]);
   run('git', ['commit', '-m', nextDev]);
   info(`Development version bump: ${releasedVersion} -> ${nextDev} (committed, no tag).`);
+}
+
+const WORKSPACE_PROTOCOL = 'workspace:*';
+function replaceWorkspaceRefsWithVersion(version) {
+  const rootPath = path.join(process.cwd(), 'package.json');
+  const rootPkg = JSON.parse(readFileSync(rootPath, 'utf8'));
+  let changed = false;
+  for (const key of ['dependencies', 'devDependencies']) {
+    if (!rootPkg[key] || typeof rootPkg[key] !== 'object') continue;
+    for (const dep of Object.keys(rootPkg[key])) {
+      if (dep.startsWith('@devalbo-cli/') && rootPkg[key][dep] === WORKSPACE_PROTOCOL) {
+        rootPkg[key][dep] = version;
+        changed = true;
+      }
+    }
+  }
+  if (changed) writeFileSync(rootPath, JSON.stringify(rootPkg, null, 2) + '\n', 'utf8');
+
+  const packageDirs = run('bash', ['-c', 'echo packages/*/package.json']).stdout.trim().split(/\s+/).filter(Boolean);
+  for (const manifest of packageDirs) {
+    const fullPath = path.join(process.cwd(), manifest);
+    if (!existsSync(fullPath)) continue;
+    const pkg = JSON.parse(readFileSync(fullPath, 'utf8'));
+    changed = false;
+    for (const key of ['dependencies', 'devDependencies']) {
+      if (!pkg[key] || typeof pkg[key] !== 'object') continue;
+      for (const dep of Object.keys(pkg[key])) {
+        if (dep.startsWith('@devalbo-cli/') && pkg[key][dep] === WORKSPACE_PROTOCOL) {
+          pkg[key][dep] = version;
+          changed = true;
+        }
+      }
+    }
+    if (changed) writeFileSync(fullPath, JSON.stringify(pkg, null, 2) + '\n', 'utf8');
+  }
+  info(`Replaced workspace:* with ${version} for @devalbo-cli/* (npm-installable at tag).`);
 }
 
 const CREATE_AN_APP_PATH = 'CREATE_AN_APP.md';
@@ -1075,6 +1119,7 @@ async function main() {
     const releaseTag = `v${newVersion}`;
     info(`Versions bumped to ${newVersion}`);
 
+    replaceWorkspaceRefsWithVersion(newVersion);
     updateCreateAnAppDoc(releaseTag);
 
     run('git', ['add', '.']);
