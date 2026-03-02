@@ -7,6 +7,10 @@
   "types": "dist/index.d.ts",
   "exports": {
     ".": { "types": "./dist/index.d.ts", "browser": "./dist/browser.js", "import": "./dist/index.js" },
+    "./shared": { "types": "./dist/shared.d.ts", "browser": "./dist/sharedBrowser.js", "import": "./dist/shared.js" },
+    "./state": { "types": "./dist/state.d.ts", "browser": "./dist/stateBrowser.js", "import": "./dist/state.js" },
+    "./cli-shell": { "types": "./dist/cli-shell.d.ts", "browser": "./dist/cliShellBrowser.js", "import": "./dist/cli-shell.js" },
+    "./filesystem": { "types": "./dist/filesystem.d.ts", "browser": "./dist/filesystemBrowser.js", "import": "./dist/filesystem.js" },
     "./vite": { "types": "./dist/vite.d.ts", "import": "./dist/vite.js" },
     "./node": { "types": "./dist/node.d.ts", "browser": "./dist/node.browser.js", "import": "./dist/node.js" }
   },

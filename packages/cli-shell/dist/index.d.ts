@@ -43,5 +43,5 @@ export type { FilePreviewProps as PreviewProps, FileEditProps as EditProps, Mime
 export { useValidParse } from './hooks/use-valid-parse';
 export { createCliAppConfig } from '@devalbo-cli/shared';
 export { buildTree, changeDir, copyPath, exportDirectoryAsBft, getDefaultCwd, importBftTextToLocation, importBftToLocation, joinFsPath, listDirectory, makeDirectory, movePath, readBytesFile, readTextFile, removePath, resolveFsPath, splitFsPath, statPath, touchFile, treeText, writeBytesFile, writeTextFile, type FsTreeNode } from './lib/filesystem-actions';
-export { getDriver, getFilesystemBackendInfo, getWatcher } from './lib/file-operations';
+export { getDriver, getWatcher } from './lib/file-operations';
 //# sourceMappingURL=index.d.ts.map

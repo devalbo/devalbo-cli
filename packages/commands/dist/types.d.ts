@@ -1,4 +1,4 @@
-import type { CommandHandler } from '@devalbo-cli/shared';
+import type { CommandHandler } from '@devalbo-cli/shared/types/commands';
 export interface CommandArgument {
     name: string;
     required?: boolean;

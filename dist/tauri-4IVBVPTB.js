@@ -1,7 +1,7 @@
 import { createRequire } from 'node:module'; const require = createRequire(import.meta.url);
 import {
   unsafeAsFilePath
-} from "./chunk-UU3L6ZIJ.js";
+} from "./chunk-LFJ2WG2S.js";
 import "./chunk-TWWXOWDW.js";
 
 // packages/filesystem/src/drivers/tauri.ts

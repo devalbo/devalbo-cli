@@ -88,8 +88,4 @@ export {
   type FsTreeNode
 } from './lib/filesystem-actions';
 
-export {
-  getDriver,
-  getFilesystemBackendInfo,
-  getWatcher
-} from './lib/file-operations';
+export { getDriver, getWatcher } from './lib/file-operations';

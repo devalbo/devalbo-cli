@@ -8,6 +8,10 @@
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
+    },
+    "./types/commands": {
+      "types": "./dist/types/commands.d.ts",
+      "import": "./dist/types/commands.js"
     }
   },
   "scripts": {

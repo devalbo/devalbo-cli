@@ -1,7 +1,7 @@
 export * from './types/branded';
 export * from './types/environment';
 export * from './types/filesystem';
-export * from './types/commands';
+export type { CommandResult, CommandOptions } from './types/commands';
 export * from './types/state';
 export * from './types/social';
 export * from './environment/detect';

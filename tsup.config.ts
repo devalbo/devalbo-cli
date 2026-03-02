@@ -15,7 +15,13 @@ export default defineConfig([
   // Node CLI entry — needs createRequire banner so bundled CJS deps (signal-exit etc.)
   // can call require("assert") and other Node built-ins in ESM mode.
   {
-    entry: { index: 'src/index.node.ts' },
+    entry: {
+      index: 'src/index.node.ts',
+      shared: 'src/shared.ts',
+      state: 'src/state.ts',
+      'cli-shell': 'src/cli-shell.ts',
+      filesystem: 'src/filesystem.ts'
+    },
     format: ['esm'],
     dts: true,
     outDir: 'dist',
@@ -49,7 +55,13 @@ export default defineConfig([
   },
   // Browser entry — no Node banner and no Node-only alias remap.
   {
-    entry: { browser: 'src/index.browser.ts' },
+    entry: {
+      browser: 'src/index.browser.ts',
+      sharedBrowser: 'src/shared.ts',
+      stateBrowser: 'src/state.ts',
+      cliShellBrowser: 'src/cli-shell.ts',
+      filesystemBrowser: 'src/filesystem.ts'
+    },
     format: ['esm'],
     dts: true,
     outDir: 'dist',

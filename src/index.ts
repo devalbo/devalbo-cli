@@ -1,60 +1,23 @@
+/**
+ * Main entry: re-export full public API so consumers can use
+ * import { X } from 'devalbo-cli' without Vite/tsconfig aliases into packages/*.
+ * Order: shared, state, filesystem, cli-shell. Conflicting names re-exported explicitly below.
+ */
+
+export * from '@devalbo-cli/shared';
+export * from '@devalbo-cli/state';
+export * from '@devalbo-cli/filesystem';
+export * from '@devalbo-cli/cli-shell';
+
+/** UI / MIME components not re-exported from cli-shell barrel */
 export {
-  InteractiveShell,
-  startInteractiveCli,
-  bindCliRuntimeSource,
-  unbindCliRuntimeSource,
-  cli,
-  builtinCommands,
-  registerBuiltinCommands,
-  mergeCommands,
-  createCliAppConfig,
-  defaultWelcomeMessage,
-  createApp,
-  ShellRuntimeProvider,
-  useShellRuntime,
-  createCommandRegistry,
-  registerBuiltinCommandsToRegistry,
-  withValidation,
-  validateEditArgs,
-  validateNavigateArgs,
-  useValidParse
-} from '@devalbo-cli/cli-shell';
-
-export type {
-  CommandHandler,
-  AsyncCommandHandler,
-  StoreCommandHandler,
-  ExtendedCommandOptions,
-  ExtendedCommandOptionsWithStore,
-  CreateAppOptions,
-  CreateAppResult,
-  CommandRegistry,
-  CommandMeta,
-  CommandRegistryEntry,
-  PreviewProps,
-  EditProps,
-  MimeTypeHandler,
-  EditArgs,
-  NavigateArgs
-} from '@devalbo-cli/cli-shell';
-
-export {
-  makeOutput,
-  makeError,
-  makeResult,
-  makeResultError
-} from '@devalbo-cli/cli-shell';
-
-export {
-  createDevalboStore,
-  AppConfigProvider,
-  useAppConfig,
-  StoreContext,
-  FILE_TREE_TABLE
-} from '@devalbo-cli/state';
-
-export { createFilesystemDriver } from '@devalbo-cli/filesystem';
-
-export { BrowserConnectivityService } from '@devalbo-cli/shared';
-
-export { Spinner, useKeyboard } from '@devalbo-cli/ui';
+  Spinner,
+  useKeyboard,
+  MarkdownEdit,
+  MarkdownView,
+  MarkdownViewEdit,
+  registerDefaultMimeTypeHandlers,
+  registerMimeTypeHandler,
+  listMimeTypeHandlers,
+  resolveMimeTypeHandler
+} from '@devalbo-cli/ui';
