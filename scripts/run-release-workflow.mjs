@@ -832,6 +832,8 @@ function assertTooling(dryRun) {
 }
 
 
+// When current version is X.Y.Z-next, changeset version with patch/minor/major
+// produces the corresponding release version (e.g. 0.2.8-next + patch -> 0.2.8).
 function writeChangesetFile(bumpKind) {
   const allPackages = [
     '@devalbo-cli/branded-types',
@@ -851,6 +853,28 @@ function writeChangesetFile(bumpKind) {
   const filePath = path.join(process.cwd(), '.changeset', `${id}.md`);
   writeFileSync(filePath, content, 'utf8');
   return filePath;
+}
+
+function bumpToNextDev(releasedVersion) {
+  const parsed = parseSemver(releasedVersion);
+  if (!parsed) die(`Cannot parse released version for next-dev bump: ${releasedVersion}`);
+  const nextDev = `${parsed.major}.${parsed.minor}.${parsed.patch + 1}-next`;
+
+  const manifestList = run('bash', ['-c', 'echo package.json packages/*/package.json']).stdout
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean);
+  for (const manifest of manifestList) {
+    const fullPath = path.join(process.cwd(), manifest);
+    if (!existsSync(fullPath)) continue;
+    const pkg = JSON.parse(readFileSync(fullPath, 'utf8'));
+    pkg.version = nextDev;
+    writeFileSync(fullPath, JSON.stringify(pkg, null, 2) + '\n', 'utf8');
+  }
+
+  run('git', ['add', ...manifestList]);
+  run('git', ['commit', '-m', nextDev]);
+  info(`Development version bump: ${releasedVersion} -> ${nextDev} (committed, no tag).`);
 }
 
 function verifyRepoState(createTag, releaseTag, options = {}) {
@@ -1043,7 +1067,9 @@ async function main() {
     run('git', ['tag', '-a', releaseTag, '-m', newVersion, 'HEAD']);
     info(`Commit and tag ${releaseTag} created.`);
 
-    console.log('Next step: push commit + tags, then rerun this wizard and choose tagged release.');
+    bumpToNextDev(newVersion);
+
+    console.log('Next step: push both commits + tag, then rerun this wizard and choose tagged release.');
     console.log('git push origin main --follow-tags');
     return;
   }

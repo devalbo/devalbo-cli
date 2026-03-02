@@ -39,6 +39,8 @@ management. All workspace packages are versioned together (fixed versioning).
 
 ### 1. Configure token for release workflow dispatch
 
+
+
 Set a GitHub token with `repo` scope (classic PAT):
 
 ```bash
@@ -74,12 +76,21 @@ bash scripts/run-release-workflow.sh --execute --allow-dirty
 
 ### How the tagged release flow works
 
-1. Wizard detects no `v*` tag on `HEAD`
+1. Wizard detects no `v*` tag on `HEAD` (version on `main` is typically `X.Y.Z-next` between releases)
 2. You pick a bump type (patch / minor / major)
 3. Wizard writes a changeset file, runs `pnpm changeset version`, commits all
    updated `package.json` files, and creates a `vX.Y.Z` tag
-4. You push: `git push origin main --follow-tags`
-5. Rerun the wizard and choose **tagged release** to dispatch `release-promote`
+4. Wizard immediately creates a second commit that bumps all versions to the next
+   development prerelease (e.g. `0.2.8-next`) so `main` is never left at the exact
+   release version
+5. You push both commits and the tag: `git push origin main --follow-tags`
+6. Rerun the wizard and choose **tagged release** to dispatch `release-promote`
+
+### Development version (`-next`)
+
+Between releases, `main` carries a prerelease version like `0.2.8-next`. The next
+release (e.g. patch) from that state becomes the stable `0.2.8` when you run the
+wizard and create a new tagged release.
 
 ### Strict tagged-release rules
 
