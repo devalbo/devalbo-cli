@@ -1,6 +1,6 @@
 {
   "name": "@devalbo-cli/cli-shell",
-  "version": "0.2.13",
+  "version": "0.2.14-next",
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -17,11 +17,11 @@
     "prepare": "npm run build"
   },
   "dependencies": {
-    "@devalbo-cli/commands": "0.2.13",
-    "@devalbo-cli/filesystem": "0.2.13",
-    "@devalbo-cli/shared": "0.2.13",
-    "@devalbo-cli/state": "0.2.13",
-    "@devalbo-cli/ui": "0.2.13",
+    "@devalbo-cli/commands": "0.2.14-next",
+    "@devalbo-cli/filesystem": "0.2.14-next",
+    "@devalbo-cli/shared": "0.2.14-next",
+    "@devalbo-cli/state": "0.2.14-next",
+    "@devalbo-cli/ui": "0.2.14-next",
     "@optique/core": "^0.10.3",
     "commander": "^14.0.3",
     "effect": "^3.19.18",
