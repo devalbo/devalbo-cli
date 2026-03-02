@@ -1,6 +1,6 @@
 {
   "name": "@devalbo-cli/filesystem",
-  "version": "0.2.12",
+  "version": "0.2.13-next",
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -30,7 +30,7 @@
     "prepare": "npm run build"
   },
   "dependencies": {
-    "@devalbo-cli/shared": "0.2.12",
+    "@devalbo-cli/shared": "0.2.13-next",
     "@tauri-apps/api": "^2.10.1",
     "tinybase": "^7.3.4"
   }
